@@ -1,13 +1,19 @@
 import React, {Component} from "react";
 import {render} from "react-dom";
 
+import SamplePage from "./pages/SamplePage";
+
 export default class App extends Component{
     constructor(props){
         super(props);
     }
 
     render(){
-        return <h1>Testing React Code</h1>;
+        return (
+            <div className="initLayout">
+                <SamplePage/>
+            </div>
+        )
     }
 }
 
