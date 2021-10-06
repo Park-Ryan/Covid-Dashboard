@@ -1,0 +1,34 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  overflow: auto;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.initLayout{
+    position : relative;
+    top : 10%;
+    left : 50%;
+    transform: translate(-50%);
+}
+
+.center {
+  position: relative;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%);
+}
