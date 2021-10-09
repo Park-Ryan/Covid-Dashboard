@@ -2,6 +2,15 @@ import json
 import csv
 from typing import OrderedDict
 
+
+class state:
+	def __init__(self):
+		self.total_confirmed_cases = 0
+		self.total_deaths = 0
+		self.total_recovered = 0
+		self.dates = {}
+
+
 # Every single province/state after merging all the dates togethers
 # TODO: find a way for state searches and states' total confirmed cases and etc..
 class country:
@@ -11,6 +20,7 @@ class country:
 		self.total_confirmed_cases = 0
 		self.total_deaths = 0
 		self.total_recovered = 0
+		# Some countries don't have a state/province, but if they do we put it into the states list and leave dates in country empty
 		self.dates = {}
 		# Ex.
 		# self.dates = {
