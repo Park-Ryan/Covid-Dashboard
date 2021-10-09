@@ -40,11 +40,7 @@ export default function HomePage(props){
     const [dateValue, dateSetValue] = React.useState(dateOptions[0]);
     const [dateInputValue, dateSetInputValue] = React.useState('');
  
-
-    function handleInputTextChange(e){
-        setInputText(e.target.value);
-    }
-
+    
     useEffect(() => {
         setPayload(inputText)
     });
