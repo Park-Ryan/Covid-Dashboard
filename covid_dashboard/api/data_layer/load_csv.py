@@ -3,11 +3,14 @@ import csv
 from typing import Dict, OrderedDict
 
 class Date: 
-	def __init__(self, date: str, recovered, cases, deaths):
+	def __init__(self, date: str, confirmed, deaths, recovered):
 		self.date = date
-		self.recovered = recovered
-		self.cases = cases
+		self.confirmed = confirmed
 		self.deaths = deaths
+		self.recovered = recovered
+
+	def __repr__(self): 
+		return "Date: % s, Confirmed: % s, Deaths: % s, Recovered: % s" % (self.date, self.confirmed, self.deaths, self.recovered) 
 
 class State:
 	def __init__(self, state_name, country_name):
@@ -18,13 +21,19 @@ class State:
 		self.total_recovered = 0
 		self.dates = []
 
+	def __repr__(self): 
+		return "% s, dates: %s" % (self.state_name, self.dates) 
+	
+	def __eq__(self, other):
+		return self.state_name == other.state_name
+
 
 # Every single province/state after merging all the dates togethers
 # TODO: find a way for state searches and states' total confirmed cases and etc..
 class Country:
 	def __init__(self, country_name):
 		self.country_name = country_name
-		self.states = []
+		self.states = {}
 		self.total_confirmed_cases = 0
 		self.total_deaths = 0
 		self.total_recovered = 0
@@ -32,11 +41,14 @@ class Country:
 		# Stores date objs
 		self.dates = []
 
+	def __repr__(self): 
+		return "country name is % s, states are % s, dates are % s" % (self.country_name, self.states, self.dates) 
+
 	# returns object in json format
 	def info(self):
 		return {
 			"Country/Region": self.country,
-			"Province/State": self.state,
+			"Province/State": self.states,
 			"Total Confirmed": self.total_confirmed_cases,
 			"Total Deaths": self.total_deaths,
 			"Total Recovered": self.total_recovered,
@@ -72,7 +84,7 @@ class Country:
 # 	),
 # ]
 
-
+# TODO: add range based search 
 class data_layer:
 	def __init__(self):
 		# key = country_name : value = country_obj
@@ -120,34 +132,42 @@ class data_layer:
 		for key, value in countries_dict.items():
 			#country_obj => is a tmp country object to pass into function
 			country_obj = Country(key)
+
 			# state is a dict
 			for state in value:
 				# print(state)
 				# convert the date and cases into a date obj
 				date_obj = Date(state["ObservationDate"], state["Confirmed"], state["Deaths"], state["Recovered"])
-				# if there is no value for state/province then add to country obj
-				if not state["Province/State"]:
-					country_obj.dates.append(Date(state["ObservationDate"], state["Confirmed"], state["Deaths"], state["Recovered"]))
-				if state["Province/State"] not in country_obj.states:
-					country_obj.states.append(State(state["Province/State"], key))
-					# print(country_obj.states)
-			
-			
-				
-			self.country_objects.append(country_obj)	
-		
-	def return_object(self):
-		return self.country_objects
-		
-		
-		# for	x in self.country_objects:
-		# 	for state in x.states:
-		# 		print(state.state_name)
-		#print(self.country_objects[0].states[0].state)		
+				temp_state = State(state["Province/State"], key)
+				# Add the dates to the states that already exist
+				if state["Province/State"] in country_obj.states:
+					country_obj.states[state["Province/State"]].dates.append(date_obj)
 
+				elif state["Province/State"] not in country_obj.states:
+					temp_state.dates.append(date_obj)
+					country_obj.states[state["Province/State"]] = temp_state
+					# print(country_obj.states)
+
+				# if there is no value for state/province then add to country obj
+				elif state["Province/State"] == "":
+					country_obj.dates.append(date_obj)
+			
+			self.countries_data[key] = country_obj
+			# self.country_objects.append(country_obj)	
+		
+	# Returns the lists of all countries
+	def get_countries(self):
+		return self.countries_data
+		
 
 data_layer = data_layer()
 data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
-data_layer.return_object()
+countries = data_layer.get_countries()
+
+# Testing
+for date in countries["US"].states["California"].dates:
+	print(date, "\n")
+
+
 # data_layer.load_json()
 # print(data_layer.countries_list)
