@@ -47,7 +47,7 @@ class Country:
 	# returns object in json format
 	def info(self):
 		return {
-			"Country/Region": self.country,
+			"Country/Region": self.country_name, 
 			"Province/State": self.states,
 			"Total Confirmed": self.total_confirmed_cases,
 			"Total Deaths": self.total_deaths,
@@ -111,6 +111,7 @@ class data_layer:
 
 		with open(csv_name, newline="") as csvfile:
 			reader = csv.DictReader(csvfile, delimiter=",")
+		
 			for row in reader:
 				# if the value of country is in the countries dict,
 				# take the value and use it as a key in the countries dict and add all the countries with that value into the list
