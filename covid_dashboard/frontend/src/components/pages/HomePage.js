@@ -63,6 +63,12 @@ export default function HomePage(props){
         console.log(dateInputValue);
         console.log("Date End");
 
+        //payload {
+        //    countryInputValue : CountryData;
+        //    stateInputValue : StateData;
+        //    typeInputValue : TypeData;
+        //    dateInputValue : DateData;
+        //}
 
         //REPLACE ME WITH A DIFFERENT API
         // const requestOptions = {
