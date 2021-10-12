@@ -49,7 +49,7 @@ class CountriesEndpoint(APIView):
 		# )
 		# countries["US"].states["California"].dates
 
-		# print(countries["US"].states["California"].dates["01/21/2021"].reprJSON())
+		print(countries["US"].states["California"].dates["01/21/2021"].reprJSON())
 		# return Response(countries["US"].states["California"].reprJSON())
 		return Response(countries["US"].states["California"].reprJSON())
 
