@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {render} from "react-dom";
+import HomePage from "./pages/HomePage";
 
 import SamplePage from "./pages/SamplePage";
 
@@ -11,7 +12,7 @@ export default class App extends Component{
     render(){
         return (
             <div className="initLayout">
-                <SamplePage/>
+                <HomePage/>
             </div>
         )
     }
