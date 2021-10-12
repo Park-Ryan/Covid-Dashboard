@@ -101,6 +101,46 @@ class data_layer:
 		self.countries_list = data["Countries/Regions"]
 		# print(self.countries_list)
 
+	def loadCSV(self, csv_name: str):
+		countries_dict = {}
+		self.load_json()
+	
+		for country in self.countries_list:
+			countries_dict[country] = []
+		
+		with open(csv_name, "r") as infile:	
+			for line in infile.readlines():
+				row_values = line.split(',')
+				row_values[7] = row_values[7].strip("\n")
+				if row_values[3] in countries_dict:
+					countries_dict[row_values[3]].append(row_values)
+		
+		for key, value in countries_dict.items():
+			#country_obj => is a tmp country object to pass into function
+			country_obj = Country(key)
+
+			# state is a dict
+			for state in value:
+				# print(state)
+				# convert the date and cases into a date obj
+				date_obj = Date(state[1], state[5], state[6], state[7])
+				temp_state = State(state[2], key)
+				# Add the dates to the states that already exist
+				if state[2] in country_obj.states:
+					country_obj.states[state[2]].dates.append(date_obj)
+
+				elif state[2] not in country_obj.states:
+					temp_state.dates.append(date_obj)
+					country_obj.states[state[2]] = temp_state
+					# print(country_obj.states)
+
+				# if there is no value for state/province then add to country obj
+				elif state[2] == "":
+					country_obj.dates.append(date_obj)
+			
+			self.countries_data[key] = country_obj
+			# self.country_objects.append(country_obj)	
+
 	def initLoadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()
@@ -116,17 +156,6 @@ class data_layer:
 				# take the value and use it as a key in the countries dict and add all the countries with that value into the list
 				if row["Country/Region"] in countries_dict:
 					countries_dict[row["Country/Region"]].append(row)
-
-			# 	print(reader["SNo"])  # prints the whole SNo column
-			# # since dictreader only allows iterability
-			# row = next(reader)  # goes next and keeps pointer position
-			# print(row)
-			# print(countries_dict)
-
-		# iterate thru all the keys and turn all the values into a country object
-		# value is a list containing all the json data for a country
-		#first check if states exist in the list
-		#if it does append and country.states.dates
 		
 		# Objects Conversion part
 		for key, value in countries_dict.items():
@@ -152,7 +181,7 @@ class data_layer:
 				elif state["Province/State"] == "":
 					country_obj.dates.append(date_obj)
 			
-			self.countries_data[key] = country_obj
+			#self.countries_data[key] = country_obj
 			# self.country_objects.append(country_obj)	
 		
 	# Returns the lists of all countries
@@ -161,7 +190,8 @@ class data_layer:
 		
 
 data_layer = data_layer()
-data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
+#data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
+data_layer.loadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
 countries = data_layer.get_countries()
 
 # Testing
