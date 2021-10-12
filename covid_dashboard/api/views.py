@@ -3,11 +3,11 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
 #from covid_dashboard.api.data_layer.load_csv import Country
 from .util import Reverse_String
 from .serializers import *
-from .data_layer import *
+from .data_layer import load_csv
+import json
 # Create your views here.
 
 class SampleEndpoint(APIView):
@@ -20,6 +20,21 @@ class SampleEndpoint(APIView):
         output_payload=Reverse_String(input_payload)
 
         return Response(output_payload,status=status.HTTP_200_OK)
+
+    def encoder_country(country):
+
+        if(isinstance(country, load_csv.Country)):
+            countrytype = []
+            countrytype[0] = country.total_confirmed_cases
+            countrytype[1] = country.total_deaths
+            countrytype[2] = country.total_recovered
+            
+            return {'country': country.country_name, 'state': country.states, 
+            'type': country.total_confirmed_cases, 'date': country.dates}
+    jsonField_country = json.dumps(load_csv.Country, default=encoder_country)
+    print()
+    print(json)
+
 
 #def informationList(self, request):
  #   if request.method == 'GET':
