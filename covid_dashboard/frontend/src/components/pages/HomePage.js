@@ -72,7 +72,7 @@ export default function HomePage(props){
             }
             else{
                 console.log("Conflict between Country and State inputs");
-                
+                alert("Location conflict between Country and State!\nPlease pick a Country and State that match.");
                 return
             }
         }
