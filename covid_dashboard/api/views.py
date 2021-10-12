@@ -78,4 +78,26 @@ class CountriesEndpoint(APIView):
 # serializer.save()
 #            return Response(status=status.HTTP_201_CREATED)
 
-#        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#        return Response(output_payload,status=status.HTTP_200_OK);
+
+
+class QueryEndpoint(APIView):
+
+    def post(self, request, format=None):
+
+        input_payload = self.request.data
+        output_payload = None 
+
+        country_query = input_payload["payload"]["countryVal"]
+        state_query = input_payload["payload"]["stateVal"]
+        type_query = input_payload["payload"]["typeVal"]
+        date_query = input_payload["payload"]["dateVal"]
+
+        
+
+        # output_payload=input_payload[input_payload[stateVal]
+        # output_payload=Reverse_String(input_payload[stateVal])
+        # output_payload=Reverse_String(input_payload[typeVal])
+        # output_payload=Reverse_String(input_payload[dateVal])
+
+        return Response(output_payload,status=status.HTTP_200_OK);
