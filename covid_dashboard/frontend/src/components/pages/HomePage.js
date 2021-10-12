@@ -11,6 +11,8 @@ import { StateData } from "../data/StateData";
 import { TypeData } from '../data/TypeData';
 import { DateData} from "../data/DateData";
 
+import { hasNoLocationConflict } from "../tests/SearchValidation";
+
 const countryOptions = CountryData;
 const stateOptions = StateData;
 const typeOptions = TypeData;
@@ -62,6 +64,18 @@ export default function HomePage(props){
         console.log("Date Begin :");
         console.log(dateInputValue);
         console.log("Date End");
+
+
+        if(countryInputValue!="" && stateInputValue != ""){
+            if(hasNoLocationConflict(countryInputValue,stateInputValue)){
+                console.log("Search Input Valid");
+            }
+            else{
+                console.log("Conflict between Country and State inputs");
+                
+                return
+            }
+        }
 
 
         //REPLACE ME WITH A DIFFERENT API
