@@ -3,5 +3,6 @@ from .views import *
 
 
 urlpatterns = [
-    path('SampleEndpoint',SampleEndpoint.as_view())
+    path('SampleEndpoint',SampleEndpoint.as_view()),
+    path('QueryEndpoint',QueryEndpoint.as_view())
 ]

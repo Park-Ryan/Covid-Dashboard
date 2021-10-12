@@ -64,22 +64,29 @@ export default function HomePage(props){
         console.log("Date End");
 
 
-        //REPLACE ME WITH A DIFFERENT API
-        // const requestOptions = {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json"},
-        //     body: JSON.stringify({
-        //         payload_bus : payload
-        //     }),
-        // };
+        var payload = {
+            "countryVal" : countryInputValue,
+            "stateVal" : stateInputValue,
+            "typeVal" : typeInputValue,
+            "dateVal" : dateInputValue,
+        }
 
-        // console.log('Sample Endpoint Fetched');
-        // fetch('/api/SampleEndpoint',requestOptions)
-        // .then(response => response.json())
-        // .then(data => {
-        //     setResultText(data);
-        //     console.log(data);
-        // });
+
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({
+                payload
+            }),
+        };
+
+        console.log('Query Endpoint Fetched');
+        fetch('/api/QueryEndpoint',requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            setResultText(data);
+            console.log(data);
+        });
     }
 
     function useForceUpdate(){
