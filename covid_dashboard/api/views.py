@@ -49,9 +49,10 @@ class CountriesEndpoint(APIView):
 		# )
 		# countries["US"].states["California"].dates
 
-		# print(countries["US"].states["California"].dates["01/21/2021"].reprJSON())
+		# print(countries["US"].states["California"].dates["01/21/2021"])
 		# return Response(countries["US"].states["California"].reprJSON())
-		return Response(countries["US"].states["California"].reprJSON())
+		# TODO: add encoder for states
+		return Response(countries["Taiwan"].reprJSON())
 
 
 # def informationList(self, request):

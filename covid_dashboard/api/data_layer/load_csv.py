@@ -72,6 +72,7 @@ class Country:
 		# Some countries don't have a state/province, but if they do we put it into the states list and leave dates in country empty
 		# Stores date objs
 		self.dates = {}
+		self.is_converted_to_json = False
 
 	def __repr__(self):
 		return "country name is % s, states are % s, dates are % s" % (
@@ -91,6 +92,12 @@ class Country:
 		}
 
 	def reprJSON(self):
+		if not self.is_converted_to_json:
+			for k, v in self.states.items():
+				self.states[k] = v.reprJSON()
+
+			self.is_converted_to_json = True
+
 		return dict(
 			country=self.country_name,
 			states=self.states,
