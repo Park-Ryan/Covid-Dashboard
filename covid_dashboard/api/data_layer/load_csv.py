@@ -20,10 +20,10 @@ class Date:
 
 	def reprJSON(self):
 		return dict(
-			date=self.date,
-			confirmed=self.confirmed,
-			deaths=self.deaths,
-			recovered=self.recovered,
+			Date=self.date,
+			Confirmed=self.confirmed,
+			Deaths=self.deaths,
+			Recovered=self.recovered,
 		)
 
 

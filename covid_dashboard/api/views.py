@@ -3,12 +3,13 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .util import Get_Filtered_Data
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
 from .util import Reverse_String
 
-from .serializers import *
+#from .serializers import *
 import json
 
 # # in myproject/backend/backend.py or myproject/api/api.py
@@ -42,12 +43,12 @@ class CountriesEndpoint(APIView):
 		# results = CountrySerializer(countries, many=True).data
 		# this is returning str instead of json literal
 		# double encoding happening
-		# result = json.dumps(
+		result = json.dumps(
 		# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
-		# 	countries["US"].states["California"],
-		# 	cls=ComplexEncoder,
-		# )
-		# countries["US"].states["California"].dates
+			countries["US"].states["California"],
+			cls=ComplexEncoder,
+		)
+		countries["US"].states["California"].dates
 
 		print(countries["US"].states["California"].dates["01/21/2021"].reprJSON())
 		# return Response(countries["US"].states["California"].reprJSON())
@@ -87,17 +88,22 @@ class QueryEndpoint(APIView):
 
         input_payload = self.request.data
         output_payload = None 
+        print_output = None
 
         country_query = input_payload["payload"]["countryVal"]
         state_query = input_payload["payload"]["stateVal"]
         type_query = input_payload["payload"]["typeVal"]
         date_query = input_payload["payload"]["dateVal"]
 
-        
+        Get_Filtered_Data(country_query, state_query, type_query, date_query)
 
-        # output_payload=input_payload[input_payload[stateVal]
-        # output_payload=Reverse_String(input_payload[stateVal])
-        # output_payload=Reverse_String(input_payload[typeVal])
-        # output_payload=Reverse_String(input_payload[dateVal])
+        output_payload=input_payload["payload"]["countryVal"]
+        print_output = output_payload + ' '
+        output_payload=input_payload["payload"]["stateVal"]
+        print_output = print_output + ' ' + output_payload
+        output_payload=input_payload["payload"]["typeVal"]
+        print_output = print_output + ' ' + output_payload
+        output_payload=input_payload["payload"]["dateVal"]
+        print_output = print_output + ' ' + output_payload
 
-        return Response(output_payload,status=status.HTTP_200_OK);
+        return Response(print_output,status=status.HTTP_200_OK);
