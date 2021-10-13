@@ -81,12 +81,20 @@ export default function HomePage(props){
             }),
         };
 
+        // console.log('Query Endpoint Fetched');
+        // fetch('/api/QueryEndpoint',requestOptions)
+        // .then(response => response.json())
+        // .then(data => {
+        //     setResultText(data);
+        //     console.log(data);
+        // });
+
         console.log('Query Endpoint Fetched');
         fetch('/api/QueryEndpoint',requestOptions)
         .then(response => response.json())
         .then(data => {
             setResultText(data);
-            console.log(data);
+            console.log(data); 
         });
     }
 

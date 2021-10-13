@@ -95,7 +95,7 @@ class QueryEndpoint(APIView):
         type_query = input_payload["payload"]["typeVal"]
         date_query = input_payload["payload"]["dateVal"]
 
-        Get_Filtered_Data(country_query, state_query, type_query, date_query)
+        payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 
         output_payload=input_payload["payload"]["countryVal"]
         print_output = output_payload + ' '
@@ -106,4 +106,4 @@ class QueryEndpoint(APIView):
         output_payload=input_payload["payload"]["dateVal"]
         print_output = print_output + ' ' + output_payload
 
-        return Response(print_output,status=status.HTTP_200_OK);
+        return Response(payload,status=status.HTTP_200_OK);
