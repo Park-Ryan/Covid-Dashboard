@@ -32,6 +32,8 @@ class QueryEndpoint(APIView):
         type_query = input_payload["payload"]["typeVal"]
         date_query = input_payload["payload"]["dateVal"]
 
+        output_payload = country_query
+
         
 
         # output_payload=input_payload[input_payload[stateVal]
