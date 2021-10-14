@@ -73,6 +73,17 @@ export default function HomePage(props){
             "typeVal" : typeInputValue,
             "dateVal" : dateInputValue,
         }
+        
+        if(countryInputValue!="" && stateInputValue != ""){
+            if(hasNoLocationConflict(countryInputValue,stateInputValue)){
+                console.log("Search Input Valid");
+            }
+            else{
+                console.log("Conflict between Country and State inputs");
+                alert("Location conflict between Country and State!\nPlease pick a Country and State that match.");
+                return
+            }
+        }
 
 
         const requestOptions = {
