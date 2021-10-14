@@ -11,6 +11,8 @@ import { StateData } from "../data/StateData";
 import { TypeData } from '../data/TypeData';
 import { DateData} from "../data/DateData";
 
+import { hasNoLocationConflict } from "../tests/SearchValidation";
+
 const countryOptions = CountryData;
 const stateOptions = StateData;
 const typeOptions = TypeData;
