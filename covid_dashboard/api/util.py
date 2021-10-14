@@ -73,17 +73,17 @@ def Get_Filtered_Data(countryFilter,stateFilter,typeFilter,dateFilter):
                     print('countries_list[countryFilter].states[].dates[] no work')
     
     #countries_list[countryFilter].states[].dates[dateFilter]
-    elif countryFilter != '' and dateFilter != '' and stateFilter == '': 
+    elif countryFilter != '' and stateFilter == '' and dateFilter != '': 
         for state in countries_list[countryFilter].states.values():
-            #if dateFilter in countries_list[countryFilter].states[state].dates:
             if dateFilter in state.dates:
                 if typeFilter == '':                   
                     return(state.dates[dateFilter].reprJSON()) # returns {date(key) : "01/22/2020" , "232132", ...}
                     
-                else:       
-                    return(state.dates[dateFilter].reprJSON()[typeFilter])
-            else:
-                print('countries_list[countryFilter].states[].dates[dateFilter] no work')
+                else:
+                    print(state.dates[dateFilter].reprJSON()[typeFilter])       
+                    #return(state.dates[dateFilter].reprJSON()[typeFilter])
+            #else:
+                #print('countries_list[countryFilter].states[].dates[dateFilter] no work')
 
     #countries_list[].states[].dates[dateFilter]
     elif countryFilter == '' and stateFilter == '' and dateFilter != '': 
