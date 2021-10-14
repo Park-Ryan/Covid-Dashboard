@@ -65,23 +65,28 @@ export default function HomePage(props){
 
         
 
-        //REPLACE ME WITH A DIFFERENT API
+        var payload = {
+            "countryVal" : countryInputValue,
+            "stateVal" : stateInputValue,
+            "typeVal" : typeInputValue,
+            "dateVal" : dateInputValue,
+        }
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify({
-                payload_bus : payload
+                  payload
             }),
         };
 
-        console.log('Sample Endpoint Fetched');
-        fetch('/api/SampleEndpoint',requestOptions)
+        console.log('Query Endpoint Fetched');
+        fetch('/api/QueryEndpoint',requestOptions)
         .then(response => response.json())
         .then(data => {
             setResultText(data);
             console.log(data);
         });
-        //this passes a string
     }
 
     function useForceUpdate(){
