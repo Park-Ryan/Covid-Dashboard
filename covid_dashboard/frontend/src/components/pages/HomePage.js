@@ -11,6 +11,8 @@ import { StateData } from "../data/StateData";
 import { TypeData } from '../data/TypeData';
 import { DateData} from "../data/DateData";
 
+import { hasNoLocationConflict } from "../tests/SearchValidation";
+
 const countryOptions = CountryData;
 const stateOptions = StateData;
 const typeOptions = TypeData;
@@ -62,14 +64,23 @@ export default function HomePage(props){
         console.log("Date Begin :");
         console.log(dateInputValue);
         console.log("Date End");
-
-        
-
+ 
         var payload = {
             "countryVal" : countryInputValue,
             "stateVal" : stateInputValue,
             "typeVal" : typeInputValue,
             "dateVal" : dateInputValue,
+        }
+
+        if(countryInputValue!="" && stateInputValue != ""){
+            if(hasNoLocationConflict(countryInputValue,stateInputValue)){
+                console.log("Search Input Valid");
+            }
+            else{
+                console.log("Conflict between Country and State inputs");
+                alert("Location conflict between Country and State!\nPlease pick a Country and State that match.");
+                return
+            }
         }
 
         const requestOptions = {
@@ -87,6 +98,7 @@ export default function HomePage(props){
             setResultText(data);
             console.log(data);
         });
+
     }
 
     function useForceUpdate(){
