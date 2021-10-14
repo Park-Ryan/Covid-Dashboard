@@ -19,12 +19,7 @@ class Date:
 		)
 
 	def reprJSON(self):
-		return dict(
-			Date=self.date,
-			Confirmed=self.confirmed,
-			Deaths=self.deaths,
-			Recovered=self.recovered,
-		)
+		return dict(Confirmed=self.confirmed, Deaths=self.deaths, Recovered=self.recovered,)
 
 
 class State:
@@ -35,7 +30,6 @@ class State:
 		self.total_deaths = 0
 		self.total_recovered = 0
 		self.dates = {}
-		self.is_converted_to_json = False
 
 	def __repr__(self):
 		return "% s, dates: %s" % (self.state_name, self.dates)
@@ -44,23 +38,31 @@ class State:
 		return self.state_name == other.state_name
 
 	def reprJSON(self):
-		if not self.is_converted_to_json:
-			for k, v in self.dates.items():
-				self.dates[k] = v.reprJSON()
+		# if not self.is_converted_to_json:
+		# 	for k, v in self.dates.items():
+		# 		self.dates[k] = v.reprJSON()
 
-			self.is_converted_to_json = True
+		# 	self.is_converted_to_json = True
+
+		# turns the date objects into json but does not save,
+		# this is to prevent calling reprJSON once it was turned into a dict
+		# so whenever this is called it might take some take to convert all of it into json
+		temp_dates = {}
+		for k, v in self.dates.items():
+			temp_dates[k] = v.reprJSON()
 
 		return dict(
-			country=self.country_name,
-			state=self.state_name,
+			Country=self.country_name,
+			State=self.state_name,
 			total_confirmed=self.total_confirmed_cases,
 			total_deaths=self.total_deaths,
 			total_recovered=self.total_recovered,
-			dates=self.dates,
+			Dates=temp_dates,
 		)
 
 
 # Every single province/state after merging all the dates togethers
+# TODO: Debating on whether to have a member that is called dates_json, which is a dict and call all the reprJSON
 # TODO: find a way for state searches and states' total confirmed cases and etc..
 class Country:
 	def __init__(self, country_name):
@@ -80,62 +82,27 @@ class Country:
 			self.dates,
 		)
 
-	# returns object in json format
-	def info(self):
-		return {
-			"Country/Region": self.country_name,
-			"Province/State": self.states,
-			"Total Confirmed": self.total_confirmed_cases,
-			"Total Deaths": self.total_deaths,
-			"Total Recovered": self.total_recovered,
-		}
-
 	def reprJSON(self):
+		temp_states = {}
+		for k, v in self.states.items():
+			temp_states[k] = v.reprJSON()
+
+		# turns the date objects into json but does not save,
+		# this is to prevent calling reprJSON once it was turned into a dict
+		# so whenever this is called it might take some take to convert all of it into json
+		temp_dates = {}
+		for k, v in self.dates.items():
+			temp_dates[k] = v.reprJSON()
+
 		return dict(
-			country=self.country_name,
-			states=self.states,
+			Country=self.country_name,
+			States=self.temp_states,
 			total_confirmed=self.total_confirmed_cases,
 			total_deaths=self.total_deaths,
 			total_recovered=self.total_recovered,
-			dates=self.dates,
+			Dates=self.temp_dates,
 		)
 
-
-class ComplexEncoder(json.JSONEncoder):
-	def default(self, obj):
-		if hasattr(obj, "reprJSON"):
-			return obj.reprJSON()
-		else:
-			return json.JSONEncoder.default(self, obj)
-
-
-# Group all the "provice/states" that have the same name
-# [
-# 	OrderedDict(
-# 		[
-# 			("SNo", "2"),
-# 			("ObservationDate", "01/22/2020"),
-# 			("Province/State", "Beijing"),
-# 			("Country/Region", "Mainland China"),
-# 			("Last Update", "1/22/2020 17:00"),
-# 			("Confirmed", "14.0"),
-# 			("Deaths", "0.0"),
-# 			("Recovered", "0.0"),
-# 		]
-# 	),
-# 	OrderedDict(
-# 		[
-# 			("SNo", "42"),
-# 			("ObservationDate", "01/23/2020"),
-# 			("Province/State", "Beijing"),
-# 			("Country/Region", "Mainland China"),
-# 			("Last Update", "1/22/2020 17:00"),
-# 			("Confirmed", "20.0"),
-# 			("Deaths", "0.0"),
-# 			("Recovered", "0.0"),
-# 		]
-# 	),
-# ]
 
 # TODO: add range based search
 class DataLayer:
@@ -167,19 +134,19 @@ class DataLayer:
 	def loadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()
-	
+
 		for country in self.countries_list:
 			countries_dict[country] = []
-		
-		with open(csv_name, "r") as infile:	
+
+		with open(csv_name, "r") as infile:
 			for line in infile.readlines():
-				row_values = line.split(',')
+				row_values = line.split(",")
 				row_values[7] = row_values[7].strip("\n")
 				if row_values[3] in countries_dict:
 					countries_dict[row_values[3]].append(row_values)
-		
+
 		for key, value in countries_dict.items():
-			#country_obj => is a tmp country object to pass into function
+			# country_obj => is a tmp country object to pass into function
 			country_obj = Country(key)
 
 			# state is a dict
@@ -200,9 +167,9 @@ class DataLayer:
 				# if there is no value for state/province then add to country obj
 				elif state[2] == "":
 					country_obj.dates.append(date_obj)
-			
+
 			self.countries_data[key] = country_obj
-			# self.country_objects.append(country_obj)	
+			# self.country_objects.append(country_obj)
 
 	def initLoadCSV(self, csv_name: str):
 		countries_dict = {}
