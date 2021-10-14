@@ -64,7 +64,13 @@ export default function HomePage(props){
         console.log("Date Begin :");
         console.log(dateInputValue);
         console.log("Date End");
-
+ 
+        var payload = {
+            "countryVal" : countryInputValue,
+            "stateVal" : stateInputValue,
+            "typeVal" : typeInputValue,
+            "dateVal" : dateInputValue,
+        }
 
         if(countryInputValue!="" && stateInputValue != ""){
             if(hasNoLocationConflict(countryInputValue,stateInputValue)){
@@ -77,23 +83,22 @@ export default function HomePage(props){
             }
         }
 
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({
+                  payload
+            }),
+        };
 
-        //REPLACE ME WITH A DIFFERENT API
-        // const requestOptions = {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json"},
-        //     body: JSON.stringify({
-        //         payload_bus : payload
-        //     }),
-        // };
+        console.log('Query Endpoint Fetched');
+        fetch('/api/QueryEndpoint',requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            setResultText(data);
+            console.log(data);
+        });
 
-        // console.log('Sample Endpoint Fetched');
-        // fetch('/api/SampleEndpoint',requestOptions)
-        // .then(response => response.json())
-        // .then(data => {
-        //     setResultText(data);
-        //     console.log(data);
-        // });
     }
 
     function useForceUpdate(){
