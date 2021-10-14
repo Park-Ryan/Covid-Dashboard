@@ -1,5 +1,6 @@
 import json
 import csv
+from enum import Enum
 from typing import Dict, OrderedDict
 
 
@@ -144,6 +145,18 @@ class ComplexEncoder(json.JSONEncoder):
 # 	),
 # ]
 
+
+class Fields(Enum):
+	SNo = 0
+	ObservationDate = 1
+	State = 2
+	Country = 3
+	LastUpdate = 4
+	Confirmed = 5
+	Deaths = 6
+	Recovered = 7
+
+
 # TODO: add range based search
 class DataLayer:
 	def __init__(self):
@@ -172,6 +185,54 @@ class DataLayer:
 		# print(self.countries_list)
 
 	def initLoadCSV(self, csv_name: str):
+		countries_dict = {}
+		self.load_json()
+
+		for country in self.countries_list:
+			countries_dict[country] = []
+
+		with open(csv_name, "r") as infile:
+			for line in infile.readlines():
+				row_values = line.split(",")
+				row_values[Fields.Recovered.value] = row_values[Fields.Recovered.value].strip("\n")
+				if row_values[Fields.Country.value] in countries_dict:
+					countries_dict[row_values[Fields.Country.value]].append(row_values)
+
+		for key, value in countries_dict.items():
+			# country_obj => is a tmp country object to pass into function
+			country_obj = Country(key)
+
+			# state is a dict
+			for state in value:
+				# print(state)
+				# convert the date and cases into a date obj
+				date_obj = Date(
+					state[Fields.ObservationDate.value],
+					state[Fields.Confirmed.value],
+					state[Fields.Deaths.value],
+					state[Fields.Recovered.value],
+				)
+				temp_state = State(state[Fields.State.value], key)
+				# Add the dates to the states that already exist
+				if state[Fields.State.value] in country_obj.states:
+					country_obj.states[state[Fields.State.value]].dates[
+						state[Fields.ObservationDate.value]
+					] = date_obj
+
+				elif state[Fields.State.value] not in country_obj.states:
+					temp_state.dates[state[Fields.ObservationDate.value]] = date_obj
+					country_obj.states[state[Fields.State.value]] = temp_state
+					# print(country_obj.states)
+
+				# if there is no value for state/province then add to country obj
+				elif state[Fields.State.value] == "":
+					country_obj.dates[state[Fields.ObservationDate.value]] = date_obj
+
+			self.countries_data[key] = country_obj
+			# self.country_objects.append(country_obj)
+		print("Finish loading csv")
+
+	def OldinitLoadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()
 
