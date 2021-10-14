@@ -107,7 +107,7 @@ export default function HomePage(props){
         .then(response => response.json())
         .then(data => {
             console.log(data); 
-            //setResultText(data);
+            setResultText(JSON.stringify(data));
             //console.log(data); 
         });
     }
