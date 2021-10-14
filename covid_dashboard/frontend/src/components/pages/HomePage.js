@@ -93,8 +93,9 @@ export default function HomePage(props){
         fetch('/api/QueryEndpoint',requestOptions)
         .then(response => response.json())
         .then(data => {
-            setResultText(data);
             console.log(data); 
+            //setResultText(data);
+            //console.log(data); 
         });
     }
 
