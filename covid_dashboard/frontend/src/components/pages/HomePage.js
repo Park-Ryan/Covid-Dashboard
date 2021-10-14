@@ -63,6 +63,7 @@ export default function HomePage(props){
         console.log(dateInputValue);
         console.log("Date End");
 
+        
 
         var payload = {
             "countryVal" : countryInputValue,
@@ -71,12 +72,11 @@ export default function HomePage(props){
             "dateVal" : dateInputValue,
         }
 
-
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify({
-                payload
+                  payload
             }),
         };
 
