@@ -1,3 +1,4 @@
+frontend/static
 node_modules
 *.pyc
 *.pyo

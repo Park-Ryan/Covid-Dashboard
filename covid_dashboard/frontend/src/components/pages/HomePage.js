@@ -13,6 +13,8 @@ import { DateData } from "../data/DateData";
 
 import { hasNoLocationConflict } from "../tests/SearchValidation";
 
+import { hasNoLocationConflict } from "../tests/SearchValidation";
+
 const countryOptions = CountryData;
 const stateOptions = StateData;
 const typeOptions = TypeData;
@@ -86,14 +88,6 @@ export default function HomePage(props) {
                 payload,
             }),
         };
-
-        // console.log('Query Endpoint Fetched');
-        // fetch('/api/QueryEndpoint',requestOptions)
-        // .then(response => response.json())
-        // .then(data => {
-        //     setResultText(data);
-        //     console.log(data);
-        // });
 
         console.log("Query Endpoint Fetched");
         fetch("/api/QueryEndpoint", requestOptions)

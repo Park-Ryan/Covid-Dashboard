@@ -9,7 +9,7 @@ from .util import Get_Filtered_Data
 # from covid_dashboard.api.data_layer.load_csv import Country
 from .util import Reverse_String
 
-#from .serializers import *
+# from .serializers import *
 import json
 
 # # in myproject/backend/backend.py or myproject/api/api.py
@@ -44,15 +44,16 @@ class CountriesEndpoint(APIView):
 		# this is returning str instead of json literal
 		# double encoding happening
 		result = json.dumps(
-		# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
+			# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
 			countries["US"].states["California"],
 			cls=ComplexEncoder,
 		)
 		countries["US"].states["California"].dates
 
-		print(countries["US"].states["California"].dates["01/21/2021"].reprJSON())
+		# print(countries["US"].states["California"].dates["01/21/2021"])
 		# return Response(countries["US"].states["California"].reprJSON())
-		return Response(countries["US"].states["California"].reprJSON())
+		# TODO: add encoder for states
+		return Response(countries["Taiwan"].reprJSON())
 
 
 # def informationList(self, request):
@@ -79,31 +80,17 @@ class CountriesEndpoint(APIView):
 # serializer.save()
 #            return Response(status=status.HTTP_201_CREATED)
 
-#        return Response(output_payload,status=status.HTTP_200_OK);
-
 
 class QueryEndpoint(APIView):
+	def post(self, request, format=None):
 
-    def post(self, request, format=None):
+		input_payload = self.request.data
 
-        input_payload = self.request.data
-        output_payload = None 
-        print_output = None
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
 
-        country_query = input_payload["payload"]["countryVal"]
-        state_query = input_payload["payload"]["stateVal"]
-        type_query = input_payload["payload"]["typeVal"]
-        date_query = input_payload["payload"]["dateVal"]
+		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 
-        payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
-
-        output_payload=input_payload["payload"]["countryVal"]
-        print_output = output_payload + ' '
-        output_payload=input_payload["payload"]["stateVal"]
-        print_output = print_output + ' ' + output_payload
-        output_payload=input_payload["payload"]["typeVal"]
-        print_output = print_output + ' ' + output_payload
-        output_payload=input_payload["payload"]["dateVal"]
-        print_output = print_output + ' ' + output_payload
-
-        return Response(payload,status=status.HTTP_200_OK);
+		return Response(payload, status=status.HTTP_200_OK)
