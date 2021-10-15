@@ -1,4 +1,19 @@
-dir_to_ignore/frontend
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
 node_modules
+bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
+
+static/frontend
 *.pyc
 *.pyo
