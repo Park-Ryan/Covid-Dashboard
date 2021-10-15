@@ -1444,8 +1444,5 @@ var CountryStateMap = {
 }
 
 
-<<<<<<< HEAD
+
 export {CountryStateMap};
-=======
-export {CountryStateMap};
->>>>>>> dev
