@@ -1,4 +1,4 @@
-dir_to_ignore/frontend
+frontend/static
 node_modules
 *.pyc
 *.pyo
