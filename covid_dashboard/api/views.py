@@ -3,12 +3,13 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .util import Get_Filtered_Data
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
 from .util import Reverse_String
 
-from .serializers import *
+# from .serializers import *
 import json
 
 # # in myproject/backend/backend.py or myproject/api/api.py
@@ -42,12 +43,12 @@ class CountriesEndpoint(APIView):
 		# results = CountrySerializer(countries, many=True).data
 		# this is returning str instead of json literal
 		# double encoding happening
-		# result = json.dumps(
-		# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
-		# 	countries["US"].states["California"],
-		# 	cls=ComplexEncoder,
-		# )
-		# countries["US"].states["California"].dates
+		result = json.dumps(
+			# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
+			countries["US"].states["California"],
+			cls=ComplexEncoder,
+		)
+		countries["US"].states["California"].dates
 
 		# print(countries["US"].states["California"].dates["01/21/2021"])
 		# return Response(countries["US"].states["California"].reprJSON())
@@ -81,24 +82,15 @@ class CountriesEndpoint(APIView):
 
 
 class QueryEndpoint(APIView):
+	def post(self, request, format=None):
 
-    def post(self, request, format=None):
+		input_payload = self.request.data
 
-        input_payload = self.request.data
-        output_payload = None 
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
 
-        country_query = input_payload["payload"]["countryVal"]
-        state_query = input_payload["payload"]["stateVal"]
-        type_query = input_payload["payload"]["typeVal"]
-        date_query = input_payload["payload"]["dateVal"]
+		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 
-        output_payload = country_query
-
-        
-
-        # output_payload=input_payload[input_payload[stateVal]
-        # output_payload=Reverse_String(input_payload[stateVal])
-        # output_payload=Reverse_String(input_payload[typeVal])
-        # output_payload=Reverse_String(input_payload[dateVal])
-
-        return Response(output_payload,status=status.HTTP_200_OK);
+		return Response(payload, status=status.HTTP_200_OK)
