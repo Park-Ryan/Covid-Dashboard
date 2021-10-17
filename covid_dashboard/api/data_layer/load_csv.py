@@ -252,6 +252,10 @@ class DataLayer:
 	# Returns the lists of all countries
 	def get_countries(self):
 		return self.countries_data
+	
+	# for updating the countries data
+	def set_countries(self, countries):
+		self.countries_data = countries
 
 
 # data_layer = data_layer()

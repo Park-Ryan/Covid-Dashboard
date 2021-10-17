@@ -1,4 +1,4 @@
-# from .data_layer.load_csv import *
+from .data_layer.load_csv import *
 
 
 def Reverse_String(dict):
@@ -11,6 +11,59 @@ def Reverse_String(dict):
 
 	return payload
 
+
+# SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
+#Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
+
+
+def Create_Csv(path, country, state, confirmed, deaths, recovered, date):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	#if country is not in the tmp list
+	#then we can just append to the dictionary becasuse that country doesn't exist
+	#else it exists
+	#then use that country as a key and append to that 
+
+	#this checks if the country is in the country list dictionary
+	if country in tmp_countries_list:
+		#date_obj is a date object that will be added to the country list
+		date_obj = Date( date,confirmed, deaths, recovered) 
+		#since the country doesn't exist all we need to do is add the 
+		#information based on the parameters
+		tmp_countries_list[country].states[state].date[state] = date_obj
+
+	else:
+		#the country doesn't exist  so need to make a country object
+		country_obj = Country(country)
+		#then make a date object to add to the country object
+		date_obj = Date( date,confirmed, deaths, recovered)
+		#sets country object dates to the date object
+		country_obj.states[state].date[state] = date_obj
+		#finally add the country object to the countries list 
+		#based on the country parameter from user 
+		tmp_countries_list[country] = country_obj
+	
+	#back in the load_csv.py 
+	#will set the countries_data to tmp_countries_list so we can use the updated data 
+	data_layer.set_countries(tmp_countries_list)
+
+def Delete_Csv(country, state, type, date):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+
+	#this checks if the country is in the country list dictionary
+	#for key in tmp_countries_list:
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+			if date in tmp_countries_list[country].states[state].dates:
+				print(tmp_countries_list[country].states[state].dates[date])
+				del tmp_countries_list[country].states[state].dates[date]
+				print(tmp_countries_list[country].states[state].dates[date])
+				#print(tmp_countries_list)
+		else:
+			print("State no exist")
+	else:
+		print("Doesn't exist")
 
 def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 

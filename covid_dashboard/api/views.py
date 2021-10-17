@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .util import Get_Filtered_Data
+from .util import Get_Filtered_Data, Create_Csv, Delete_Csv
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
@@ -92,5 +92,9 @@ class QueryEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
+		#Delete_Csv("US", "California", "Recovered", "01/26/2020")
+		Delete_Csv(country_query,state_query,type_query,date_query)
+		#print(Read_Csv(covid_dashboard/api/data/archive/time_series_covid_19_recovered.csv))
 
 		return Response(payload, status=status.HTTP_200_OK)
+	
