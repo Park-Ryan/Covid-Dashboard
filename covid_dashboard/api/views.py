@@ -110,3 +110,47 @@ class AddEndpoint(APIView):
 		payload = "Add Endpoint was Called" #DeleteMe
 
 		return Response(payload, status=status.HTTP_200_OK)
+
+class EditEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Edit Endpoint was Called" #DeleteMe
+
+		return Response(payload, status=status.HTTP_200_OK)
+
+class DeleteEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Delete Endpoint was Called" #DeleteMe
+
+		return Response(payload, status=status.HTTP_200_OK)
+
+class BackupEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+
+		payload = "Backup Endpoint was Called" #DeleteMe
+
+		return Response(payload, status=status.HTTP_200_OK)
