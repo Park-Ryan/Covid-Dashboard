@@ -176,8 +176,8 @@ export default function HomePage(props) {
             }),
         };
 
-        console.log("Query Endpoint Fetched");
-        fetch("/api/QueryEndpoint", requestOptions)
+        console.log("Add Endpoint Fetched");
+        fetch("/api/AddEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -185,8 +185,9 @@ export default function HomePage(props) {
                 setResultText(JSON.stringify(data));
             });
     }
-        function handleAddButton(){
-        console.log("Add Button Pressed")
+
+    function handleEditButton(){
+        console.log("Edit Button Pressed")
         console.log("Country Begin")
         console.log(modCountryInputValue);
         console.log("Country End")
@@ -222,8 +223,8 @@ export default function HomePage(props) {
             }),
         };
 
-        console.log("Add Endpoint Fetched");
-        fetch("/api/AddEndpoint", requestOptions)
+        console.log("Edit Endpoint Fetched");
+        fetch("/api/EditEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -431,7 +432,7 @@ export default function HomePage(props) {
                         <Button
                             variant="contained"
                             color="secondary"
-                            onClick={handleSubmit}
+                            onClick={handleEditButton}
                         >
                             Edit
                         </Button>
