@@ -41,10 +41,43 @@ export default function HomePage(props) {
     const [dateValue, dateSetValue] = React.useState(dateOptions[0]);
     const [dateInputValue, dateSetInputValue] = React.useState("");
 
+
     //Data modification variables
     //Country effect
     const [modCountryValue, modCountrySetValue] = React.useState("");
     const [modCountryInputValue, modCountrySetInputValue] = React.useState("");
+
+    //State effect
+    const [modStateValue, modStateSetValue] = React.useState("");
+    const [modStateInputValue, modStateSetInputValue] = React.useState("");
+
+    //Type effect
+    const [modTypeValue, modTypeSetValue] = React.useState("");
+    const [modTypeInputValue, modTypeSetInputValue] = React.useState("");
+
+    //Date effect
+    const [modDateValue, modDateSetValue] = React.useState("");
+    const [modDateInputValue, modDateSetInputValue] = React.useState("");
+    
+
+    //Textfield updating logic
+    function handleCountryInputChange(e){
+        modCountrySetInputValue(e.target.value);
+    }
+    
+    function handleStateInputChange(e){
+        modStateSetInputValue(e.target.value);
+    }
+
+    function handleTypeInputChange(e){
+        modTypeSetInputValue(e.target.value);
+    }
+
+    function handleDateInputChange(e){
+        modDateSetInputValue(e.target.value);
+    }
+
+
 
     useEffect(() => {
         setPayload(inputText);
@@ -104,15 +137,22 @@ export default function HomePage(props) {
             });
     }
 
-    function handleCountryInputChange(e){
-        modCountrySetInputValue(e.target.value);
-    }
+
 
     function handleAddButton(){
         console.log("Add Button Pressed")
-        console.log("Country Begin ")
+        console.log("Country Begin")
         console.log(modCountryInputValue);
         console.log("Country End")
+        console.log("State Begin")
+        console.log(modStateInputValue);
+        console.log("State End")
+        console.log("Type Begin")
+        console.log(modTypeInputValue);
+        console.log("Type End")
+        console.log("Date Begin")
+        console.log(modDateInputValue);
+        console.log("Date End")
     }
 
     function useForceUpdate() {
@@ -251,17 +291,15 @@ export default function HomePage(props) {
                         />
                     </Grid>
                     <Grid item align="center" xs={2}>
-                        <Autocomplete
+                        <TextField
+                            id="outlined-basic" 
+                            label="State"
                             // value={value}
-                            onChange={(event, newValue) => {
-                                stateSetValue(newValue);
-                            }}
-                            inputValue={stateInputValue}
+                            onChange={handleStateInputChange}
+                            inputValue={modStateInputValue}
                             onInputChange={(event, newInputValue) => {
-                                stateSetInputValue(newInputValue);
+                                modStateSetInputValue(newInputValue);
                             }}
-                            id="controllable-states-demo"
-                            options={stateOptions}
                             sx={{ width: 300 }}
                             renderInput={(params) => (
                                 <TextField {...params} label="State" />
@@ -269,17 +307,15 @@ export default function HomePage(props) {
                         />
                     </Grid>
                     <Grid item align="center" xs={2}>
-                        <Autocomplete
+                    <TextField
+                            id="outlined-basic" 
+                            label="Type"
                             // value={value}
-                            onChange={(event, newValue) => {
-                                typeSetValue(newValue);
-                            }}
-                            inputValue={typeInputValue}
+                            onChange={handleTypeInputChange}
+                            inputValue={modTypeInputValue}
                             onInputChange={(event, newInputValue) => {
-                                typeSetInputValue(newInputValue);
+                                modTypeSetInputValue(newInputValue);
                             }}
-                            id="controllable-states-demo"
-                            options={typeOptions}
                             sx={{ width: 300 }}
                             renderInput={(params) => (
                                 <TextField {...params} label="Type" />
@@ -287,17 +323,15 @@ export default function HomePage(props) {
                         />
                     </Grid>
                     <Grid item align="center" xs={2}>
-                        <Autocomplete
+                        <TextField
+                            id="outlined-basic" 
+                            label="Date"
                             // value={value}
-                            onChange={(event, newValue) => {
-                                dateSetValue(newValue);
-                            }}
-                            inputValue={dateInputValue}
+                            onChange={handleDateInputChange}
+                            inputValue={modDateInputValue}
                             onInputChange={(event, newInputValue) => {
-                                dateSetInputValue(newInputValue);
+                                modDateSetInputValue(newInputValue);
                             }}
-                            id="controllable-states-demo"
-                            options={dateOptions}
                             sx={{ width: 300 }}
                             renderInput={(params) => (
                                 <TextField {...params} label="Date" />
