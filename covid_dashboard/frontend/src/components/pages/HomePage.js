@@ -24,6 +24,7 @@ export default function HomePage(props) {
     const [payload, setPayload] = useState("");
     const [resultText, setResultText] = useState("");
 
+    //Data extraction variables
     //Country effect
     const [countryValue, countrySetValue] = React.useState(countryOptions[0]);
     const [countryInputValue, countrySetInputValue] = React.useState("");
@@ -39,6 +40,11 @@ export default function HomePage(props) {
     //Date effect
     const [dateValue, dateSetValue] = React.useState(dateOptions[0]);
     const [dateInputValue, dateSetInputValue] = React.useState("");
+
+    //Data modification variables
+    //Country effect
+    const [modCountryValue, modCountrySetValue] = React.useState("");
+    const [modCountryInputValue, modCountrySetInputValue] = React.useState("");
 
     useEffect(() => {
         setPayload(inputText);
@@ -206,6 +212,7 @@ export default function HomePage(props) {
                         </Button>
                     </Grid>
                     <Grid item align="center" xs={12}>
+                        <br></br>
                         <Typography component="h6" variant="h6" >
                             Enter fields to add, edit, delete, and backup the dataset.
                         </Typography>
@@ -217,17 +224,17 @@ export default function HomePage(props) {
                     </Grid>
                     <Grid item xs={2}></Grid>
                     <Grid item align="center" xs={2}>
-                        <Autocomplete
+                        <TextField
+                            id="outlined-basic" 
+                            label="Country"
                             // value={value}
                             onChange={(event, newValue) => {
-                                countrySetValue(newValue);
+                                modCountrySetValue(newValue);
                             }}
-                            inputValue={countryInputValue}
+                            inputValue={modCountryInputValue}
                             onInputChange={(event, newInputValue) => {
-                                countrySetInputValue(newInputValue);
+                                modCountrySetInputValue(newInputValue);
                             }}
-                            id="controllable-states-demo"
-                            options={countryOptions}
                             sx={{ width: 300 }}
                             renderInput={(params) => (
                                 <TextField {...params} label="Country" />
