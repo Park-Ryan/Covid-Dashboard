@@ -104,6 +104,17 @@ export default function HomePage(props) {
             });
     }
 
+    function handleCountryInputChange(e){
+        modCountrySetInputValue(e.target.value);
+    }
+
+    function handleAddButton(){
+        console.log("Add Button Pressed")
+        console.log("Country Begin ")
+        console.log(modCountryInputValue);
+        console.log("Country End")
+    }
+
     function useForceUpdate() {
         const [value, setValue] = useState(0); // integer state
         return () => setValue((value) => value + 1); // update the state to force render
@@ -228,9 +239,7 @@ export default function HomePage(props) {
                             id="outlined-basic" 
                             label="Country"
                             // value={value}
-                            onChange={(event, newValue) => {
-                                modCountrySetValue(newValue);
-                            }}
+                            onChange={handleCountryInputChange}
                             inputValue={modCountryInputValue}
                             onInputChange={(event, newInputValue) => {
                                 modCountrySetInputValue(newInputValue);
@@ -302,7 +311,7 @@ export default function HomePage(props) {
                         <Button
                             variant="contained"
                             color="secondary"
-                            onClick={handleSubmit}
+                            onClick={handleAddButton}
                         >
                             Add
                         </Button>
