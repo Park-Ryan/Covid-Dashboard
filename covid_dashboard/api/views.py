@@ -150,6 +150,8 @@ class BackupEndpoint(APIView):
 
 		#TODO : Implement backend logic
 
+		#Backup doesn't require any data to be passed in from the frontend
+
 
 		payload = "Backup Endpoint was Called" #DeleteMe
 
