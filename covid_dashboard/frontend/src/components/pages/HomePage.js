@@ -199,6 +199,120 @@ export default function HomePage(props) {
                             Submit
                         </Button>
                     </Grid>
+                    <Grid item xs={2}></Grid>
+                    <Grid item align="center" xs={2}>
+                        <Autocomplete
+                            // value={value}
+                            onChange={(event, newValue) => {
+                                countrySetValue(newValue);
+                            }}
+                            inputValue={countryInputValue}
+                            onInputChange={(event, newInputValue) => {
+                                countrySetInputValue(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={countryOptions}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Country" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Autocomplete
+                            // value={value}
+                            onChange={(event, newValue) => {
+                                stateSetValue(newValue);
+                            }}
+                            inputValue={stateInputValue}
+                            onInputChange={(event, newInputValue) => {
+                                stateSetInputValue(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={stateOptions}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="State" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Autocomplete
+                            // value={value}
+                            onChange={(event, newValue) => {
+                                typeSetValue(newValue);
+                            }}
+                            inputValue={typeInputValue}
+                            onInputChange={(event, newInputValue) => {
+                                typeSetInputValue(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={typeOptions}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Type" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Autocomplete
+                            // value={value}
+                            onChange={(event, newValue) => {
+                                dateSetValue(newValue);
+                            }}
+                            inputValue={dateInputValue}
+                            onInputChange={(event, newInputValue) => {
+                                dateSetInputValue(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={dateOptions}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Date" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={2}></Grid>
+                    <Grid item align="center" xs={2}>
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                        >
+                            Add
+                        </Button>
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                        >
+                            Edit
+                        </Button>
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                        >
+                            Delete
+                        </Button>
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                        >
+                            Backup
+                        </Button>
+                    </Grid>
+                    <Grid item align="center" xs={2}>
+                    </Grid>
                     <Grid item align="center" xs={12}>
                         {resultText != "" ? displayResultText() : ""}
                     </Grid>
