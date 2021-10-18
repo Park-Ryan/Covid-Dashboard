@@ -233,6 +233,53 @@ export default function HomePage(props) {
             });
     }
 
+    function handleDeleteButton(){
+        console.log("Delete Button Pressed")
+        console.log("Country Begin")
+        console.log(modCountryInputValue);
+        console.log("Country End")
+        console.log("State Begin")
+        console.log(modStateInputValue);
+        console.log("State End")
+        console.log("Type Begin")
+        console.log(modTypeInputValue);
+        console.log("Type End")
+        console.log("Date Begin")
+        console.log(modDateInputValue);
+        console.log("Date End")
+
+        var payload = {
+            countryVal: modCountryInputValue,
+            stateVal: modStateInputValue,
+            typeVal: modTypeInputValue,
+            dateVal: modDateInputValue,
+        };
+
+        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "") {
+            alert(
+                "All fields text fields must be populated to perform data modifications (ADD, EDIT, DELETE)"
+            );
+            return;
+        }
+
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                payload,
+            }),
+        };
+
+        console.log("Delete Endpoint Fetched");
+        fetch("/api/DeleteEndpoint", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setResultText(JSON.stringify(data));
+            });
+    }
+
     function useForceUpdate() {
         const [value, setValue] = useState(0); // integer state
         return () => setValue((value) => value + 1); // update the state to force render
@@ -441,7 +488,7 @@ export default function HomePage(props) {
                         <Button
                             variant="contained"
                             color="secondary"
-                            onClick={handleSubmit}
+                            onClick={handleDeleteButton}
                         >
                             Delete
                         </Button>
