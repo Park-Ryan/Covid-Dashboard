@@ -278,7 +278,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color="secondary"
                             onClick={handleSubmit}
                         >
                             Add
@@ -287,7 +287,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color="secondary"
                             onClick={handleSubmit}
                         >
                             Edit
@@ -296,7 +296,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color="secondary"
                             onClick={handleSubmit}
                         >
                             Delete
@@ -305,7 +305,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color="secondary"
                             onClick={handleSubmit}
                         >
                             Backup
