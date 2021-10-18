@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Button } from "@material-ui/core";
+import { Grid, Button, Typography } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
@@ -114,8 +114,14 @@ export default function HomePage(props) {
                     <Grid item xs={3}></Grid>
                     <Grid item algin="center" xs={6}>
                         <Logo />
+                        <br></br>
                     </Grid>
                     <Grid item xs={3}></Grid>
+                    <Grid item align="center" xs={12}>
+                        <Typography component="h6" variant="h6" >
+                            Enter fields for data extraction.
+                        </Typography>
+                    </Grid>
                     <Grid item xs={2}></Grid>
                     <Grid item align="center" xs={2}>
                         <Autocomplete
@@ -198,6 +204,16 @@ export default function HomePage(props) {
                         >
                             Submit
                         </Button>
+                    </Grid>
+                    <Grid item align="center" xs={12}>
+                        <Typography component="h6" variant="h6" >
+                            Enter fields to add, edit, delete, and backup the dataset.
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={12}>
+                        <Typography component="h6" variant="h6" >
+                            (User must populate all fields to process)
+                        </Typography>
                     </Grid>
                     <Grid item xs={2}></Grid>
                     <Grid item align="center" xs={2}>
