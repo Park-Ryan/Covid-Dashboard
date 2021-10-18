@@ -1,7 +1,7 @@
 var TypeData = [
-    'Cases',
-    'Recovery',
-    'Deaths'
+    'Confirmed',
+    'Recovered',
+    'Deaths',
 ];
 
 export {TypeData};

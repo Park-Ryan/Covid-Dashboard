@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### react ###
 .DS_*
 *.log
@@ -5,6 +6,9 @@ logs
 **/*.backup.*
 **/*.back.*
 
+=======
+frontend/static
+>>>>>>> main
 node_modules
 bower_components
 

@@ -1,15 +1,16 @@
-import React, {useState, useEffect} from "react";
-import {Grid, Button} from "@material-ui/core";
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import React, { useState, useEffect } from "react";
+import { Grid, Button } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 import Logo from "../Logo";
-import ControllableStates  from "../ControllableStates"
+import ControllableStates from "../ControllableStates";
 
 import { CountryData } from "../data/CountryData";
 import { StateData } from "../data/StateData";
-import { TypeData } from '../data/TypeData';
-import { DateData} from "../data/DateData";
+import { TypeData } from "../data/TypeData";
+import { DateData } from "../data/DateData";
+
 
 import { hasNoLocationConflict } from "../tests/SearchValidation";
 
@@ -21,37 +22,32 @@ const stateOptions = StateData;
 const typeOptions = TypeData;
 const dateOptions = DateData;
 
-
-export default function HomePage(props){
-
+export default function HomePage(props) {
     const [inputText, setInputText] = useState("");
     const [payload, setPayload] = useState("");
     const [resultText, setResultText] = useState("");
 
     //Country effect
     const [countryValue, countrySetValue] = React.useState(countryOptions[0]);
-    const [countryInputValue, countrySetInputValue] = React.useState('');
+    const [countryInputValue, countrySetInputValue] = React.useState("");
 
     //State effect
     const [stateValue, stateSetValue] = React.useState(stateOptions[0]);
-    const [stateInputValue, stateSetInputValue] = React.useState('');
-
+    const [stateInputValue, stateSetInputValue] = React.useState("");
 
     //Type effects
     const [typeValue, typeSetValue] = React.useState(typeOptions[0]);
-    const [typeInputValue, typeSetInputValue] = React.useState('');
+    const [typeInputValue, typeSetInputValue] = React.useState("");
 
     //Date effect
     const [dateValue, dateSetValue] = React.useState(dateOptions[0]);
-    const [dateInputValue, dateSetInputValue] = React.useState('');
- 
-    
+    const [dateInputValue, dateSetInputValue] = React.useState("");
+
     useEffect(() => {
-        setPayload(inputText)
+        setPayload(inputText);
     });
 
-    function handleSubmit(){
-
+    function handleSubmit() {
         console.log("Country Begin :");
         console.log(countryInputValue);
         console.log("Country End");
@@ -67,52 +63,51 @@ export default function HomePage(props){
         console.log("Date Begin :");
         console.log(dateInputValue);
         console.log("Date End");
- 
-        var payload = {
-            "countryVal" : countryInputValue,
-            "stateVal" : stateInputValue,
-            "typeVal" : typeInputValue,
-            "dateVal" : dateInputValue,
-        }
 
-        if(countryInputValue!="" && stateInputValue != ""){
-            if(hasNoLocationConflict(countryInputValue,stateInputValue)){
+        var payload = {
+            countryVal: countryInputValue,
+            stateVal: stateInputValue,
+            typeVal: typeInputValue,
+            dateVal: dateInputValue,
+        };
+
+        if (countryInputValue != "" && stateInputValue != "") {
+            if (hasNoLocationConflict(countryInputValue, stateInputValue)) {
                 console.log("Search Input Valid");
-            }
-            else{
+            } else {
                 console.log("Conflict between Country and State inputs");
-                alert("Location conflict between Country and State!\nPlease pick a Country and State that match.");
-                return
+                alert(
+                    "Location conflict between Country and State!\nPlease pick a Country and State that match."
+                );
+                return;
             }
         }
 
         const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                  payload
+                payload,
             }),
         };
 
-        console.log('Query Endpoint Fetched');
-        fetch('/api/QueryEndpoint',requestOptions)
-        .then(response => response.json())
-        .then(data => {
-            setResultText(data);
-            console.log(data);
-        });
-
+        console.log("Query Endpoint Fetched");
+        fetch("/api/QueryEndpoint", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setResultText(JSON.stringify(data));
+            });
     }
 
-    function useForceUpdate(){
+    function useForceUpdate() {
         const [value, setValue] = useState(0); // integer state
-        return () => setValue(value => value + 1); // update the state to force render
+        return () => setValue((value) => value + 1); // update the state to force render
     }
 
-    function displayResultText(){
-        return(
-            <h4>{resultText}</h4>
-        )
+    function displayResultText() {
+        return <h4>{resultText}</h4>;
     }
 
     return (
@@ -218,4 +213,3 @@ export default function HomePage(props){
         </div>
     );
 }
-
