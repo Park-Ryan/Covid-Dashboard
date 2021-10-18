@@ -430,7 +430,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={12}>
                         <br></br>
                         <Typography component="h6" variant="h6" >
-                            Enter fields to add, edit, delete, and backup the dataset.
+                            Enter fields to add, edit, and delete from the dataset.
                         </Typography>
                     </Grid>
                     <Grid item align="center" xs={12}>
