@@ -94,3 +94,19 @@ class QueryEndpoint(APIView):
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 
 		return Response(payload, status=status.HTTP_200_OK)
+
+class AddEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Add Endpoint was Called" #DeleteMe
+
+		return Response(payload, status=status.HTTP_200_OK)
