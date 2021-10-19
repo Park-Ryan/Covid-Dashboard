@@ -30,7 +30,7 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 		date_obj = Date( date,confirmed, deaths, recovered) 
 		#since the country doesn't exist all we need to do is add the 
 		#information based on the parameters
-		tmp_countries_list[country].states[state].date[state] = date_obj
+		tmp_countries_list[country].states[state].dates[date] = date_obj
 
 	else:
 		#the country doesn't exist  so need to make a country object
@@ -38,15 +38,19 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 		#then make a date object to add to the country object
 		date_obj = Date( date,confirmed, deaths, recovered)
 		#sets country object dates to the date object
-		country_obj.states[state].date[state] = date_obj
+		country_obj.states[state].dates[date] = date_obj
 		#finally add the country object to the countries list 
 		#based on the country parameter from user 
 		tmp_countries_list[country] = country_obj
 	
 	#back in the load_csv.py 
 	#will set the countries_data to tmp_countries_list so we can use the updated data 
+	#print(tmp_countries_list[country].states[state])
 	data_layer.set_countries(tmp_countries_list)
 
+
+#type doesn't matter because you're deleting the whole row of values 
+#i.e for 01/20/2020 you would delete the whole row
 def Delete_Csv(country, state, type, date):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()

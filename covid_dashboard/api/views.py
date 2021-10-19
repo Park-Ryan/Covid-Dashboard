@@ -92,9 +92,11 @@ class QueryEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
-		#Delete_Csv("US", "California", "Recovered", "01/26/2020")
-		Delete_Csv(country_query,state_query,type_query,date_query)
+		#Create_Csv("US", "California", "10","0","0", "01/22/2020")
+		#Delete_Csv("US", "California", "Recovered", "01/22/2020")
+		#Delete_Csv(country_query,state_query,type_query,date_query)
 		#print(Read_Csv(covid_dashboard/api/data/archive/time_series_covid_19_recovered.csv))
 
+		#Create_Csv(country_query, state_query, type_query, date_query)
 		return Response(payload, status=status.HTTP_200_OK)
 	
