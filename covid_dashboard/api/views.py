@@ -106,6 +106,7 @@ class AddEndpoint(APIView):
 		state_query = input_payload["payload"]["stateVal"]
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
 
 		payload = "Add Endpoint was Called" #DeleteMe
 
@@ -122,6 +123,7 @@ class EditEndpoint(APIView):
 		state_query = input_payload["payload"]["stateVal"]
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
 
 		payload = "Edit Endpoint was Called" #DeleteMe
 
@@ -138,6 +140,7 @@ class DeleteEndpoint(APIView):
 		state_query = input_payload["payload"]["stateVal"]
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
 
 		payload = "Delete Endpoint was Called" #DeleteMe
 
