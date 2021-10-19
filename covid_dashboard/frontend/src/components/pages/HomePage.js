@@ -161,6 +161,9 @@ export default function HomePage(props) {
         console.log("Date Begin")
         console.log(modDateInputValue);
         console.log("Date End")
+        console.log("Amount Begin")
+        console.log(modAmountInputValue);
+        console.log("Amount End")
 
         var payload = {
             countryVal: modCountryInputValue,
@@ -169,7 +172,7 @@ export default function HomePage(props) {
             dateVal: modDateInputValue,
         };
 
-        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "") {
+        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
             alert(
                 "All fields text fields must be populated to perform data modifications (ADD, EDIT, DELETE)"
             );
@@ -208,6 +211,9 @@ export default function HomePage(props) {
         console.log("Date Begin")
         console.log(modDateInputValue);
         console.log("Date End")
+        console.log("Amount Begin")
+        console.log(modAmountInputValue);
+        console.log("Amount End")
 
         var payload = {
             countryVal: modCountryInputValue,
@@ -216,7 +222,7 @@ export default function HomePage(props) {
             dateVal: modDateInputValue,
         };
 
-        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "") {
+        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
             alert(
                 "All fields text fields must be populated to perform data modifications (ADD, EDIT, DELETE)"
             );
@@ -255,6 +261,9 @@ export default function HomePage(props) {
         console.log("Date Begin")
         console.log(modDateInputValue);
         console.log("Date End")
+        console.log("Amount Begin")
+        console.log(modAmountInputValue);
+        console.log("Amount End")
 
         var payload = {
             countryVal: modCountryInputValue,
@@ -263,7 +272,7 @@ export default function HomePage(props) {
             dateVal: modDateInputValue,
         };
 
-        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "") {
+        if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
             alert(
                 "All fields text fields must be populated to perform data modifications (ADD, EDIT, DELETE)"
             );
