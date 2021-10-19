@@ -16,7 +16,7 @@ def Reverse_String(dict):
 #Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
 
 
-def Create_Csv(git acountry, state, confirmed, deaths, recovered, date):
+def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
 	#if country is not in the tmp list
