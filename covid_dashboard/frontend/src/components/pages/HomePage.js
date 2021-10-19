@@ -170,6 +170,7 @@ export default function HomePage(props) {
             stateVal: modStateInputValue,
             typeVal: modTypeInputValue,
             dateVal: modDateInputValue,
+            amountVal: modAmountInputValue,
         };
 
         if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
@@ -220,6 +221,7 @@ export default function HomePage(props) {
             stateVal: modStateInputValue,
             typeVal: modTypeInputValue,
             dateVal: modDateInputValue,
+            amountVal: modAmountInputValue,
         };
 
         if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
@@ -270,6 +272,7 @@ export default function HomePage(props) {
             stateVal: modStateInputValue,
             typeVal: modTypeInputValue,
             dateVal: modDateInputValue,
+            amountVal: modAmountInputValue,
         };
 
         if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
