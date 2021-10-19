@@ -180,6 +180,13 @@ export default function HomePage(props) {
             return;
         }
 
+        if(isNaN(Number(modAmountInputValue))){
+            alert(
+                "The input for the Amount Text Box is an invalid type. Please enter an integer"
+            );
+            return;
+        }
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -231,6 +238,13 @@ export default function HomePage(props) {
             return;
         }
 
+        if(isNaN(Number(modAmountInputValue))){
+            alert(
+                "The input for the Amount Text Box is an invalid type. Please enter an integer"
+            );
+            return;
+        }
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -278,6 +292,13 @@ export default function HomePage(props) {
         if (modCountryInputValue == "" || modStateInputValue == "" || modTypeInputValue == "" || modDateInputValue == "" || modAmountInputValue == "") {
             alert(
                 "All fields text fields must be populated to perform data modifications (ADD, EDIT, DELETE)"
+            );
+            return;
+        }
+
+        if(isNaN(Number(modAmountInputValue))){
+            alert(
+                "The input for the Amount Text Box is an invalid type. Please enter an integer"
             );
             return;
         }
