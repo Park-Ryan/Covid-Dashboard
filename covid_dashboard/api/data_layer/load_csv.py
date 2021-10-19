@@ -1,5 +1,6 @@
 import json
 import csv
+import copy
 from enum import Enum
 from typing import Dict, OrderedDict
 
@@ -255,7 +256,7 @@ class DataLayer:
 	
 	# for updating the countries data
 	def set_countries(self, countries):
-		self.countries_data = countries
+		self.countries_data = copy.deepcopy(countries)
 
 
 # data_layer = data_layer()

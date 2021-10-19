@@ -1,5 +1,5 @@
 from .data_layer.load_csv import *
-
+import copy
 
 def Reverse_String(dict):
 
@@ -12,10 +12,26 @@ def Reverse_String(dict):
 	return payload
 
 
+
+
+#def Copy_Csv(self, pathOfOriginal):
+	
+#Backup CSV
+def Backup_Csv(self, path):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+
+	with open(path, "w") as infile:
+			for line in infile.readlines():
+				row_values = line.split(",")
+				row_values[Fields.Recovered.value] = row_values[Fields.Recovered.value].strip("\n")
+				if row_values[Fields.Country.value] in tmp_countries_list:
+					tmp_countries_list[row_values[Fields.Country.value]].append(row_values)
+
+
+
 # SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
 #Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
-
-
 def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
@@ -48,10 +64,33 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	#print(tmp_countries_list[country].states[state])
 	data_layer.set_countries(tmp_countries_list)
 
+#only update the confirmed, deaths, or recovered cases
+def Update_Csv(country, state, type, date, value):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+			if date in tmp_countries_list[country].states[state].dates:
+				if type == "Deaths":
+					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
+					
+					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+				elif type == "Recovered":
+					tmp_countries_list[country].states[state].dates[Fields.Recovered.value] = value 
+				elif type == "Confirmed":			
+					tmp_countries_list[country].states[state].dates[Fields.Confirmed.value] = value
+				else:
+					print("Update doesnt work")
+			else:
+				print("Update couldn't find date")
+	data_layer.set_countries(tmp_countries_list)
 
 #type doesn't matter because you're deleting the whole row of values 
 #i.e for 01/20/2020 you would delete the whole row
-def Delete_Csv(country, state, type, date):
+def Delete_Csv(country, state, date):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
 
