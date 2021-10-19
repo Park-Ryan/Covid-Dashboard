@@ -81,6 +81,10 @@ export default function HomePage(props) {
         modDateSetInputValue(e.target.value);
     }
 
+    function handleAmountInputChange(e){
+        modAmountSetInputValue(e.target.value);
+    }
+
 
 
     useEffect(() => {
@@ -442,7 +446,7 @@ export default function HomePage(props) {
                             (User must populate all fields to process)
                         </Typography>
                     </Grid>
-                    <Grid item xs={2}></Grid>
+                    <Grid item xs={1}></Grid>
                     <Grid item align="center" xs={2}>
                         <TextField
                             id="outlined-basic" 
@@ -507,7 +511,23 @@ export default function HomePage(props) {
                             )}
                         />
                     </Grid>
-                    <Grid item xs={2}></Grid>
+                    <Grid item align="center" xs={2}>
+                        <TextField
+                            id="outlined-basic" 
+                            label="Amount"
+                            // value={value}
+                            onChange={handleAmountInputChange}
+                            inputValue={modAmountInputValue}
+                            onInputChange={(event, newInputValue) => {
+                                modAmountSetInputValue(newInputValue);
+                            }}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Amount" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={1}></Grid>
                     <Grid item align="center" xs={2}>
                     </Grid>
                     <Grid item align="center" xs={2}>
