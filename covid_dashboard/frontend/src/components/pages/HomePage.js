@@ -58,6 +58,10 @@ export default function HomePage(props) {
     //Date effect
     const [modDateValue, modDateSetValue] = React.useState("");
     const [modDateInputValue, modDateSetInputValue] = React.useState("");
+
+    //Amount effect
+    const [modAmountValue, modAmountSetValue] = React.useState("");
+    const [modAmountInputValue, modAmountSetInputValue] = React.useState("");
     
 
     //Textfield updating logic
