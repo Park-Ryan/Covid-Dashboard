@@ -1,4 +1,5 @@
 from .data_layer.load_csv import *
+import json
 import copy
 
 def Reverse_String(dict):
@@ -17,16 +18,46 @@ def Reverse_String(dict):
 #def Copy_Csv(self, pathOfOriginal):
 	
 #Backup CSV
-def Backup_Csv(self, path):
+def Backup_Csv(path):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
 
-	with open(path, "w") as infile:
-			for line in infile.readlines():
-				row_values = line.split(",")
-				row_values[Fields.Recovered.value] = row_values[Fields.Recovered.value].strip("\n")
-				if row_values[Fields.Country.value] in tmp_countries_list:
-					tmp_countries_list[row_values[Fields.Country.value]].append(row_values)
+	
+		#print(tmp_countries_list["US"])
+
+	SNo = ""
+	LastUpdate = ""
+	csv_country = ""
+	csv_state = ""
+	date = ""
+	confirmed = ""
+	deaths = ""
+	recovered = ""
+	with open(path, "w") as outfile:
+		for countryKey, country in tmp_countries_list.items():
+			csv_country = countryKey
+			for stateKey, state in country.states.items():
+				csv_state = stateKey
+				for dates in state.dates.values():
+					date = dates.date
+					confirmed = dates.confirmed
+					deaths = dates.deaths
+					recovered = dates.recovered
+					tmp_join = [SNo,date, csv_state,csv_country, date, confirmed, deaths, recovered]
+					tmp_string = ",".join(tmp_join)
+					tmp_string += "\n"
+					outfile.write(tmp_string)
+
+		
+	
+		
+
+	
+			#for line in infile.readlines():
+				# row_values = line.split(",")
+				# row_values[Fields.Recovered.value] = row_values[Fields.Recovered.value].strip("\n")
+				# if row_values[Fields.Country.value] in tmp_countries_list:
+				# 	tmp_countries_list[row_values[Fields.Country.value]].append(row_values)
 
 
 
@@ -43,7 +74,7 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	#this checks if the country is in the country list dictionary
 	if country in tmp_countries_list:
 		#date_obj is a date object that will be added to the country list
-		date_obj = Date( date,confirmed, deaths, recovered) 
+		date_obj = Date(date,confirmed, deaths, recovered) 
 		#since the country doesn't exist all we need to do is add the 
 		#information based on the parameters
 		tmp_countries_list[country].states[state].dates[date] = date_obj
