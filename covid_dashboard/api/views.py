@@ -97,7 +97,72 @@ class QueryEndpoint(APIView):
 		#Delete_Csv(country_query,state_query,type_query,date_query)
 		#Update_Csv("US", "California", "Deaths", "01/26/2020", 4)
 		#print(Read_Csv(covid_dashboard/api/data/archive/time_series_covid_19_recovered.csv))
-		Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
+		#Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
 		#Create_Csv(country_query, state_query, type_query, date_query)
 		return Response(payload, status=status.HTTP_200_OK)
 	
+
+class AddEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
+
+		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+
+		return Response(payload, status=status.HTTP_200_OK)
+
+class EditEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
+
+		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
+
+		return Response(payload, status=status.HTTP_200_OK)
+
+class DeleteEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		amount_query = input_payload["payload"]["amountVal"]
+
+		payload = Delete_Csv(country_query, state_query, date_query)
+
+		return Response(payload, status=status.HTTP_200_OK)
+
+class BackupEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		#TODO : Implement backend logic
+
+		#Backup doesn't require any data to be passed in from the frontend
+
+
+		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
+
+		return Response(payload, status=status.HTTP_200_OK)

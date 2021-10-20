@@ -48,22 +48,11 @@ def Backup_Csv(path):
 					tmp_string += "\n"
 					outfile.write(tmp_string)
 
-		
-	
-		
-
-	
-			#for line in infile.readlines():
-				# row_values = line.split(",")
-				# row_values[Fields.Recovered.value] = row_values[Fields.Recovered.value].strip("\n")
-				# if row_values[Fields.Country.value] in tmp_countries_list:
-				# 	tmp_countries_list[row_values[Fields.Country.value]].append(row_values)
-
 
 
 # SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
 #Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
-def Create_Csv(country, state, confirmed, deaths, recovered, date):
+def Create_Csv(country, state, type, date, amount):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
 	#if country is not in the tmp list
@@ -74,7 +63,15 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	#this checks if the country is in the country list dictionary
 	if country in tmp_countries_list:
 		#date_obj is a date object that will be added to the country list
-		date_obj = Date(date,confirmed, deaths, recovered) 
+		#Since function only takes in specified input then we have to check
+		#which type it is. After entering specified amount for type then
+		#make the other 2 types default 0
+		if type == "Deaths":
+			date_obj = Date(date, "0", str(amount), "0") 
+		elif type == "Confirmed":
+			date_obj = Date(date, str(amount), "0", "0") 
+		elif type == "Recovered":
+			date_obj = Date(date,"0", "0", str(amount)) 
 		#since the country doesn't exist all we need to do is add the 
 		#information based on the parameters
 		tmp_countries_list[country].states[state].dates[date] = date_obj
@@ -82,12 +79,17 @@ def Create_Csv(country, state, confirmed, deaths, recovered, date):
 	else:
 		#the country doesn't exist  so need to make a country object
 		country_obj = Country(country)
-		#then make a date object to add to the country object
-		date_obj = Date( date,confirmed, deaths, recovered)
-		#sets country object dates to the date object
+		if type == "Deaths":
+			date_obj = Date(date,"0", str(amount), "0") 
+		elif type == "Confirmed":
+			date_obj = Date(date,str(amount), "0", "0") 
+		elif type == "Recovered":
+			#then make a date object to add to the country object
+			date_obj = Date( date,"0", "0", str(amount))
+			#sets country object dates to the date object
 		country_obj.states[state].dates[date] = date_obj
-		#finally add the country object to the countries list 
-		#based on the country parameter from user 
+			#finally add the country object to the countries list 
+			#based on the country parameter from user 
 		tmp_countries_list[country] = country_obj
 	
 	#back in the load_csv.py 
@@ -110,9 +112,13 @@ def Update_Csv(country, state, type, date, value):
 					
 					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
 				elif type == "Recovered":
-					tmp_countries_list[country].states[state].dates[Fields.Recovered.value] = value 
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
 				elif type == "Confirmed":			
-					tmp_countries_list[country].states[state].dates[Fields.Confirmed.value] = value
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
 				else:
 					print("Update doesnt work")
 			else:
