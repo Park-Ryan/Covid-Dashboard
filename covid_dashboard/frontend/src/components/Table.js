@@ -83,31 +83,31 @@ const headCells = [
         id: "name",
         numeric: false,
         disablePadding: true,
-        label: "Dessert (100g serving)",
+        label: "Country",
     },
     {
         id: "calories",
         numeric: true,
         disablePadding: false,
-        label: "Calories",
+        label: "State",
     },
     {
         id: "fat",
         numeric: true,
         disablePadding: false,
-        label: "Fat (g)",
+        label: "Type",
     },
     {
         id: "carbs",
         numeric: true,
         disablePadding: false,
-        label: "Carbs (g)",
+        label: "Date",
     },
     {
         id: "protein",
         numeric: true,
         disablePadding: false,
-        label: "Protein (g)",
+        label: "Amount",
     },
 ];
 
@@ -210,7 +210,7 @@ const EnhancedTableToolbar = (props) => {
                     id="tableTitle"
                     component="div"
                 >
-                    Nutrition
+                   Data Table
                 </Typography>
             )}
 
@@ -244,7 +244,7 @@ export default function EnhancedTable(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     //Data
-    const [data, setData] = React.useState(props.data);
+    const [data, setData] = React.useState(JSON.parse(props.data)); //Array of JSONS that are returned from QueryEndpoint
 
     //Country
     const [country, setCountry] = React.useState(props.country);
@@ -258,12 +258,27 @@ export default function EnhancedTable(props) {
     //Date
     const [date, setDate] = React.useState(props.date);
 
+    // setData(JSON.parse(data));
     console.log("Hello from Table component");
-    console.log(JSON.parse(data));
+    console.log(data);
     console.log(country);
     console.log(state);
     console.log(type);
     console.log(date);
+
+    console.log("I want to print the countries");
+
+    console.log(data.length);
+
+    function printCountryLoop(){
+        for(let i = 0; i < data.length; ++i){
+            console.log(data[i]["Country"]);
+        }
+    }
+
+
+
+    //#Country #State #Type #Date #Amount
 
 
     const handleRequestSort = (event, property) => {
@@ -423,6 +438,7 @@ export default function EnhancedTable(props) {
                 }
                 label="Dense padding"
             />
+            {printCountryLoop()}
         </Box>
     );
 }
