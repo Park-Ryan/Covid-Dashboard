@@ -22,7 +22,6 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 	from .urls import data_layer
 
 	countries_list = data_layer.get_countries()
-
 	# TODO: none of these account for the dates dictionary inside country!
 	# may need to include those later depending on if they contain useful data
 
