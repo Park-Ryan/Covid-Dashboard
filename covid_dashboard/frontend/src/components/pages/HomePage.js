@@ -14,12 +14,15 @@ import { DateData } from "../data/DateData";
 
 import { hasNoLocationConflict } from "../tests/SearchValidation";
 
-const countryOptions = CountryData;
-const stateOptions = StateData;
-const typeOptions = TypeData;
-const dateOptions = DateData;
 
 export default function HomePage(props) {
+
+    const [countryOptions,setCountryOptions] = useState(CountryData);
+    const [stateOptions,setStateOptions] = useState(StateData);
+    const [typeOptions,setTypeOptions]= useState(TypeData);
+    const [dateOptions,setDateOptions] = useState(DateData);
+
+
     const [inputText, setInputText] = useState("");
     const [payload, setPayload] = useState("");
     const [resultText, setResultText] = useState("");
@@ -185,6 +188,27 @@ export default function HomePage(props) {
                 "The input for the Amount Text Box is an invalid type. Please enter an integer"
             );
             return;
+        }
+
+        //Dynamically add to options
+        //Add country
+        if(!countryOptions.includes(modCountryInputValue)){
+            countryOptions.push(modCountryInputValue)
+        }
+
+        //Add state
+        if(!stateOptions.includes(modStateInputValue)){
+            stateOptions.push(modStateInputValue)
+        }
+
+        //Add type
+        if(!typeOptions.includes(modTypeInputValue)){
+            typeOptions.push(modTypeInputValue)
+        }
+
+        //Add date
+        if(!dateOptions.includes(modDateInputValue)){
+            dateOptions.push(modDateInputValue)
         }
 
         const requestOptions = {
