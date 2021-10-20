@@ -138,6 +138,7 @@ class DataLayer:
 		self.countries_list = data["Countries/Regions"]
 		# print(self.countries_list)
 
+	#here we read the original copy of the csv, but after the backup we need to read the copy
 	def initLoadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()

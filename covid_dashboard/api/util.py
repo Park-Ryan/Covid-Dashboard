@@ -66,15 +66,16 @@ def Create_Csv(country, state, type, date, amount):
 		#Since function only takes in specified input then we have to check
 		#which type it is. After entering specified amount for type then
 		#make the other 2 types default 0
-		if type == "Deaths":
-			date_obj = Date(date, "0", str(amount), "0") 
-		elif type == "Confirmed":
-			date_obj = Date(date, str(amount), "0", "0") 
-		elif type == "Recovered":
-			date_obj = Date(date,"0", "0", str(amount)) 
-		#since the country doesn't exist all we need to do is add the 
-		#information based on the parameters
-		tmp_countries_list[country].states[state].dates[date] = date_obj
+		# if type == "Deaths":
+		# 	date_obj = Date(date, "0", str(amount), "0") 
+		# elif type == "Confirmed":
+		# 	date_obj = Date(date, str(amount), "0", "0") 
+		# elif type == "Recovered":
+		# 	date_obj = Date(date,"0", "0", str(amount)) 
+		# #since the country doesn't exist all we need to do is add the 
+		# #information based on the parameters
+		# tmp_countries_list[country].states[state].dates[date] = date_obj
+		print("Create Exist. Go To Edit Instead.")
 
 	else:
 		#the country doesn't exist  so need to make a country object
