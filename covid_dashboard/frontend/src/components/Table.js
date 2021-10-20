@@ -235,13 +235,36 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
     const [order, setOrder] = React.useState("asc");
     const [orderBy, setOrderBy] = React.useState("calories");
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+    //Data
+    const [data, setData] = React.useState(props.data);
+
+    //Country
+    const [country, setCountry] = React.useState(props.country);
+
+    //State
+    const [state, setState] = React.useState(props.state);
+
+    //Type
+    const [type, setType] = React.useState(props.type);
+
+    //Date
+    const [date, setDate] = React.useState(props.date);
+
+    console.log("Hello from Table component");
+    console.log(JSON.parse(data));
+    console.log(country);
+    console.log(state);
+    console.log(type);
+    console.log(date);
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";

@@ -107,7 +107,19 @@ export default function HomePage(props) {
     }
 
     function displayResultText() {
-        return <h4>{resultText}</h4>;
+        return(
+            <div>
+                <StyledEngineProvider injectFirst>
+                    <Table 
+                        data={resultText}
+                        country={countryInputValue}
+                        state={stateInputValue}
+                        type={typeInputValue}
+                        date={dateInputValue}
+                    />
+                </StyledEngineProvider>
+            </div>
+        );
     }
 
     return (
@@ -207,9 +219,9 @@ export default function HomePage(props) {
                     </Grid>
                 </Grid>
             </div>
-            <StyledEngineProvider injectFirst>
+            {/* <StyledEngineProvider injectFirst>
                 <Table />
-            </StyledEngineProvider>
+            </StyledEngineProvider> */}
         </div>
     );
 }
