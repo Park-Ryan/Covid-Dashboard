@@ -61,25 +61,16 @@ def Create_Csv(country, state, type, date, amount):
 	#then use that country as a key and append to that 
 
 	#this checks if the country is in the country list dictionary
-	if country in tmp_countries_list:
+	# if country in tmp_countries_list:
 		#date_obj is a date object that will be added to the country list
 		#Since function only takes in specified input then we have to check
 		#which type it is. After entering specified amount for type then
 		#make the other 2 types default 0
-		# if type == "Deaths":
-		# 	date_obj = Date(date, "0", str(amount), "0") 
-		# elif type == "Confirmed":
-		# 	date_obj = Date(date, str(amount), "0", "0") 
-		# elif type == "Recovered":
-		# 	date_obj = Date(date,"0", "0", str(amount)) 
-		# #since the country doesn't exist all we need to do is add the 
-		# #information based on the parameters
-		# tmp_countries_list[country].states[state].dates[date] = date_obj
-		print("Create Exist. Go To Edit Instead.")
+	if date in tmp_countries_list[country].states[state].dates:
 
-	else:
-		#the country doesn't exist  so need to make a country object
-		country_obj = Country(country)
+		print("Create Exist. Go To Edit Instead.")
+	else: 
+		
 		if type == "Deaths":
 			date_obj = Date(date,"0", str(amount), "0") 
 		elif type == "Confirmed":
@@ -88,10 +79,26 @@ def Create_Csv(country, state, type, date, amount):
 			#then make a date object to add to the country object
 			date_obj = Date( date,"0", "0", str(amount))
 			#sets country object dates to the date object
-		country_obj.states[state].dates[date] = date_obj
+		tmp_countries_list[country].states[state].dates[date] = date_obj
 			#finally add the country object to the countries list 
 			#based on the country parameter from user 
-		tmp_countries_list[country] = country_obj
+		
+
+	# else:
+	# 	#the country doesn't exist  so need to make a country object
+	# 	country_obj = Country(country)
+	# 	if type == "Deaths":
+	# 		date_obj = Date(date,"0", str(amount), "0") 
+	# 	elif type == "Confirmed":
+	# 		date_obj = Date(date,str(amount), "0", "0") 
+	# 	elif type == "Recovered":
+	# 		#then make a date object to add to the country object
+	# 		date_obj = Date( date,"0", "0", str(amount))
+	# 		#sets country object dates to the date object
+	# 	country_obj.states[state].dates[date] = date_obj
+	# 		#finally add the country object to the countries list 
+	# 		#based on the country parameter from user 
+	# 	tmp_countries_list[country] = country_obj
 	
 	#back in the load_csv.py 
 	#will set the countries_data to tmp_countries_list so we can use the updated data 
@@ -110,16 +117,18 @@ def Update_Csv(country, state, type, date, value):
 					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
 					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
-					
+					print("Edit Deaths")
 					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
 				elif type == "Recovered":
 					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
 					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
+					print("Edit Recovered")
 				elif type == "Confirmed":			
 					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"], 
 					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
+					print("Edit Confirmed")
 				else:
 					print("Update doesnt work")
 			else:
@@ -137,9 +146,9 @@ def Delete_Csv(country, state, date):
 	if country in tmp_countries_list:
 		if state in tmp_countries_list[country].states:
 			if date in tmp_countries_list[country].states[state].dates:
-				print(tmp_countries_list[country].states[state].dates[date])
+				#print(tmp_countries_list[country].states[state].dates[date])
 				del tmp_countries_list[country].states[state].dates[date]
-				print(tmp_countries_list[country].states[state].dates[date])
+				#print(tmp_countries_list[country].states[state].dates[date])
 				#print(tmp_countries_list)
 		else:
 			print("State no exist")
