@@ -86,6 +86,24 @@ const headCells = [
         disablePadding: false,
         label: "Amount",
     },
+    {
+        id: "fat",
+        numeric: true,
+        disablePadding: false,
+        label: "Confirmed",
+    },
+    {
+        id: "carbs",
+        numeric: true,
+        disablePadding: false,
+        label: "Deaths",
+    },
+    {
+        id: "protein",
+        numeric: true,
+        disablePadding: false,
+        label: "Recovered",
+    },
 ];
 
 function EnhancedTableHead(props) {
@@ -235,6 +253,7 @@ export default function EnhancedTable(props) {
     //Date
     const [date, setDate] = React.useState(props.date);
 
+
     // setData(JSON.parse(data));
     console.log("Hello from Table component");
     console.log(data);
@@ -252,29 +271,49 @@ export default function EnhancedTable(props) {
             console.log(data[i]["Country"]);
         }
     }
-
-    function createData(date, country, state, type, amount) {
+    function createAllData(date, country, state, type, amount, amount_confirmed, amount_deaths, amount_recovered){
         return {
             date,
             country,
             state,
             type,
             amount,
-        };
+            amount_confirmed, 
+            amount_deaths,
+            amount_recovered,
+        }
+    }
+    function createData(date, country, state, type, amount) {
+            return {
+                date,
+                country,
+                state,
+                type,
+                amount,
+            }
     }
     
     let rows = [];
     function addRows(){
         console.log("Adding rows")
         //createData("Cupcake", 305, 3.7, 67, 4.3),
-        for (let i = 0; i< data.length; i++)
-        {   
+        if(type != ""){
+            for (let i = 0; i< data.length; i++)
+            {   
             //console.log(data[i]["Date"]);
             // changing type on page does not update
-             rows.push(createData(data[i]["Date"], data[i]["Country"],data[i]["State"], type, data[i]["Types"][type]));
+            rows.push(createData(data[i]["Date"], data[i]["Country"],data[i]["State"], type, data[i]["Types"][type]));
+            }
         }
-        console.log(rows[1].country);
-    }
+        else {
+            for (let i = 0; i< data.length; i++)
+            {   
+            //console.log(data[i]["Date"]);
+            // changing type on page does not update
+            rows.push(createAllData(data[i]["Date"], data[i]["Country"],data[i]["State"], "", "",  data[i]["Types"]["Confirmed"],  data[i]["Types"]["Deaths"], data[i]["Types"]["Recovered"]));
+            }   
+        }
+     }
     //#Country #State #Type #Date #Amount
 
     const handleRequestSort = (event, property) => {
@@ -329,7 +368,6 @@ export default function EnhancedTable(props) {
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = 0;
-        // page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
         <Box sx={{ width: "100%" }}>
@@ -404,6 +442,15 @@ export default function EnhancedTable(props) {
                                             </TableCell>
                                             <TableCell align="right">
                                                 {row.amount}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {row.amount_confirmed}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {row.amount_deaths}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {row.amount_recovered}
                                             </TableCell>
                                         </TableRow>
                                     );
