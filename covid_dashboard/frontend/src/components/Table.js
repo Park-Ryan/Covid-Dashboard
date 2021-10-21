@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -254,6 +255,13 @@ export default function EnhancedTable(props) {
     const [date, setDate] = React.useState(props.date);
 
 
+    // useEffect(()=>{
+    //     setData(JSON.parse(props.data));
+    // });
+
+    
+    
+
     // setData(JSON.parse(data));
     console.log("Hello from Table component");
     console.log(data);
@@ -477,13 +485,13 @@ export default function EnhancedTable(props) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            <FormControlLabel
+            {/* <FormControlLabel
                 control={
                     <Switch checked={dense} onChange={handleChangeDense} />
                 }
                 label="Dense padding"
-            />
-            {printCountryLoop()}
+            /> */}
+            {/* {printCountryLoop()} */}
         </Box>
     );
 }

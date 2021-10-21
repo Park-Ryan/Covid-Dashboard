@@ -130,6 +130,8 @@ export default function HomePage(props) {
             }
         }
 
+        setResultText("");
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
