@@ -1,3 +1,4 @@
+from os import stat
 from .data_layer.load_csv import *
 import json
 import copy
@@ -52,58 +53,53 @@ def Backup_Csv(path):
 
 # SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
 #Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
-def Create_Csv(country, state, type, date, amount):
+def Create_Csv(country, state, type, date, value):
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
-	#if country is not in the tmp list
-	#then we can just append to the dictionary becasuse that country doesn't exist
-	#else it exists
-	#then use that country as a key and append to that 
-
-	#this checks if the country is in the country list dictionary
-	# if country in tmp_countries_list:
-		#date_obj is a date object that will be added to the country list
-		#Since function only takes in specified input then we have to check
-		#which type it is. After entering specified amount for type then
-		#make the other 2 types default 0
-	if date in tmp_countries_list[country].states[state].dates:
-
-		print("Create Exist. Go To Edit Instead.")
-	else: 
-		
-		if type == "Deaths":
-			date_obj = Date(date,"0", str(amount), "0") 
-		elif type == "Confirmed":
-			date_obj = Date(date,str(amount), "0", "0") 
-		elif type == "Recovered":
-			#then make a date object to add to the country object
-			date_obj = Date( date,"0", "0", str(amount))
-			#sets country object dates to the date object
-		tmp_countries_list[country].states[state].dates[date] = date_obj
-			#finally add the country object to the countries list 
-			#based on the country parameter from user 
-		
-
-	# else:
-	# 	#the country doesn't exist  so need to make a country object
-	# 	country_obj = Country(country)
-	# 	if type == "Deaths":
-	# 		date_obj = Date(date,"0", str(amount), "0") 
-	# 	elif type == "Confirmed":
-	# 		date_obj = Date(date,str(amount), "0", "0") 
-	# 	elif type == "Recovered":
-	# 		#then make a date object to add to the country object
-	# 		date_obj = Date( date,"0", "0", str(amount))
-	# 		#sets country object dates to the date object
-	# 	country_obj.states[state].dates[date] = date_obj
-	# 		#finally add the country object to the countries list 
-	# 		#based on the country parameter from user 
-	# 	tmp_countries_list[country] = country_obj
 	
-	#back in the load_csv.py 
-	#will set the countries_data to tmp_countries_list so we can use the updated data 
-	#print(tmp_countries_list[country].states[state])
+	#1. user wants to add a country 
+	#2. user wants to add a state
+	#3. user wants to add a date
+	
+	if country not in tmp_countries_list.keys():
+		country_obj = Country(country)
+		state_obj = State(state, country)
+		country_obj.states[state] = state_obj
+		if type == "Deaths":
+					date_obj = Date( 
+									date, 
+									"", 
+									str(value), 
+									""
+									) 
+					country_obj.states.get(state).dates[date] = date_obj
+					tmp_countries_list[country] = country_obj
+		elif type == "Recovered":
+					date_obj = Date( 
+									date, 
+									"",
+									"",
+									str(value)
+									) 
+					country_obj.states.get(state).dates[date] = date_obj
+					tmp_countries_list[country] = country_obj
+		elif type == "Confirmed":			
+					date_obj = Date( 
+									date, 
+									str(value), 
+									"", 
+									""
+									) 
+					country_obj.states.get(state).dates[date] = date_obj
+					tmp_countries_list[country] = country_obj
 	data_layer.set_countries(tmp_countries_list)
+					
+
+
+
+	
+
+	
 
 #only update the confirmed, deaths, or recovered cases
 def Update_Csv(country, state, type, date, value):
@@ -114,25 +110,39 @@ def Update_Csv(country, state, type, date, value):
 			if date in tmp_countries_list[country].states[state].dates:
 				if type == "Deaths":
 					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
-					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
-					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					date_obj = Date( 
+									date, 
+									tmp_countries_list[country].states[state].dates[date].confirmed, 
+									str(value), 
+									tmp_countries_list[country].states[state].dates[date].recovered
+									) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 					print("Edit Deaths")
 					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
 				elif type == "Recovered":
-					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
-					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]) 
+					date_obj = Date( 
+									date, 
+									tmp_countries_list[country].states[state].dates[date].confirmed, 
+									tmp_countries_list[country].states[state].dates[date].deaths,
+									str(value)
+									) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 					print("Edit Recovered")
 				elif type == "Confirmed":			
-					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"], 
-					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					date_obj = Date( 
+									date, 
+									str(value), 
+									tmp_countries_list[country].states[state].dates[date].deaths, 
+									tmp_countries_list[country].states[state].dates[date].recovered
+									) 
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 					print("Edit Confirmed")
 				else:
 					print("Update doesnt work")
 			else:
 				print("Update couldn't find date")
+	
+	print(tmp_countries_list.get(country).states.get(state).dates.get(date).reprJSON())
 	data_layer.set_countries(tmp_countries_list)
 
 #type doesn't matter because you're deleting the whole row of values 
@@ -154,6 +164,8 @@ def Delete_Csv(country, state, date):
 			print("State no exist")
 	else:
 		print("Doesn't exist")
+
+	data_layer.set_countries(tmp_countries_list)
 
 def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 

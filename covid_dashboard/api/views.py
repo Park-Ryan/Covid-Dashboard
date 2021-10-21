@@ -115,9 +115,9 @@ class AddEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
-		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+		Create_Csv(country_query, state_query, type_query, date_query, amount_query)
 
-		return Response(payload, status=status.HTTP_200_OK)
+		return Response("", status=status.HTTP_200_OK)
 
 class EditEndpoint(APIView):
 	def post(self, request, format=None):
@@ -132,9 +132,9 @@ class EditEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
-		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
+		Update_Csv(country_query, state_query, type_query, date_query, amount_query)
 
-		return Response(payload, status=status.HTTP_200_OK)
+		return Response("", status=status.HTTP_200_OK)
 
 class DeleteEndpoint(APIView):
 	def post(self, request, format=None):
@@ -149,9 +149,9 @@ class DeleteEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
-		payload = Delete_Csv(country_query, state_query, date_query)
+		Delete_Csv(country_query, state_query, date_query)
 
-		return Response(payload, status=status.HTTP_200_OK)
+		return Response("", status=status.HTTP_200_OK)
 
 class BackupEndpoint(APIView):
 	def post(self, request, format=None):
@@ -163,6 +163,6 @@ class BackupEndpoint(APIView):
 		#Backup doesn't require any data to be passed in from the frontend
 
 
-		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
+		Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
 
-		return Response(payload, status=status.HTTP_200_OK)
+		return Response("", status=status.HTTP_200_OK)

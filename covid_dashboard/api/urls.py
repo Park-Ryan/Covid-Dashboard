@@ -11,8 +11,8 @@ urlpatterns = [
 	path("EditEndpoint", EditEndpoint.as_view()),
 	path("DeleteEndpoint", DeleteEndpoint.as_view()),
 	path("BackupEndpoint", BackupEndpoint.as_view()),
-  path('QueryEndpoint',QueryEndpoint.as_view())
+  	path('QueryEndpoint',QueryEndpoint.as_view())
 ]
 
 data_layer = DataLayer()
-data_layer.initLoadCSV("api/data/archive/covid_19_data.csv")
+data_layer.initLoadCSV("api/data/archive/Copy_covid_19_data.csv")
