@@ -56,7 +56,7 @@ function stableSort(array, comparator) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
+var headCells = [
     {
         id: "name",
         numeric: false,
@@ -106,6 +106,91 @@ const headCells = [
         label: "Recovered",
     },
 ];
+
+var headCells2 = [
+    {
+        id: "name",
+        numeric: false,
+        disablePadding: true,
+        label: "Country",
+    },
+    {
+        id: "calories",
+        numeric: true,
+        disablePadding: false,
+        label: "State",
+    },
+    {
+        id: "fat",
+        numeric: true,
+        disablePadding: false,
+        label: "Type",
+    },
+    {
+        id: "carbs",
+        numeric: true,
+        disablePadding: false,
+        label: "Date",
+    },
+    {
+        id: "protein",
+        numeric: true,
+        disablePadding: false,
+        label: "Amount",
+    },
+];
+
+var headCells3 = [
+    {
+        id: "name",
+        numeric: false,
+        disablePadding: true,
+        label: "Country",
+    },
+    {
+        id: "calories",
+        numeric: true,
+        disablePadding: false,
+        label: "State",
+    },
+    {
+        id: "fat",
+        numeric: true,
+        disablePadding: false,
+        label: "Type",
+    },
+    {
+        id: "carbs",
+        numeric: true,
+        disablePadding: false,
+        label: "Date",
+    },
+    {
+        id: "protein",
+        numeric: true,
+        disablePadding: false,
+        label: "Amount",
+    },
+    {
+        id: "fat",
+        numeric: true,
+        disablePadding: false,
+        label: "Confirmed",
+    },
+    {
+        id: "carbs",
+        numeric: true,
+        disablePadding: false,
+        label: "Deaths",
+    },
+    {
+        id: "protein",
+        numeric: true,
+        disablePadding: false,
+        label: "Recovered",
+    },
+];
+
 
 function EnhancedTableHead(props) {
     const {
@@ -306,6 +391,7 @@ export default function EnhancedTable(props) {
         console.log("Adding rows")
         //createData("Cupcake", 305, 3.7, 67, 4.3),
         if(type != ""){
+            headCells=headCells2;
             for (let i = 0; i< data.length; i++)
             {   
             //console.log(data[i]["Date"]);
@@ -314,6 +400,7 @@ export default function EnhancedTable(props) {
             }
         }
         else {
+            headCells=headCells3;
             for (let i = 0; i< data.length; i++)
             {   
             //console.log(data[i]["Date"]);
