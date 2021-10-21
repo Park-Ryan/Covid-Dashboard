@@ -367,6 +367,14 @@ export default function HomePage(props) {
     }
 
     function displayResultText() {
+
+        //Case where query endpoint returns nothing
+        if(resultText=="[]"){
+            return(
+                <h4>No Data Found</h4>
+            )
+        }
+
         return <h4>{resultText}</h4>;
     }
 
