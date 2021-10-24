@@ -432,6 +432,28 @@ export default function HomePage(props) {
     function displayResultText() {
         return(
             <div>
+                <Grid container spacing={1}>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            Table 1 Position
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            Table 2 Position
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            Table 3 Position
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            Table 4 Position
+                        </Typography>
+                    </Grid>
+                </Grid>
                 <StyledEngineProvider injectFirst>
                     <Table 
                         data={resultText}
