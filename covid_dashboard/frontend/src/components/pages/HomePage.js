@@ -65,7 +65,23 @@ export default function HomePage(props) {
     //Amount effect
     const [modAmountValue, modAmountSetValue] = React.useState("");
     const [modAmountInputValue, modAmountSetInputValue] = React.useState("");
-    
+
+    //Top 5 Table data
+    //Country with the top 5 deaths
+    const [countryTop5DeathsValue, setCountryTop5DeathsValue] = React.useState("");
+    const [countryTop5DeathsInputValue, setCountryTop5DeathsInputValue] = React.useState("");
+
+    //State with the top 5 cases
+    const [stateTop5CasesValue, setStateTop5CasesValue] = React.useState("");
+    const [stateTop5CasesInputValue, setStateTop5CasesInputValue] = React.useState("");
+
+    //State with the top 5 deaths
+    const [stateTop5DeathsValue, setStateTop5DeathsValue] = React.useState("");
+    const [stateTop5DeathsInputValue, setStateTop5DeathsInputValue] = React.useState("");
+
+    //State with the top 5 recovery
+    const [stateTop5RecoveryValue, setStateTop5RecoveryValue] = React.useState("");
+    const [stateTop5RecoveryInputValue, setStateTop5RecoveryInputValue] = React.useState("");
 
     //Textfield updating logic
     function handleCountryInputChange(e){
@@ -148,6 +164,48 @@ export default function HomePage(props) {
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
+        
+
+        //Country with top 5 deaths    
+        console.log("Country Top Deaths Endpoint Fetched");
+        fetch("/api/CountryTopDeaths", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setCountryTop5DeathsInputValue(JSON.stringify(data));
+            });
+
+        //State with top 5 cases
+        console.log("State Top Cases Endpoint Fetched");
+        fetch("/api/StateTopCases", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5CasesInputValue(JSON.stringify(data));
+            });
+        
+        //State with top 5 deaths
+        console.log("State Top Deaths Endpoint Fetched");
+        fetch("/api/StateTopDeaths", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5DeathsInputValue(JSON.stringify(data));
+            });
+
+        //State with top 5 recovery
+        console.log("State Top Recovery Endpoint Fetched");
+        fetch("/api/StateTopRecovery", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5RecoveryInputValue(JSON.stringify(data));
+            });
+            
     }
 
 

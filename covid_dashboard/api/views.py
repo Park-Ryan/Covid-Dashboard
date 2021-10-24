@@ -166,3 +166,56 @@ class BackupEndpoint(APIView):
 		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
 
 		return Response(payload, status=status.HTTP_200_OK)
+
+class CountryTopDeathsEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Dummy Output"
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class StateTopCasesEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Dummy Output"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class StateTopDeathsEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Dummy Output"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class StateTopRecoveryEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Dummy Output"
+		return Response(payload, status=status.HTTP_200_OK)
