@@ -12,8 +12,81 @@ def Reverse_String(dict):
 
 	return payload
 
+def Get_Top_5_Countries_Deaths():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	TotalArray = []
+	total_deaths = 0.0
+	finalTotal = []
 
+	for countries_key, country_obj in tmp_countries_list.items():
+		for state_key, state_obj in country_obj.states.items():
+			for date_key, date_obj in state_obj.dates.items():
+				if date_key in state_obj.dates: 
+					total_deaths += float((tmp_countries_list[countries_key].states[state_key].dates[date_key].reprJSON()["Deaths"]))
+					
+		TotalArray.append(total_deaths)
+	for x in range(5):
+		finalTotal.append(max(TotalArray))
+		TotalArray.remove(max(TotalArray))
 
+	print("Countries Deaths")
+	print(finalTotal)
+
+def Get_Top_5_States_Cases(stateFilter):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	TotalArray = []
+	total_deaths = 0.0
+	finalTotal = []
+
+	for country_key, country_obj in tmp_countries_list.items():
+		if stateFilter in country_obj.states:
+			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Confirmed"]))
+					
+		TotalArray.append(total_deaths)
+	for x in range(5):
+		finalTotal.append(max(TotalArray))
+		TotalArray.remove(max(TotalArray))
+
+	print("States_Confirmed")
+	print(finalTotal)
+
+def Get_Top_5_States_Deaths(stateFilter):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	TotalArray = []
+	total_deaths = 0.0
+	finalTotal = []
+
+	for country_key, country_obj in tmp_countries_list.items():
+		if stateFilter in country_obj.states:
+			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Deaths"]))
+					
+		TotalArray.append(total_deaths)
+	for x in range(5):
+		finalTotal.append(max(TotalArray))
+		TotalArray.remove(max(TotalArray))
+
+	print(finalTotal)
+	
+#left as the same in case we need to go back to this version
+def Get_Top_5_States_Recovered(stateFilter):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	TotalArray = {}
+	total_deaths = 0.0
+
+	for country_key, country_obj in tmp_countries_list.items():
+		if stateFilter in country_obj.states:
+			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Recovered"]))
+					
+		TotalArray[country_key] = total_deaths
+
+	print(max(TotalArray.values()))
 
 #def Copy_Csv(self, pathOfOriginal):
 	

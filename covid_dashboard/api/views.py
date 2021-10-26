@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Update_Csv
+from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Update_Csv
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
@@ -92,13 +92,8 @@ class QueryEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
-		#Create_Csv("US", "California", "10","0","0", "01/22/2020")
-		#Delete_Csv("US", "California", "Recovered", "01/22/2020")
-		#Delete_Csv(country_query,state_query,type_query,date_query)
-		#Update_Csv("US", "California", "Deaths", "01/26/2020", 4)
-		#print(Read_Csv(covid_dashboard/api/data/archive/time_series_covid_19_recovered.csv))
-		#Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
-		#Create_Csv(country_query, state_query, type_query, date_query)
+		Get_Top_5_Countries_Deaths()
+		Get_Top_5_States_Cases(state_query)
 		return Response(payload, status=status.HTTP_200_OK)
 	
 
