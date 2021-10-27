@@ -1,6 +1,8 @@
 from .data_layer.load_csv import *
 import json
 import copy
+from array import array
+
 
 def Reverse_String(dict):
 
@@ -15,23 +17,46 @@ def Reverse_String(dict):
 def Get_Top_5_Countries_Deaths():
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
-	TotalArray = []
-	total_deaths = 0.0
-	finalTotal = []
-
-	for countries_key, country_obj in tmp_countries_list.items():
-		for state_key, state_obj in country_obj.states.items():
-			for date_key, date_obj in state_obj.dates.items():
-				if date_key in state_obj.dates: 
-					total_deaths += float((tmp_countries_list[countries_key].states[state_key].dates[date_key].reprJSON()["Deaths"]))
+	country_deaths = 0.0
+	
+	# for countries_key, country_obj in tmp_countries_list.items():
+	# 	for state_key, state_obj in country_obj.states.items():
+	# 		for date_key, date_obj in state_obj.dates.items():
+	# 			if date_key in state_obj.dates: 
+	# 				total_deaths += float((tmp_countries_list[countries_key].states[state_key].dates[date_key].reprJSON()["Deaths"]))
 					
-		TotalArray.append(total_deaths)
-	for x in range(5):
-		finalTotal.append(max(TotalArray))
-		TotalArray.remove(max(TotalArray))
+	# 	TotalArray.append(total_deaths)
+	# for x in range(5):
+	# 	finalTotal.append(max(TotalArray))
+	# 	TotalArray.remove(max(TotalArray))
 
-	print("Countries Deaths")
-	print(finalTotal)
+	# print("Countries Deaths")
+	# print(finalTotal)
+	tmp_list = []
+	death_dict = {}
+	state_max = 0.0
+
+	for country_key, country_obj in tmp_countries_list.items():
+		country_deaths = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			death_list = [] # deaths list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.deaths
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	death_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(death_list)	#using the max of the list of float for states
+			country_deaths += state_max 
+
+			
+		death_dict[country_key] = country_deaths
+					
+	
+	print("countriesDeath")
+	print(death_dict)
 
 def Get_Top_5_States_Cases(stateFilter):
 	from .urls import data_layer
@@ -49,6 +74,22 @@ def Get_Top_5_States_Cases(stateFilter):
 	for x in range(5):
 		finalTotal.append(max(TotalArray))
 		TotalArray.remove(max(TotalArray))
+
+	# tmp_list = []
+	# death_list = []
+	# death_dict = {}
+	# for country_key, country_obj in tmp_countries_list.items():
+	# 	for state_key, state_obj in country_obj.states.items():
+	# 		for date_obj in state_obj.dates.values():
+	# 			tmp_list = date_obj.deaths
+	# 			for item in tmp_list.splitlines():
+	# 				# if state_key == "California":
+	# 				# 	ca_list.append(float(item))
+	 			
+	# 			 	death_list.append(float(item))
+						
+	# 		death_dict[country_key] = max(death_list)
+	# 	death_list = []			
 
 	print("States_Confirmed")
 	print(finalTotal)
