@@ -18,20 +18,7 @@ def Get_Top_5_Countries_Deaths():
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
 	country_deaths = 0.0
-	
-	# for countries_key, country_obj in tmp_countries_list.items():
-	# 	for state_key, state_obj in country_obj.states.items():
-	# 		for date_key, date_obj in state_obj.dates.items():
-	# 			if date_key in state_obj.dates: 
-	# 				total_deaths += float((tmp_countries_list[countries_key].states[state_key].dates[date_key].reprJSON()["Deaths"]))
-					
-	# 	TotalArray.append(total_deaths)
-	# for x in range(5):
-	# 	finalTotal.append(max(TotalArray))
-	# 	TotalArray.remove(max(TotalArray))
-
-	# print("Countries Deaths")
-	# print(finalTotal)
+	payload = []
 	tmp_list = []
 	death_dict = {}
 	state_max = 0.0
@@ -53,10 +40,24 @@ def Get_Top_5_Countries_Deaths():
 
 			
 		death_dict[country_key] = country_deaths
-					
 	
-	print("countriesDeath")
-	print(death_dict)
+	# TODO: store death dict somewhere so we do not have to find and sort every time
+	# sort death dict so we can get top n countries by index
+	death_dict = dict(sorted(death_dict.items(), key=lambda item: item[1], reverse=True)) 
+	death_dict_keys = death_dict.keys()
+	top_five_keys = list(death_dict_keys)[:5]
+	death_dict_values = death_dict.values()
+	top_five_values = list(death_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country":top_five_keys[i],
+			"Deaths":top_five_values[i]
+			}
+		)
+
+	print(payload)
 
 def Get_Top_5_States_Cases(stateFilter):
 	from .urls import data_layer
