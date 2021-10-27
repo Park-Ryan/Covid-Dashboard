@@ -22,6 +22,7 @@ def Get_Top_5_Countries_Deaths():
 	tmp_list = []
 	death_dict = {}
 	state_max = 0.0
+	empty = ""
 
 	for country_key, country_obj in tmp_countries_list.items():
 		country_deaths = 0.0	
@@ -53,11 +54,18 @@ def Get_Top_5_Countries_Deaths():
 		payload.append(
 			{
 			"Country":top_five_keys[i],
-			"Deaths":top_five_values[i]
+			"State": empty,
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths":top_five_values[i],
+				"Recovered": empty
+				}
 			}
 		)
-
 	print(payload)
+	return payload
 
 def Get_Top_5_States_Cases(stateFilter):
 	from .urls import data_layer
