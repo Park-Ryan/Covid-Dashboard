@@ -42,8 +42,7 @@ def Get_Top_5_Countries_Deaths():
 			
 		death_dict[country_key] = country_deaths
 	
-	# TODO: store death dict somewhere so we do not have to find and sort every time
-	# sort death dict so we can get top n countries by index
+	
 	death_dict = dict(sorted(death_dict.items(), key=lambda item: item[1], reverse=True)) 
 	death_dict_keys = death_dict.keys()
 	top_five_keys = list(death_dict_keys)[:5]
@@ -67,76 +66,178 @@ def Get_Top_5_Countries_Deaths():
 	print(payload)
 	return payload
 
-def Get_Top_5_States_Cases(stateFilter):
+def Get_Top_5_States_Cases():
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
-	TotalArray = []
-	total_deaths = 0.0
-	finalTotal = []
 
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
+
+	
 	for country_key, country_obj in tmp_countries_list.items():
-		if stateFilter in country_obj.states:
-			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Confirmed"]))
-					
-		TotalArray.append(total_deaths)
-	for x in range(5):
-		finalTotal.append(max(TotalArray))
-		TotalArray.remove(max(TotalArray))
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.confirmed
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
 
-	# tmp_list = []
-	# death_list = []
-	# death_dict = {}
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": top_five_values[i],
+				"Deaths": empty,
+				"Recovered": empty
+				}
+			}
+		)
+	print(payload)
+	return payload
+
+def Get_Top_5_States_Deaths():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	# TotalArray = []
+	# total_deaths = 0.0
+	# finalTotal = []
+
 	# for country_key, country_obj in tmp_countries_list.items():
-	# 	for state_key, state_obj in country_obj.states.items():
-	# 		for date_obj in state_obj.dates.values():
-	# 			tmp_list = date_obj.deaths
-	# 			for item in tmp_list.splitlines():
-	# 				# if state_key == "California":
-	# 				# 	ca_list.append(float(item))
-	 			
-	# 			 	death_list.append(float(item))
-						
-	# 		death_dict[country_key] = max(death_list)
-	# 	death_list = []			
+	# 	if stateFilter in country_obj.states:
+	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Deaths"]))
+					
+	# 	TotalArray.append(total_deaths)
+	# for x in range(5):
+	# 	finalTotal.append(max(TotalArray))
+	# 	TotalArray.remove(max(TotalArray))
 
-	print("States_Confirmed")
-	print(finalTotal)
 
-def Get_Top_5_States_Deaths(stateFilter):
-	from .urls import data_layer
-	tmp_countries_list = data_layer.get_countries()
-	TotalArray = []
-	total_deaths = 0.0
-	finalTotal = []
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
 
 	for country_key, country_obj in tmp_countries_list.items():
-		if stateFilter in country_obj.states:
-			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Deaths"]))
-					
-		TotalArray.append(total_deaths)
-	for x in range(5):
-		finalTotal.append(max(TotalArray))
-		TotalArray.remove(max(TotalArray))
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.deaths
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
 
-	print(finalTotal)
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths": top_five_values[i],
+				"Recovered": empty
+				}
+			}
+		)
+	print(payload)
+	return payload
 	
 #left as the same in case we need to go back to this version
-def Get_Top_5_States_Recovered(stateFilter):
+def Get_Top_5_States_Recovered():
 	from .urls import data_layer
 	tmp_countries_list = data_layer.get_countries()
-	TotalArray = {}
-	total_deaths = 0.0
+	# TotalArray = {}
+	# total_deaths = 0.0
+
+	# for country_key, country_obj in tmp_countries_list.items():
+	# 	if stateFilter in country_obj.states:
+	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Recovered"]))
+					
+	# 	TotalArray[country_key] = total_deaths
+
+	# print(max(TotalArray.values()))
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
 
 	for country_key, country_obj in tmp_countries_list.items():
-		if stateFilter in country_obj.states:
-			for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-					total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Recovered"]))
-					
-		TotalArray[country_key] = total_deaths
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.recovered
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
 
-	print(max(TotalArray.values()))
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths": empty,
+				"Recovered": top_five_values[i]
+				}
+			}
+		)
+	print(payload)
+	return payload
 
 #def Copy_Csv(self, pathOfOriginal):
 	
