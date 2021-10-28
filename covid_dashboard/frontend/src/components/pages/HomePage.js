@@ -269,6 +269,18 @@ export default function HomePage(props) {
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
+
+            setResultText("");
+
+    
+            console.log("Query Endpoint Fetched");
+            fetch("/api/QueryEndpoint", requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    // for testing!
+                    setResultText(JSON.stringify(data));
+                });
     }
 
     function handleEditButton(){
@@ -321,6 +333,18 @@ export default function HomePage(props) {
 
         console.log("Edit Endpoint Fetched");
         fetch("/api/EditEndpoint", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setResultText(JSON.stringify(data));
+            });
+
+        setResultText("");
+
+
+        console.log("Query Endpoint Fetched");
+        fetch("/api/QueryEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
