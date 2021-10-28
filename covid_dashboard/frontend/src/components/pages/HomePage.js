@@ -16,6 +16,7 @@ import { hasNoLocationConflict } from "../tests/SearchValidation";
 
 import { StyledEngineProvider } from "@mui/material/styles";
 import Table from "../Table";
+import List from "../List";
 
 const countryOptions = CountryData;
 const stateOptions = StateData;
@@ -103,8 +104,6 @@ export default function HomePage(props) {
     function handleAmountInputChange(e){
         modAmountSetInputValue(e.target.value);
     }
-
-
 
     useEffect(() => {
         setPayload(inputText);
@@ -435,8 +434,12 @@ export default function HomePage(props) {
                 <Grid container spacing={1}>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
-                            Table 1 Position
-                        </Typography>
+                            <List 
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={[{"US":231,"China":132}]}
+                                mostRecovered={[{"US":231,"China":132}]}
+                                ></List>
+                         </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
