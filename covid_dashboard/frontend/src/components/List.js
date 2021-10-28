@@ -8,12 +8,15 @@ import ListSubheader from '@mui/material/ListSubheader';
 
 export default function PinnedSubheaderList(props) {
   const [MostConfirmed, setMostConfirmed] = React.useState(props.mostConfirmed);
-  const [MostDeaths, setMostDeaths] = React.useState(props.mostDeaths);
+  const [mostDeaths, setMostDeaths] = React.useState(props.mostDeaths);
   const [MostRecovered, setMostRecovered] = React.useState(props.mostRecovered);
+  const [location,setLocation] = React.useState(props.location);
 
-  console.log(MostConfirmed);
-  console.log(MostDeaths);
-  console.log(MostRecovered);
+  const [type,setType] = React.useState(props.category);
+
+  console.log("from List.js")
+  console.log(JSON.parse(mostDeaths));
+
   
   return (
     <List
@@ -29,15 +32,15 @@ export default function PinnedSubheaderList(props) {
       subheader={<li />}
     >
       {[
-          "Deaths",
+          type,
       ].map((sectionId) => (
         <li key={`section-${sectionId}`}>
           <ul>
-            <ListSubheader>{`Most ${sectionId}`}</ListSubheader>
-            {MostConfirmed.map((item) => (
-              <ListItem key={`item-${sectionId}-${item}`}>
-                <ListItemText primary={`${item["US"]}`} />
-                <ListItemText primary={`${item["China"]}`}/>
+            <ListSubheader>{`${location} Most ${sectionId}`}</ListSubheader>
+            {JSON.parse(mostDeaths).map((item) => (
+              <ListItem alignItems="flex-start" key={`item-${sectionId}-${item}-${item}}`}>
+                <ListItemText primary={`${item[location]}`}/>
+                <ListItemText primary={`${item["Types"][type]}`}/>
               </ListItem>
             ))}
           </ul>

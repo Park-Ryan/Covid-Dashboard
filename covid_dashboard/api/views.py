@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Update_Csv
+from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Get_Top_5_States_Deaths, Get_Top_5_States_Recovered, Update_Csv
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
@@ -92,8 +92,6 @@ class QueryEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
-		Get_Top_5_Countries_Deaths()
-		Get_Top_5_States_Cases(state_query)
 		return Response(payload, status=status.HTTP_200_OK)
 	
 
@@ -172,7 +170,7 @@ class CountryTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
-		payload = "Dummy Output"
+		payload = Get_Top_5_Countries_Deaths()
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -186,7 +184,7 @@ class StateTopCasesEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
-		payload = "Dummy Output"
+		payload = Get_Top_5_States_Cases()
 		return Response(payload, status=status.HTTP_200_OK)
 
 class StateTopDeathsEndpoint(APIView):
@@ -199,7 +197,7 @@ class StateTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
-		payload = "Dummy Output"
+		payload = Get_Top_5_States_Deaths()
 		return Response(payload, status=status.HTTP_200_OK)
 
 class StateTopRecoveryEndpoint(APIView):
@@ -212,5 +210,5 @@ class StateTopRecoveryEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
-		payload = "Dummy Output"
+		payload = Get_Top_5_States_Recovered()
 		return Response(payload, status=status.HTTP_200_OK)

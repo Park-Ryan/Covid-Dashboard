@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid, Button, Typography } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useCallback, useReducer } from "react";
 
 import Logo from "../Logo";
 import ControllableStates from "../ControllableStates";
@@ -24,6 +25,9 @@ const typeOptions = TypeData;
 const dateOptions = DateData;
 
 export default function HomePage(props) {
+
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
     const [inputText, setInputText] = useState("");
     const [payload, setPayload] = useState("");
     const [resultText, setResultText] = useState("");
@@ -423,37 +427,56 @@ export default function HomePage(props) {
             });
     }
 
-    function useForceUpdate() {
-        const [value, setValue] = useState(0); // integer state
-        return () => setValue((value) => value + 1); // update the state to force render
-    }
 
     function displayResultText() {
+        console.log("START: ");
+        console.log(countryTop5DeathsInputValue);
+        console.log("END : ");
         return(
             <div>
                 <Grid container spacing={1}>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
-                            <List 
+                            <List
+                                category={"Deaths"} 
+                                location={"Country"}
                                 mostConfirmed={[{"US":231,"China":132}]}
-                                mostDeaths={[{"US":231,"China":132}]}
+                                mostDeaths={countryTop5DeathsInputValue}
                                 mostRecovered={[{"US":231,"China":132}]}
                                 ></List>
                          </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
-                            Table 2 Position
+                            <List
+                                category={"Confirmed"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5CasesInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
                         </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
-                            Table 3 Position
+                            <List
+                                category={"Deaths"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5DeathsInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
                         </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
-                            Table 4 Position
+                            <List
+                                category={"Recovered"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5RecoveryInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
                         </Typography>
                     </Grid>
                 </Grid>
@@ -702,7 +725,8 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                     </Grid>
                     <Grid item align="center" xs={12}>
-                        {resultText != "" ? displayResultText() : ""}
+                        {/* {resultText != "" ? displayResultText() : ""} */}
+                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" )? displayResultText() : ""}
                     </Grid>
                 </Grid>
             </div>
