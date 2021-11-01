@@ -88,6 +88,16 @@ export default function HomePage(props) {
     const [stateTop5RecoveryValue, setStateTop5RecoveryValue] = React.useState("");
     const [stateTop5RecoveryInputValue, setStateTop5RecoveryInputValue] = React.useState("");
 
+    //Standard Deviation Variables
+    const [std1, setStd1] = React.useState("");
+    const [std1Input, setStd1Input] = React.useState("");
+
+    const [std2, setStd2] = React.useState("");
+    const [std2Input, setStd2Input] = React.useState("");
+
+    const [std3, setStd3] = React.useState("");
+    const [std3Input, setStd3Input] = React.useState("");
+
     //Textfield updating logic
     function handleCountryInputChange(e){
         modCountrySetInputValue(e.target.value);
@@ -208,7 +218,37 @@ export default function HomePage(props) {
                 // for testing!
                 setStateTop5RecoveryInputValue(JSON.stringify(data));
             });
-            
+
+
+        //std1
+        console.log("std1 Endpoint Fetched");
+        fetch("/api/std1", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStd1Input(JSON.stringify(data))
+            });
+
+        //std2
+        console.log("std2 Endpoint Fetched");
+        fetch("/api/std2", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStd2Input(JSON.stringify(data))
+            });
+
+        //std3
+        console.log("std3 Endpoint Fetched");
+        fetch("/api/std3", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStd3Input(JSON.stringify(data))
+            });
     }
 
 
@@ -501,6 +541,21 @@ export default function HomePage(props) {
                                 mostDeaths={stateTop5RecoveryInputValue}
                                 mostRecovered={[{"US":231,"China":132}]}
                             ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Standard Deviation Position 1
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Standard Deviation Position 2
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Standard Deviation Position 3
                         </Typography>
                     </Grid>
                 </Grid>
