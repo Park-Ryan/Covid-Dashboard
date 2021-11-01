@@ -1,5 +1,6 @@
 {
-  "dependencies": {
-    "@material-ui/data-grid": "^4.0.0-alpha.37"
+  "devDependencies": {
+    "webpack": "^5.60.0",
+    "webpack-cli": "^4.9.1"
   }
 }

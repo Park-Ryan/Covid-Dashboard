@@ -1,5 +1,6 @@
 import json
 import csv
+import copy
 from enum import Enum
 from typing import Dict, OrderedDict
 
@@ -137,6 +138,7 @@ class DataLayer:
 		self.countries_list = data["Countries/Regions"]
 		# print(self.countries_list)
 
+	#here we read the original copy of the csv, but after the backup we need to read the copy
 	def initLoadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()
@@ -252,6 +254,10 @@ class DataLayer:
 	# Returns the lists of all countries
 	def get_countries(self):
 		return self.countries_data
+	
+	# for updating the countries data
+	def set_countries(self, countries):
+		self.countries_data = copy.deepcopy(countries)
 
 
 # data_layer = data_layer()

@@ -1,4 +1,7 @@
-# from .data_layer.load_csv import *
+from .data_layer.load_csv import *
+import json
+import copy
+from array import array
 
 
 def Reverse_String(dict):
@@ -11,6 +14,370 @@ def Reverse_String(dict):
 
 	return payload
 
+def Get_Top_5_Countries_Deaths():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	country_deaths = 0.0
+	payload = []
+	tmp_list = []
+	death_dict = {}
+	state_max = 0.0
+	empty = ""
+
+	for country_key, country_obj in tmp_countries_list.items():
+		country_deaths = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			death_list = [] # deaths list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.deaths
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	death_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(death_list)	#using the max of the list of float for states
+			country_deaths += state_max 
+
+			
+		death_dict[country_key] = country_deaths
+	
+	
+	death_dict = dict(sorted(death_dict.items(), key=lambda item: item[1], reverse=True)) 
+	death_dict_keys = death_dict.keys()
+	top_five_keys = list(death_dict_keys)[:5]
+	death_dict_values = death_dict.values()
+	top_five_values = list(death_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country":top_five_keys[i],
+			"State": empty,
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths":top_five_values[i],
+				"Recovered": empty
+				}
+			}
+		)
+	print(payload)
+	return payload
+
+def Get_Top_5_States_Cases():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
+
+	
+	for country_key, country_obj in tmp_countries_list.items():
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.confirmed
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
+
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": top_five_values[i],
+				"Deaths": empty,
+				"Recovered": empty
+				}
+			}
+		)
+	print(payload)
+	return payload
+
+def Get_Top_5_States_Deaths():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	# TotalArray = []
+	# total_deaths = 0.0
+	# finalTotal = []
+
+	# for country_key, country_obj in tmp_countries_list.items():
+	# 	if stateFilter in country_obj.states:
+	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Deaths"]))
+					
+	# 	TotalArray.append(total_deaths)
+	# for x in range(5):
+	# 	finalTotal.append(max(TotalArray))
+	# 	TotalArray.remove(max(TotalArray))
+
+
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
+
+	for country_key, country_obj in tmp_countries_list.items():
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.deaths
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
+
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths": top_five_values[i],
+				"Recovered": empty
+				}
+			}
+		)
+	print(payload)
+	return payload
+	
+#left as the same in case we need to go back to this version
+def Get_Top_5_States_Recovered():
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	# TotalArray = {}
+	# total_deaths = 0.0
+
+	# for country_key, country_obj in tmp_countries_list.items():
+	# 	if stateFilter in country_obj.states:
+	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Recovered"]))
+					
+	# 	TotalArray[country_key] = total_deaths
+
+	# print(max(TotalArray.values()))
+	payload = []
+	tmp_list = []
+	case_dict = {}
+	state_max = 0.0
+	empty = ""
+
+	for country_key, country_obj in tmp_countries_list.items():
+		state_max = 0.0	
+		for state_key, state_obj in country_obj.states.items():
+			case_list = [] # case list per state
+			for date_obj in state_obj.dates.values():
+				tmp_list = date_obj.recovered
+				#date_obj.deaths returns a list of strings containing all the deaths
+				#then going to use this for loop convert that to a float to use the max
+				for line in tmp_list.splitlines(): 
+					#splits the in the tmp_list to a float 
+				 	case_list.append(float(line))
+				#at the end of the conversion you now have a list of float values for the state.dates
+			state_max = max(case_list)	#using the max of the list of float for states
+			case_dict[state_key] = state_max
+
+	#sort the dict then only need to grab the top 5 values
+	case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True)) 
+	case_dict_keys = case_dict.keys()
+	top_five_keys = list(case_dict_keys)[:5]
+	case_dict_values = case_dict.values()
+	top_five_values = list(case_dict_values)[:5]
+	
+	for i in range(0, 5):
+		payload.append(
+			{
+			"Country": empty,
+			"State": top_five_keys[i],
+			"Date": empty,
+			"Types": 
+				{
+				"Confirmed": empty,
+				"Deaths": empty,
+				"Recovered": top_five_values[i]
+				}
+			}
+		)
+	print(payload)
+	return payload
+
+#def Copy_Csv(self, pathOfOriginal):
+	
+#Backup CSV
+def Backup_Csv(path):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+
+	
+		#print(tmp_countries_list["US"])
+
+	SNo = ""
+	LastUpdate = ""
+	csv_country = ""
+	csv_state = ""
+	date = ""
+	confirmed = ""
+	deaths = ""
+	recovered = ""
+	with open(path, "w") as outfile:
+		for countryKey, country in tmp_countries_list.items():
+			csv_country = countryKey
+			for stateKey, state in country.states.items():
+				csv_state = stateKey
+				for dates in state.dates.values():
+					date = dates.date
+					confirmed = dates.confirmed
+					deaths = dates.deaths
+					recovered = dates.recovered
+					tmp_join = [SNo,date, csv_state,csv_country, date, confirmed, deaths, recovered]
+					tmp_string = ",".join(tmp_join)
+					tmp_string += "\n"
+					outfile.write(tmp_string)
+
+
+
+# SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
+#Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
+def Create_Csv(country, state, type, date, amount):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	#if country is not in the tmp list
+	#then we can just append to the dictionary becasuse that country doesn't exist
+	#else it exists
+	#then use that country as a key and append to that 
+
+	#this checks if the country is in the country list dictionary
+	# if country in tmp_countries_list:
+		#date_obj is a date object that will be added to the country list
+		#Since function only takes in specified input then we have to check
+		#which type it is. After entering specified amount for type then
+		#make the other 2 types default 0
+	if date in tmp_countries_list[country].states[state].dates:
+
+		print("Create Exist. Go To Edit Instead.")
+	else: 
+		
+		if type == "Deaths":
+			date_obj = Date(date,"0", str(amount), "0") 
+		elif type == "Confirmed":
+			date_obj = Date(date,str(amount), "0", "0") 
+		elif type == "Recovered":
+			#then make a date object to add to the country object
+			date_obj = Date( date,"0", "0", str(amount))
+			#sets country object dates to the date object
+		tmp_countries_list[country].states[state].dates[date] = date_obj
+			#finally add the country object to the countries list 
+			#based on the country parameter from user 
+		
+
+	# else:
+	# 	#the country doesn't exist  so need to make a country object
+	# 	country_obj = Country(country)
+	# 	if type == "Deaths":
+	# 		date_obj = Date(date,"0", str(amount), "0") 
+	# 	elif type == "Confirmed":
+	# 		date_obj = Date(date,str(amount), "0", "0") 
+	# 	elif type == "Recovered":
+	# 		#then make a date object to add to the country object
+	# 		date_obj = Date( date,"0", "0", str(amount))
+	# 		#sets country object dates to the date object
+	# 	country_obj.states[state].dates[date] = date_obj
+	# 		#finally add the country object to the countries list 
+	# 		#based on the country parameter from user 
+	# 	tmp_countries_list[country] = country_obj
+	
+	#back in the load_csv.py 
+	#will set the countries_data to tmp_countries_list so we can use the updated data 
+	#print(tmp_countries_list[country].states[state])
+	data_layer.set_countries(tmp_countries_list)
+
+#only update the confirmed, deaths, or recovered cases
+def Update_Csv(country, state, type, date, value):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+			if date in tmp_countries_list[country].states[state].dates:
+				if type == "Deaths":
+					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
+					print("Edit Deaths")
+					#print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+				elif type == "Recovered":
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
+					print("Edit Recovered")
+				elif type == "Confirmed":			
+					date_obj = Date( date, tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"], 
+					str(value), tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]) 
+					tmp_countries_list[country].states[state].dates[date] = date_obj
+					print("Edit Confirmed")
+				else:
+					print("Update doesnt work")
+			else:
+				print("Update couldn't find date")
+	data_layer.set_countries(tmp_countries_list)
+
+#type doesn't matter because you're deleting the whole row of values 
+#i.e for 01/20/2020 you would delete the whole row
+def Delete_Csv(country, state, date):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()
+
+	#this checks if the country is in the country list dictionary
+	#for key in tmp_countries_list:
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+			if date in tmp_countries_list[country].states[state].dates:
+				#print(tmp_countries_list[country].states[state].dates[date])
+				del tmp_countries_list[country].states[state].dates[date]
+				#print(tmp_countries_list[country].states[state].dates[date])
+				#print(tmp_countries_list)
+		else:
+			print("State no exist")
+	else:
+		print("Doesn't exist")
 
 def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid, Button, Typography } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useCallback, useReducer } from "react";
 
 import Logo from "../Logo";
 import ControllableStates from "../ControllableStates";
@@ -14,12 +15,19 @@ import { DateData } from "../data/DateData";
 
 import { hasNoLocationConflict } from "../tests/SearchValidation";
 
+import { StyledEngineProvider } from "@mui/material/styles";
+import Table from "../Table";
+import List from "../List";
+
 const countryOptions = CountryData;
 const stateOptions = StateData;
 const typeOptions = TypeData;
 const dateOptions = DateData;
 
 export default function HomePage(props) {
+
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
     const [inputText, setInputText] = useState("");
     const [payload, setPayload] = useState("");
     const [resultText, setResultText] = useState("");
@@ -62,7 +70,23 @@ export default function HomePage(props) {
     //Amount effect
     const [modAmountValue, modAmountSetValue] = React.useState("");
     const [modAmountInputValue, modAmountSetInputValue] = React.useState("");
-    
+
+    //Top 5 Table data
+    //Country with the top 5 deaths
+    const [countryTop5DeathsValue, setCountryTop5DeathsValue] = React.useState("");
+    const [countryTop5DeathsInputValue, setCountryTop5DeathsInputValue] = React.useState("");
+
+    //State with the top 5 cases
+    const [stateTop5CasesValue, setStateTop5CasesValue] = React.useState("");
+    const [stateTop5CasesInputValue, setStateTop5CasesInputValue] = React.useState("");
+
+    //State with the top 5 deaths
+    const [stateTop5DeathsValue, setStateTop5DeathsValue] = React.useState("");
+    const [stateTop5DeathsInputValue, setStateTop5DeathsInputValue] = React.useState("");
+
+    //State with the top 5 recovery
+    const [stateTop5RecoveryValue, setStateTop5RecoveryValue] = React.useState("");
+    const [stateTop5RecoveryInputValue, setStateTop5RecoveryInputValue] = React.useState("");
 
     //Textfield updating logic
     function handleCountryInputChange(e){
@@ -84,8 +108,6 @@ export default function HomePage(props) {
     function handleAmountInputChange(e){
         modAmountSetInputValue(e.target.value);
     }
-
-
 
     useEffect(() => {
         setPayload(inputText);
@@ -127,6 +149,8 @@ export default function HomePage(props) {
             }
         }
 
+        setResultText("");
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -143,6 +167,48 @@ export default function HomePage(props) {
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
+        
+
+        //Country with top 5 deaths    
+        console.log("Country Top Deaths Endpoint Fetched");
+        fetch("/api/CountryTopDeaths", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setCountryTop5DeathsInputValue(JSON.stringify(data));
+            });
+
+        //State with top 5 cases
+        console.log("State Top Cases Endpoint Fetched");
+        fetch("/api/StateTopCases", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5CasesInputValue(JSON.stringify(data));
+            });
+        
+        //State with top 5 deaths
+        console.log("State Top Deaths Endpoint Fetched");
+        fetch("/api/StateTopDeaths", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5DeathsInputValue(JSON.stringify(data));
+            });
+
+        //State with top 5 recovery
+        console.log("State Top Recovery Endpoint Fetched");
+        fetch("/api/StateTopRecovery", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setStateTop5RecoveryInputValue(JSON.stringify(data));
+            });
+            
     }
 
 
@@ -203,6 +269,18 @@ export default function HomePage(props) {
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
+
+            setResultText("");
+
+    
+            console.log("Query Endpoint Fetched");
+            fetch("/api/QueryEndpoint", requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    // for testing!
+                    setResultText(JSON.stringify(data));
+                });
     }
 
     function handleEditButton(){
@@ -255,6 +333,18 @@ export default function HomePage(props) {
 
         console.log("Edit Endpoint Fetched");
         fetch("/api/EditEndpoint", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setResultText(JSON.stringify(data));
+            });
+
+        setResultText("");
+
+
+        console.log("Query Endpoint Fetched");
+        fetch("/api/QueryEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -361,13 +451,70 @@ export default function HomePage(props) {
             });
     }
 
-    function useForceUpdate() {
-        const [value, setValue] = useState(0); // integer state
-        return () => setValue((value) => value + 1); // update the state to force render
-    }
 
     function displayResultText() {
-        return <h4>{resultText}</h4>;
+        console.log("START: ");
+        console.log(countryTop5DeathsInputValue);
+        console.log("END : ");
+        return(
+            <div>
+                <Grid container spacing={1}>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                category={"Deaths"} 
+                                location={"Country"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={countryTop5DeathsInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                                ></List>
+                         </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                category={"Confirmed"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5CasesInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                category={"Deaths"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5DeathsInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                category={"Recovered"}
+                                location={"State"}
+                                mostConfirmed={[{"US":231,"China":132}]}
+                                mostDeaths={stateTop5RecoveryInputValue}
+                                mostRecovered={[{"US":231,"China":132}]}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <StyledEngineProvider injectFirst>
+                    <Table 
+                        data={resultText}
+                        country={countryInputValue}
+                        state={stateInputValue}
+                        type={typeInputValue}
+                        date={dateInputValue}
+                    />
+                </StyledEngineProvider>
+            </div>
+        );
     }
 
     return (
@@ -602,10 +749,14 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={2}>
                     </Grid>
                     <Grid item align="center" xs={12}>
-                        {resultText != "" ? displayResultText() : ""}
+                        {/* {resultText != "" ? displayResultText() : ""} */}
+                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" )? displayResultText() : ""}
                     </Grid>
                 </Grid>
             </div>
+            {/* <StyledEngineProvider injectFirst>
+                <Table />
+            </StyledEngineProvider> */}
         </div>
     );
 }
