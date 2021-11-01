@@ -212,3 +212,43 @@ class StateTopRecoveryEndpoint(APIView):
 
 		payload = Get_Top_5_States_Recovered()
 		return Response(payload, status=status.HTTP_200_OK)
+
+
+class Std1Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from std1 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class Std2Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from std2 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class Std3Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from std3 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)

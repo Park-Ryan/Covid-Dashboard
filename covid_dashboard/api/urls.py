@@ -15,6 +15,9 @@ urlpatterns = [
 	path("StateTopCases", StateTopCasesEndpoint.as_view()),
 	path("StateTopDeaths", StateTopDeathsEndpoint.as_view()),
 	path("StateTopRecovery", StateTopRecoveryEndpoint.as_view()),
+	path("std1",Std1Endpoint.as_view()),
+	path("std2",Std2Endpoint.as_view()),
+	path("std3",Std3Endpoint.as_view()),
   path('QueryEndpoint',QueryEndpoint.as_view())
 ]
 
