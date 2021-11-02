@@ -142,7 +142,7 @@ class DeleteEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
-		payload = Delete_Csv(country_query, state_query, date_query)
+		payload = Delete_Csv(country_query, state_query, type_query,date_query)
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -184,7 +184,7 @@ class StateTopCasesEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
-		payload = Get_Top_5_States_Cases()
+		payload = Get_Top_5_States_Cases("", "", "", "")
 		return Response(payload, status=status.HTTP_200_OK)
 
 class StateTopDeathsEndpoint(APIView):
