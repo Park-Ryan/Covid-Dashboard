@@ -1,3 +1,4 @@
+from enum import Flag
 from .data_layer.load_csv import *
 import json
 import copy
@@ -196,6 +197,7 @@ def Get_Top_5_States_Deaths():
 	case_dict = {}
 	state_max = 0.0
 	empty = ""
+
 
 	for country_key, country_obj in tmp_countries_list.items():
 		state_max = 0.0	
@@ -575,28 +577,22 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 
 def Update_Value(country, state, type, date, amount):
 	from .urls import data_layer
-	flag = False
-	for date_key, date_val in data_layer.countries_data[country].states[state].dates.items():
-		if flag:
-			if type == "Confirmed":
-				tmp_amount = float(date_val.confirmed)
-				tmp_amount += float(amount)
-				date_val.confirmed = str(tmp_amount)
-			if type == "Deaths":
-				tmp_amount = float(date_val.deaths)
-				tmp_amount += float(amount)
-				date_val.deaths = str(tmp_amount)
-			if type == "Recovered":
-				tmp_amount = float(date_val.recovered)
-				tmp_amount += float(amount)
-				date_val.recovered = str(tmp_amount)			
-		if date_key == date:
-			flag = True
 	
 	#updating the countries dict
-	
-
-
+	dates_dict = data_layer.countries_data.get(country).states.get(state).dates
+	date_keys_list = list(dates_dict.keys())
+	for date_key in date_keys_list[
+        date_keys_list.index(date) : 
+    ]:
+		if date_key != date:
+			tmp_amount = float(dates_dict[date_key].reprJSON()[type]) + float(amount)
+			if type == "Confirmed":
+				dates_dict[date_key].confirmed = str(tmp_amount)
+			elif type == "Deaths":
+				dates_dict[date_key].deaths = str(tmp_amount)
+			elif type == "Recovered":
+				dates_dict[date_key].recovered = str(tmp_amount)
+						
 
 def Delete_Value(country, state, type, date):
 	from .urls import data_layer
@@ -631,11 +627,14 @@ def Delete_Value(country, state, type, date):
 	# TODO what if deleting first date and last date?
 	# if first date, subtract its value from every future date and delete at end
 	# if last date, delete it
+	subtract_amount = 0
 	i = key_list.index(date)
 	if i == 0: 
 		if type == "Confirmed":
 			subtract_amount = float(value_list[0].confirmed)
 		if type == "Deaths":
+			print("Values list index of 0: ")
+			print(value_list[0].deaths)
 			subtract_amount = float(value_list[0].deaths)
 		if type == "Recovered":
 			subtract_amount = float(value_list[0].recovered) 
@@ -643,15 +642,16 @@ def Delete_Value(country, state, type, date):
 	elif i == len(key_list):
 		del data_layer.countries_data[country].states[state].dates[date]
 		return 
+	else:
+		if type == "Confirmed":
+			subtract_amount = float(value_list[i].confirmed) - float(value_list[i-1].confirmed)
+		if type == "Deaths":
+			subtract_amount = float(value_list[i].deaths) - float(value_list[i-1].deaths)
+		if type == "Recovered":
+			subtract_amount = float(value_list[i].recovered) - float(value_list[i-1].recovered)
 
-	if type == "Confirmed":
-		subtract_amount = float(value_list[i].confirmed) - float(value_list[i-1].confirmed)
-	if type == "Deaths":
-		subtract_amount = float(value_list[i].deaths) - float(value_list[i-1].deaths)
-	if type == "Recovered":
-		subtract_amount = float(value_list[i].recovered) - float(value_list[i-1].recovered)
-
-
+	print("Subtract amount")
+	print(subtract_amount)
 
 
 	for date_key, date_val in data_layer.countries_data[country].states[state].dates.items():
