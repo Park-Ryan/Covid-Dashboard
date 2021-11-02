@@ -1,13 +1,12 @@
+from datetime import timedelta
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Get_Top_5_States_Deaths, Get_Top_5_States_Recovered, Update_Csv
-
+from .util import *
 
 # from covid_dashboard.api.data_layer.load_csv import Country
-from .util import Reverse_String
 
 # from .serializers import *
 import json
@@ -32,6 +31,7 @@ class SampleEndpoint(APIView):
 		return Response(output_payload, status=status.HTTP_200_OK)
 
 
+# for testing
 class CountriesEndpoint(APIView):
 	def get(self, request):
 		# import the data layer object to the views
@@ -54,6 +54,54 @@ class CountriesEndpoint(APIView):
 		# return Response(countries["US"].states["California"].reprJSON())
 		# TODO: add encoder for states
 		return Response(countries["Taiwan"].reprJSON())
+
+
+class AnalyticsEndpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+		payload = None
+
+		# country_query = input_payload["payload"]["countryVal"]
+		# state_query = input_payload["payload"]["stateVal"]
+		# type_query = input_payload["payload"]["typeVal"]
+		# date_query = input_payload["payload"]["dateVal"]
+
+		# TESTING
+		country_query = "US"
+		state_query = "California"
+		type_query = "Confirmed"
+		date_query = "03/30/2021"
+		end_date_query = ""
+		# default is to get the past 7 days if end date query is empty
+		# end_date_query = input_payload["payload"]["dateVal"]
+
+		# if end date is empty str, we need end date to be the starting date
+		# bc its the previous last 7 days
+		if not end_date_query:
+			from datetime import datetime
+
+			temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
+			# adding 7 days to current date,
+			print("this is now: ", temp_date_obj)
+			# TODO: Default is 7 days, make a var to make it easily editable
+			default_days = 7
+			# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
+			temp_date_obj -= timedelta(days=default_days)
+			print("this is 7 days later: ", temp_date_obj)
+
+			end_date_query = temp_date_obj.strftime("%m/%d/%Y")
+			print("end date as str: ", end_date_query)
+
+			payload = Get_Analytics(
+				country_query, state_query, type_query, end_date_query, date_query
+			)
+		else:  # Regular process
+			payload = Get_Analytics(
+				country_query, state_query, type_query, date_query, end_date_query
+			)
+
+		return Response(payload, status=status.HTTP_200_OK)
 
 
 # def informationList(self, request):
@@ -93,14 +141,14 @@ class QueryEndpoint(APIView):
 
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 		return Response(payload, status=status.HTTP_200_OK)
-	
+
 
 class AddEndpoint(APIView):
 	def post(self, request, format=None):
 
 		input_payload = self.request.data
 
-		#TODO : Implement backend logic
+		# TODO : Implement backend logic
 
 		country_query = input_payload["payload"]["countryVal"]
 		state_query = input_payload["payload"]["stateVal"]
@@ -112,12 +160,13 @@ class AddEndpoint(APIView):
 
 		return Response(payload, status=status.HTTP_200_OK)
 
+
 class EditEndpoint(APIView):
 	def post(self, request, format=None):
 
 		input_payload = self.request.data
 
-		#TODO : Implement backend logic
+		# TODO : Implement backend logic
 
 		country_query = input_payload["payload"]["countryVal"]
 		state_query = input_payload["payload"]["stateVal"]
@@ -129,12 +178,13 @@ class EditEndpoint(APIView):
 
 		return Response(payload, status=status.HTTP_200_OK)
 
+
 class DeleteEndpoint(APIView):
 	def post(self, request, format=None):
 
 		input_payload = self.request.data
 
-		#TODO : Implement backend logic
+		# TODO : Implement backend logic
 
 		country_query = input_payload["payload"]["countryVal"]
 		state_query = input_payload["payload"]["stateVal"]
@@ -146,19 +196,20 @@ class DeleteEndpoint(APIView):
 
 		return Response(payload, status=status.HTTP_200_OK)
 
+
 class BackupEndpoint(APIView):
 	def post(self, request, format=None):
 
 		input_payload = self.request.data
 
-		#TODO : Implement backend logic
+		# TODO : Implement backend logic
 
-		#Backup doesn't require any data to be passed in from the frontend
-
+		# Backup doesn't require any data to be passed in from the frontend
 
 		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
 
 		return Response(payload, status=status.HTTP_200_OK)
+
 
 class CountryTopDeathsEndpoint(APIView):
 	def post(self, request, format=None):
@@ -187,6 +238,7 @@ class StateTopCasesEndpoint(APIView):
 		payload = Get_Top_5_States_Cases()
 		return Response(payload, status=status.HTTP_200_OK)
 
+
 class StateTopDeathsEndpoint(APIView):
 	def post(self, request, format=None):
 
@@ -199,6 +251,7 @@ class StateTopDeathsEndpoint(APIView):
 
 		payload = Get_Top_5_States_Deaths()
 		return Response(payload, status=status.HTTP_200_OK)
+
 
 class StateTopRecoveryEndpoint(APIView):
 	def post(self, request, format=None):
