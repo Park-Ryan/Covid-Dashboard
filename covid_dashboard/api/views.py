@@ -86,9 +86,9 @@ class AnalyticsEndpoint(APIView):
 
 		# TESTING, take this out when actual args get passed
 		country_query = "US"
-		state_query = "California"
+		state_query = ""
 		type_query = ""
-		date_query = "03/20/2021"
+		date_query = ""
 		end_date_query = ""
 		# default is to get the past 7 days if end date query is empty
 		# end_date_query = input_payload["payload"]["dateVal"]
@@ -97,7 +97,7 @@ class AnalyticsEndpoint(APIView):
 
 		# if end date is empty str, we need end date to be the starting date
 		# bc its the previous last 7 days
-		if state_query and not end_date_query:
+		if state_query and date_query and not end_date_query:
 			temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
 			# subtracting 7 days to current date,
 			# TODO: Default is 7 days, make a var to make it easily editable
