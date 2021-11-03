@@ -18,6 +18,7 @@ import { hasNoLocationConflict } from "../tests/SearchValidation";
 import { StyledEngineProvider } from "@mui/material/styles";
 import Table from "../Table";
 import List from "../List";
+import BarChart from "../BarChart";
 
 const countryOptions = CountryData;
 const stateOptions = StateData;
@@ -435,6 +436,12 @@ export default function HomePage(props) {
         return(
             <div>
                 <Grid container spacing={1}>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
+                            <BarChart>
+                            </BarChart>    
+                        </Typography>
+                    </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
