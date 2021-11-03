@@ -21,3 +21,4 @@ urlpatterns = [
 
 data_layer = DataLayer()
 data_layer.initLoadCSV("api/data/archive/covid_19_data.csv")
+data_layer.initTotals()

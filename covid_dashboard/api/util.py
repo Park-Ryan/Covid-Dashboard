@@ -1,3 +1,4 @@
+from os import stat
 from .data_layer.load_csv import *
 import json
 import copy
@@ -59,7 +60,6 @@ def Get_Top_5_Countries_Deaths():
 				"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
 			}
 		)
-	print(payload)
 	return payload
 
 
@@ -532,40 +532,64 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 	return payload
 
 
-def Get_Analytics(country_query, state_query, type_query, start_date, end_date):
+# TODO: if state is empty, calc the analytics for country
+# if type is empty, calc all the anayltics for each type
+# if
+def Get_Analytics(country_query, state_query, type_query, start_date, end_date) -> dict:
 	from .urls import data_layer
 
+	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
-	type_nums = []
+	# if date does exist do what?
 
-	# TODO: write function that grabs all dates in between the start and end and returns a list
+	# function to get the date range
+	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
 
-	# Get index of our start date and start iterating from there until we reach the end date
-	# how about get a list of the keys(dates) we need to iterate over and plug them into our dict
-	date_keys_list = list(dates_dict.keys())
-	# slicing list of keys to get the date ranges in between included them
-	for date_key in date_keys_list[
-		date_keys_list.index(start_date) : date_keys_list.index(end_date)
-	]:
-		# TODO: maybe add a function that maps date object to a dict,
-		# so we dont have to check each type case w/ a cn if
-
-		# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
-		type_nums.append(float(dates_dict[date_key].reprJSON()[type_query]))  # credit to alan
-		# print(date_key)
-		# print(test)
-
-	print(type_nums)
-
+	# print(type_nums)
 	a = np.array(type_nums)
 	std = np.std(a)
 	averages = np.average(a)
+
+	# print("type nums:", type_nums, "std:", std, "averages:", averages)
+	# if start_date == end_date:
+	# 	std = type_nums[0]
+	# 	averages = type_nums[0]
+
 	# if country and state are given, compute the percentage of covid (confirmed/deaths/recovered) cases
 	# to the total country (confirmed/deaths/recovered)
 	# TODO: implement methods that initalize the total_deaths, etc, attributes at the start of the server
 	# Use those totals to compute the percentages by state_deaths divided by total country deaths
-	percentages = 0
+	# three avg
+	# 1. all the dates => so daily avg from the beginning of covid
+	# 2. one date => prev 7 days to given days = 7 day avg
+	# 3. between two dates => avg between those two dates
+	"""
+		Go into the country
+		Iterate through each state
+		Sum the totals for each state with the given parameters
+		Add that total to the country total
+		
+	"""
+	# change type query str to match Total_ + case
+	total_type_query = "Total_" + type_query
+	# NOTE: reprJSON is read only
+	country_total = data_layer.countries_data.get(country_query).reprJSON()[
+		total_type_query
+	]
+	state_total = (
+		data_layer.countries_data.get(country_query)
+		.states.get(state_query)
+		.reprJSON()[total_type_query]
+	)
+	# Given only country: country total / global total = percentage
+	if not state_query:  # empty state query
+		percentages = (
+			float(country_total) / float(data_layer.global_total_types.get(total_type_query))
+		) * 100
+	# Given country and state: state total / country total = percentage
+	else:
+		percentages = (float(state_total) / float(country_total)) * 100
 
 	payload = {
 		"type": type_query,
@@ -579,5 +603,32 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date):
 
 
 # Returns a list of the dates in between two ranges
-def Get_Date_Range():
-	pass
+def Get_Date_Range(type_query, start_date, end_date, dates_dict):
+	type_nums = []
+
+	# TODO: Handle dates that DNE
+	# TODO: Handle same date
+	if start_date == end_date:
+		# print("IN GET DATE RANGE", dates_dict.get(start_date))
+		type_nums.append(float(dates_dict.get(start_date).reprJSON()[type_query]))
+		# print("START IS EQUAL TO END")
+		return type_nums
+
+	# TODO: write function that grabs all dates in between the start and end and returns a list
+
+	# Get index of our start date and start iterating from there until we reach the end date
+	# how about get a list of the keys(dates) we need to iterate over and plug them into our dict
+	date_keys_list = list(dates_dict.keys())
+	# slicing list of keys to get the date ranges in between included them
+	for date_key in date_keys_list[
+		date_keys_list.index(start_date) : date_keys_list.index(end_date)
+	]:
+		# TODO: maybe add a function that maps date object to a dict,
+		# so we dont have to check each type case w/ a cn if
+		# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
+		type_nums.append(
+			float(dates_dict.get(date_key).reprJSON()[type_query])
+		)  # credit to alan
+	# print(date_key)
+	# print(test)
+	return type_nums
