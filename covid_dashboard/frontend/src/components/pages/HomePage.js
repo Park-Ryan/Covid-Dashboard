@@ -49,6 +49,10 @@ export default function HomePage(props) {
     const [dateValue, dateSetValue] = React.useState(dateOptions[0]);
     const [dateInputValue, dateSetInputValue] = React.useState("");
 
+    //Date2 effect
+    const [date2Value, date2SetValue] = React.useState(dateOptions[0]);
+    const [date2InputValue, date2SetInputValue] = React.useState("");
+
 
     //Data modification variables
     //Country effect
@@ -147,15 +151,20 @@ export default function HomePage(props) {
         console.log(typeInputValue);
         console.log("Type End");
 
-        console.log("Date Begin :");
+        console.log("Start Date Begin :");
         console.log(dateInputValue);
-        console.log("Date End");
+        console.log("Start Date End");
+
+        console.log("End Date Begin :");
+        console.log(date2InputValue);
+        console.log("End Date End");
 
         var payload = {
             countryVal: countryInputValue,
             stateVal: stateInputValue,
             typeVal: typeInputValue,
             dateVal: dateInputValue,
+            date2Val : date2InputValue,
         };
 
         if (countryInputValue != "" && stateInputValue != "") {
@@ -644,7 +653,7 @@ export default function HomePage(props) {
                             Enter fields for data extraction.
                         </Typography>
                     </Grid>
-                    <Grid item xs={2}></Grid>
+                    <Grid item xs={1}></Grid>
                     <Grid item align="center" xs={2}>
                         <Autocomplete
                             // value={value}
@@ -713,11 +722,29 @@ export default function HomePage(props) {
                             options={dateOptions}
                             sx={{ width: 300 }}
                             renderInput={(params) => (
-                                <TextField {...params} label="Date" />
+                                <TextField {...params} label="Start Date" />
                             )}
                         />
                     </Grid>
-                    <Grid item xs={2}></Grid>
+                    <Grid item align="center" xs={2}>
+                        <Autocomplete
+                            // value={value}
+                            onChange={(event, newValue) => {
+                                date2SetValue(newValue);
+                            }}
+                            inputValue={date2InputValue}
+                            onInputChange={(event, newInputValue) => {
+                                date2SetInputValue(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={dateOptions}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="End Date" />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={1}></Grid>
                     <Grid item align="center" xs={12}>
                         <Button
                             variant="contained"
