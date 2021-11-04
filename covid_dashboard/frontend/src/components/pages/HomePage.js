@@ -98,6 +98,17 @@ export default function HomePage(props) {
     const [std3, setStd3] = React.useState("");
     const [std3Input, setStd3Input] = React.useState("");
 
+    //Percent Variables
+    const [percent1, setPercent1] = React.useState("");
+    const [percent1Input, setPercent1Input] = React.useState("");
+
+    const [percent2, setPercent2] = React.useState("");
+    const [percent2Input, setPercent2Input] = React.useState("");
+
+    const [percent3, setPercent3] = React.useState("");
+    const [percent3Input, setPercent3Input] = React.useState("");
+
+
     //Textfield updating logic
     function handleCountryInputChange(e){
         modCountrySetInputValue(e.target.value);
@@ -248,6 +259,37 @@ export default function HomePage(props) {
                 console.log(data);
                 // for testing!
                 setStd3Input(JSON.stringify(data))
+            });
+
+
+        //percent1
+        console.log("percent1 Endpoint Fetched");
+        fetch("/api/percent1", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setPercent1Input(JSON.stringify(data))
+            });
+        
+        //percent2
+        console.log("percent2 Endpoint Fetched");
+        fetch("/api/percent2", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setPercent2Input(JSON.stringify(data))
+            });
+
+        //percent3
+        console.log("percent3 Endpoint Fetched");
+        fetch("/api/percent3", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setPercent3Input(JSON.stringify(data))
             });
     }
 
@@ -556,6 +598,21 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             Standard Deviation Position 3
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Percent Position 1
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Percent Position 2
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            Percent Position 3
                         </Typography>
                     </Grid>
                 </Grid>

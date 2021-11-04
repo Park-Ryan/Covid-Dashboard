@@ -18,6 +18,9 @@ urlpatterns = [
 	path("std1",Std1Endpoint.as_view()),
 	path("std2",Std2Endpoint.as_view()),
 	path("std3",Std3Endpoint.as_view()),
+	path("percent1",Percent1Endpoint.as_view()),
+	path("percent2",Percent2Endpoint.as_view()),
+	path("percent3",Percent3Endpoint.as_view()),
   path('QueryEndpoint',QueryEndpoint.as_view())
 ]
 

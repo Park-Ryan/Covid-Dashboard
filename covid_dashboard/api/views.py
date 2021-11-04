@@ -252,3 +252,42 @@ class Std3Endpoint(APIView):
 
 		payload = "Hello from std3 endpoint"
 		return Response(payload, status=status.HTTP_200_OK)
+
+class Percent1Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from percent1 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class Percent2Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from percent2 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)
+
+class Percent3Endpoint(APIView):
+	def post(self, request, format=None):
+
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		payload = "Hello from percent3 endpoint"
+		return Response(payload, status=status.HTTP_200_OK)
