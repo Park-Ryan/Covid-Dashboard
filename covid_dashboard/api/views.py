@@ -62,7 +62,6 @@ class CountriesEndpoint(APIView):
 class AnalyticsEndpoint(APIView):
 	def post(self, request, format=None):
 		from .urls import data_layer
-
 		default_days = 7
 		types = ["Confirmed", "Deaths", "Recovered"]
 		input_payload = self.request.data
@@ -86,10 +85,15 @@ class AnalyticsEndpoint(APIView):
 
 		# TESTING, take this out when actual args get passed
 		country_query = "US"
-		state_query = ""
-		type_query = ""
+		state_query = "California"
+		type_query = "Deaths"
 		date_query = ""
 		end_date_query = ""
+
+		#list of errors
+		#empty both
+
+
 		# default is to get the past 7 days if end date query is empty
 		# end_date_query = input_payload["payload"]["dateVal"]
 
@@ -125,6 +129,7 @@ class AnalyticsEndpoint(APIView):
 			end_date_query = list(
 				data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
 			)[-1]
+
 			for type in types:
 				payload.append(
 					{
@@ -222,6 +227,7 @@ class AnalyticsEndpoint(APIView):
 						)
 					}
 				)
+		#print(payload)
 		return Response(payload, status=status.HTTP_200_OK)
 
 

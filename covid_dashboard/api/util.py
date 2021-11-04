@@ -3,8 +3,8 @@ from .data_layer.load_csv import *
 import json
 import copy
 from array import array
+import math
 import numpy as np
-
 
 def Reverse_String(dict):
 
@@ -105,7 +105,7 @@ def Get_Top_5_States_Cases():
 				"Types": {"Confirmed": top_five_values[i], "Deaths": empty, "Recovered": empty},
 			}
 		)
-	print(payload)
+	#print(payload)
 	return payload
 
 
@@ -164,7 +164,7 @@ def Get_Top_5_States_Deaths():
 				"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
 			}
 		)
-	print(payload)
+	#print(payload)
 	return payload
 
 
@@ -221,7 +221,7 @@ def Get_Top_5_States_Recovered():
 				"Types": {"Confirmed": empty, "Deaths": empty, "Recovered": top_five_values[i]},
 			}
 		)
-	print(payload)
+	#print(payload)
 	return payload
 
 
@@ -546,11 +546,23 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	# function to get the date range
 	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
 
-	# print(type_nums)
-	a = np.array(type_nums)
-	std = np.std(a)
-	averages = np.average(a)
+	averages = sum(type_nums) / len(type_nums)
+	variance = sum(pow(x-averages,2) for x in type_nums)
+	variance /= (len(type_nums))
+	std = math.sqrt(variance)
+	print("Our Math")
+	print(averages)
+	print(std)
+	#print(variance)
 
+	# print(type_nums)
+	# print("this is numpy")
+	# a= np.array(type_nums)
+	# stds = np.std(a)
+	# averagess = np.average(a)
+	# print(averagess)
+	# print(stds)
+	# print("end")
 	# print("type nums:", type_nums, "std:", std, "averages:", averages)
 	# if start_date == end_date:
 	# 	std = type_nums[0]
@@ -599,6 +611,7 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 		"averages": averages,
 		"percentages": percentages,
 	}
+	
 	return payload
 
 
