@@ -6,16 +6,24 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 
-export default function PinnedSubheaderList(props) {
-  const [MostConfirmed, setMostConfirmed] = React.useState(props.mostConfirmed);
-  const [mostDeaths, setMostDeaths] = React.useState(props.mostDeaths);
-  const [MostRecovered, setMostRecovered] = React.useState(props.mostRecovered);
-  const [location,setLocation] = React.useState(props.location);
+function filterData(type,data){
+  var result = []
+  for(let i = 0; i < data.length; ++i){
+    if(data[i]["type"]==type){
+      result.push(data[i]);
+    }
+  }
+  return result;
+}
 
-  const [type,setType] = React.useState(props.category);
+export default function PinnedSubheaderList(props) {
+  const [data, setData] = React.useState(JSON.parse(props.data));
+  const [type, setType] = React.useState(props.type);
+  const [stat, setStat] = React.useState(props.stat);
+  const [shouldTruncate, setShouldTruncate] = React.useState(props.shouldTruncate);
 
   console.log("from List.js")
-  console.log(JSON.parse(mostDeaths));
+  console.log(data);
 
   
   return (
@@ -36,11 +44,14 @@ export default function PinnedSubheaderList(props) {
       ].map((sectionId) => (
         <li key={`section-${sectionId}`}>
           <ul>
-            <ListSubheader>{`${location} Most ${sectionId}`}</ListSubheader>
-            {JSON.parse(mostDeaths).map((item) => (
+            <ListSubheader>{`${stat} ${type} by state `}</ListSubheader>
+            {filterData(type,data).map((item) => (
               <ListItem alignItems="flex-start" key={`item-${sectionId}-${item}-${item}}`}>
-                <ListItemText primary={`${item[location]}`}/>
-                <ListItemText primary={`${item["Types"][type]}`}/>
+                <ListItemText primary={`${item["state"]}`}/>
+                {
+                  shouldTruncate ? <ListItemText primary={`${Math.trunc(item[stat])}`}/> : <ListItemText primary={`${Math.trunc(item[stat]*100)/100}%`}/>
+                }
+                {/* // <ListItemText primary={`${Math.trunc(item[stat])}`}/> */}
               </ListItem>
             ))}
           </ul>

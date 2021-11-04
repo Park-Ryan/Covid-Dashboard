@@ -604,6 +604,7 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 		percentages = (float(state_total) / float(country_total)) * 100
 
 	payload = {
+		"state": state_query,
 		"type": type_query,
 		"start-date": start_date,
 		"end-date": end_date,
