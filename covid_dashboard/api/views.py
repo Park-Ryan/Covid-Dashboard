@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Get_Top_5_States_Deaths, Get_Top_5_States_Recovered, Update_Csv
+import time
 
 
 # from covid_dashboard.api.data_layer.load_csv import Country
@@ -91,7 +92,10 @@ class QueryEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for query endpoint is : " + str(elapsed_time) + " seconds")
 		return Response(payload, status=status.HTTP_200_OK)
 	
 
@@ -108,7 +112,10 @@ class AddEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for add endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -125,7 +132,10 @@ class EditEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -142,7 +152,10 @@ class DeleteEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Delete_Csv(country_query, state_query, date_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for delete endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -155,8 +168,10 @@ class BackupEndpoint(APIView):
 
 		#Backup doesn't require any data to be passed in from the frontend
 
-
+		start_time = time.time()
 		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for backup endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -170,7 +185,11 @@ class CountryTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_Countries_Deaths()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for country top deaths endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -184,7 +203,12 @@ class StateTopCasesEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Cases()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top cases endpoint is : " + str(elapsed_time) + " seconds")
+
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 class StateTopDeathsEndpoint(APIView):
@@ -197,7 +221,11 @@ class StateTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Deaths()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top deaths endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 class StateTopRecoveryEndpoint(APIView):
@@ -210,5 +238,9 @@ class StateTopRecoveryEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Recovered()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top recovery endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
