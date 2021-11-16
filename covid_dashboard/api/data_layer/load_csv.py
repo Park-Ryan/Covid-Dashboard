@@ -1,3 +1,4 @@
+from datetime import date
 import json
 import csv
 import copy
@@ -28,7 +29,7 @@ class State:
 	def __init__(self, state_name, country_name):
 		self.state_name = state_name
 		self.country_name = country_name
-		self.total_confirmed_cases = 0
+		self.total_confirmed = 0
 		self.total_deaths = 0
 		self.total_recovered = 0
 		self.dates = {}
@@ -50,9 +51,9 @@ class State:
 		return dict(
 			Country=self.country_name,
 			State=self.state_name,
-			total_confirmed=self.total_confirmed_cases,
-			total_deaths=self.total_deaths,
-			total_recovered=self.total_recovered,
+			Total_Confirmed=self.total_confirmed,
+			Total_Deaths=self.total_deaths,
+			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
 
@@ -64,7 +65,7 @@ class Country:
 	def __init__(self, country_name):
 		self.country_name = country_name
 		self.states = {}
-		self.total_confirmed_cases = 0
+		self.total_confirmed = 0
 		self.total_deaths = 0
 		self.total_recovered = 0
 		# Some countries don't have a state/province, but if they do we put it into the states list and leave dates in country empty
@@ -92,11 +93,11 @@ class Country:
 
 		return dict(
 			Country=self.country_name,
-			States=self.temp_states,
-			total_confirmed=self.total_confirmed_cases,
-			total_deaths=self.total_deaths,
-			total_recovered=self.total_recovered,
-			Dates=self.temp_dates,
+			States=temp_states,
+			Total_Confirmed=self.total_confirmed,
+			Total_Deaths=self.total_deaths,
+			Total_Recovered=self.total_recovered,
+			Dates=temp_dates,
 		)
 
 
@@ -120,6 +121,12 @@ class DataLayer:
 		self.countries_list = []
 		# holds all the country objects created(kinda like a bootleg database)
 		self.country_objects = []
+		# used to calcualte percentage of cases for a country, country total / global total
+		self.global_total_types = {
+			"Total_Confirmed": 0,
+			"Total_Deaths": 0,
+			"Total_Recovered": 0,
+		}
 
 	def test(self):
 		print("works")
@@ -138,7 +145,7 @@ class DataLayer:
 		self.countries_list = data["Countries/Regions"]
 		# print(self.countries_list)
 
-	#here we read the original copy of the csv, but after the backup we need to read the copy
+	# here we read the original copy of the csv, but after the backup we need to read the copy
 	def initLoadCSV(self, csv_name: str):
 		countries_dict = {}
 		self.load_json()
@@ -254,10 +261,49 @@ class DataLayer:
 	# Returns the lists of all countries
 	def get_countries(self):
 		return self.countries_data
-	
+
 	# for updating the countries data
 	def set_countries(self, countries):
 		self.countries_data = copy.deepcopy(countries)
+
+	# Intialize all the total type attributes for each country and state based off its nested objects
+	def initTotals(self):
+		countries = self.countries_data
+		global_confirmed = 0
+		global_deaths = 0
+		global_recovered = 0
+		# go through all a country's states and initialize all the totals,
+		# then use those total to init the totals in the countries
+		for country_obj in countries.values():
+			for state_obj in country_obj.states.values():
+				# since cases are cumulative, then get the max number in the list as that is the total
+				# if that is a the case, isnt the last object the largest? assuming the list is sorted by date
+				# This is true, the last object is the largest / the total
+				# get last date object in a state's dates dict
+				# if state_obj.state_name == "California":
+				total = list(state_obj.dates.values())[-1]
+				state_obj.total_confirmed = total.confirmed
+				state_obj.total_deaths = total.deaths
+				state_obj.total_recovered = total.recovered
+				# print(total)
+				# Now sum up all the country's state's totals and put it inside the country's totals attributes
+				country_obj.total_confirmed += float(state_obj.total_confirmed)
+				country_obj.total_deaths += float(state_obj.total_deaths)
+				country_obj.total_recovered += float(state_obj.total_recovered)
+
+				# if country_obj.country_name == "US":
+				# 	print(
+				# 		country_obj.total_confirmed, country_obj.total_deaths, country_obj.total_recovered
+				# 	)
+			# add to the glocal total of cases
+			global_confirmed += country_obj.total_confirmed
+			global_deaths += country_obj.total_deaths
+			global_recovered += country_obj.total_recovered
+
+		# at the end set the values to the global total types
+		self.global_total_types["Total_Confirmed"] = global_confirmed
+		self.global_total_types["Total_Deaths"] = global_deaths
+		self.global_total_types["Total_Recovered"] = global_recovered
 
 
 # data_layer = data_layer()
