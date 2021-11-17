@@ -9,7 +9,6 @@ import time
 from .util import *
 from datetime import datetime
 from queue import PriorityQueue
-
 # from covid_dashboard.api.data_layer.load_csv import Country
 
 # from .serializers import *
@@ -164,7 +163,11 @@ class AnalyticsEndpoint(APIView):
 
 def update_Value(country_query, state_query, type_query, amount_query):
 	from .urls import data_layer
+	start_time = time.time()
+	
+	
 	total_type_query = "Total_" + type_query
+	print("total type: ", total_type_query)
 	# NOTE: reprJSON is read only
 	country_total = data_layer.countries_data.get(country_query).reprJSON()[
 		total_type_query
@@ -174,19 +177,20 @@ def update_Value(country_query, state_query, type_query, amount_query):
 		.states.get(state_query)
 		.reprJSON()[total_type_query]
 	)
+
 	total_days = 493 + 1
-	print(incremental_analytic[country_query]["avg"])
-	# tmp_total = incremental_analytic[country_query]["avg"] * total_days 
-	# average = (tmp_total + amount_query)/total_days
-	# variance = pow(incremental_analytic[country_query]["std"], 2)
-	# variance = variance + (pow(amount_query-average),2)
-	# variance /= total_days
-	# std = math.sqrt(variance)
-	# percentages = (float(state_total) / float(country_total)) * 100	
-	# incremental_analytic[country_query]["avg"] = average
-	# incremental_analytic[country_query]["std"] = std
-	# incremental_analytic[country_query]["percentages"] = percentages
-	# print("Value: ", incremental_analytic[country_query]["avg"]) 
+	tmp_total = (incremental_analytic[country_query][0]["averages"]) * total_days 
+	average = (tmp_total + float(amount_query))/total_days
+	variance = pow(incremental_analytic[country_query][0]["std"], 2)
+	variance = variance + pow((float(amount_query)-average),2)
+	variance /= total_days
+	std = math.sqrt(variance)
+	percentages = (float(state_total) / float(country_total)) * 100	
+	incremental_analytic[country_query][0]["averages"] = average
+	incremental_analytic[country_query][0]["std"] = std
+	incremental_analytic[country_query][0]["percentages"] = percentages
+	elapsed_time = (time.time() - start_time)
+	print("Time elapsed for update endpoint is : " + str(elapsed_time) + " seconds")
 
 
  
@@ -284,6 +288,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 	
 		
 			if country_query not in incremental_analytic.keys():
+				print("Reached inside only country for loop")
 				for state_key in data_layer.countries_data.get(country_query).states.keys():
 
 					# Get earliest available date & last date
@@ -310,7 +315,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 				incremental_analytic[country_query] = payload
 			elapsed_time = (time.time() - start_time)
 			print("Time elapsed for analytic endpoint is : " + str(elapsed_time) + " seconds")
-			return incremental_analytic[country_query]
+			payload = incremental_analytic[country_query]
 			
 		else:  # Regular process
 			for type in types:

@@ -353,16 +353,16 @@ def Update_Csv(country, state, type, date, value):
 					date_obj = Date(
 						date,
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"],
-						str(value),
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
+						str(value)
 					)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 					print("Edit Recovered")
 				elif type == "Confirmed":
 					date_obj = Date(
 						date,
-						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						str(value),
+						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
 					tmp_countries_list[country].states[state].dates[date] = date_obj

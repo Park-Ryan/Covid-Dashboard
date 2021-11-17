@@ -222,6 +222,7 @@ export default function HomePage(props) {
             });
         
       
+            setstateAnalyticsInputValue("");
         console.log("state Analytics Value Endpoint Fetched");
         fetch("/api/AnalyticsEndpoint", requestOptions)
             .then((response) => response.json())
@@ -373,6 +374,7 @@ export default function HomePage(props) {
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
+        
     }
 
     function handleDeleteButton(){
