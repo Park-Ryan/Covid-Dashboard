@@ -16,7 +16,15 @@ urlpatterns = [
 	path("StateTopDeaths", StateTopDeathsEndpoint.as_view()),
 	path("StateTopRecovery", StateTopRecoveryEndpoint.as_view()),
 	path("QueryEndpoint", QueryEndpoint.as_view()),
-	path("AnalyticsEndpoint", AnalyticsEndpoint.as_view()),
+	path("ConfirmedAvgEndpoint", ConfirmedAvgEndpoint.as_view()),
+	path("ConfirmedPercentageEndpoint", ConfirmedPercentageEndpoint.as_view()),
+	path("ConfirmedStdEndpoint", ConfirmedStdEndpoint.as_view()),
+	path("RecoveredPercentageEndpoint", RecoveredPercentageEndpoint.as_view()),
+	path("RecoveredAvgEndpoint", RecoveredAvgEndpoint.as_view()),
+	path("RecoveredStdEndpoint", RecoveredStdEndpoint.as_view()),
+	path("DeathsPercentageEndpoint", DeathsPercentageEndpoint.as_view()),
+	path("DeathsAvgEndpoint", DeathsAvgEndpoint.as_view()),
+	path("DeathsStdEndpoint", DeathsStdEndpoint.as_view())
 ]
 
 data_layer = DataLayer()

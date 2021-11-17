@@ -546,15 +546,11 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	# function to get the date range
 	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
 
-	averages = sum(type_nums) / len(type_nums)
+	averages = max(type_nums) / len(type_nums)
 	variance = sum(pow(x-averages,2) for x in type_nums)
 	variance /= (len(type_nums))
 	std = math.sqrt(variance)
-	print("Our Math")
-	print(averages)
-	print(std)
-	#print(variance)
-
+	
 	# print(type_nums)
 	# print("this is numpy")
 	# a= np.array(type_nums)
