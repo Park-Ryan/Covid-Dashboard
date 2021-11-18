@@ -18,6 +18,7 @@ import { hasNoLocationConflict } from "../tests/SearchValidation";
 import { StyledEngineProvider } from "@mui/material/styles";
 import Table from "../Table";
 import List from "../List";
+import BarChart from "../BarChart";
 
 const countryOptions = CountryData;
 const stateOptions = StateData;
@@ -87,6 +88,9 @@ export default function HomePage(props) {
     //State with the top 5 recovery
     const [stateTop5RecoveryValue, setStateTop5RecoveryValue] = React.useState("");
     const [stateTop5RecoveryInputValue, setStateTop5RecoveryInputValue] = React.useState("");
+
+    const [stateAnalytics, setstateAnalyticsValue] = React.useState("");
+    const [stateAnalyticsInputValue, setstateAnalyticsInputValue] = React.useState("");
 
     //Textfield updating logic
     function handleCountryInputChange(e){
@@ -163,52 +167,69 @@ export default function HomePage(props) {
         fetch("/api/QueryEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 // for testing!
                 setResultText(JSON.stringify(data));
             });
         
+        setCountryTop5DeathsInputValue("");
 
         //Country with top 5 deaths    
         console.log("Country Top Deaths Endpoint Fetched");
         fetch("/api/CountryTopDeaths", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 // for testing!
                 setCountryTop5DeathsInputValue(JSON.stringify(data));
             });
+
+            setStateTop5CasesInputValue("");
 
         //State with top 5 cases
         console.log("State Top Cases Endpoint Fetched");
         fetch("/api/StateTopCases", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 // for testing!
                 setStateTop5CasesInputValue(JSON.stringify(data));
             });
         
+            setStateTop5DeathsInputValue("");
+
         //State with top 5 deaths
         console.log("State Top Deaths Endpoint Fetched");
         fetch("/api/StateTopDeaths", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 // for testing!
                 setStateTop5DeathsInputValue(JSON.stringify(data));
             });
+
+            setStateTop5RecoveryInputValue("");
 
         //State with top 5 recovery
         console.log("State Top Recovery Endpoint Fetched");
         fetch("/api/StateTopRecovery", requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 // for testing!
                 setStateTop5RecoveryInputValue(JSON.stringify(data));
             });
+        
+            setstateAnalyticsInputValue("");
             
+        console.log("state Analytics Value Endpoint Fetched");
+        fetch("/api/AnalyticsEndpoint", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // for testing!
+                setstateAnalyticsInputValue(JSON.stringify(data));
+            });
     }
 
 
@@ -454,52 +475,104 @@ export default function HomePage(props) {
 
     function displayResultText() {
         console.log("START: ");
-        console.log(countryTop5DeathsInputValue);
+        console.log(JSON.parse(stateAnalyticsInputValue));
         console.log("END : ");
         return(
             <div>
                 <Grid container spacing={1}>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
+                            <BarChart mostDeaths={countryTop5DeathsInputValue}>
+                            </BarChart>  
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={3}>
+                        <Typography component="h6" variant="h6">
                             <List
-                                category={"Deaths"} 
-                                location={"Country"}
-                                mostConfirmed={[{"US":231,"China":132}]}
-                                mostDeaths={countryTop5DeathsInputValue}
-                                mostRecovered={[{"US":231,"China":132}]}
+                               data = {stateAnalyticsInputValue}
+                               type = {"Confirmed"}
+                               stat = {"averages"}
+                               shouldTruncate={1}
                                 ></List>
                          </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
-                                category={"Confirmed"}
-                                location={"State"}
-                                mostConfirmed={[{"US":231,"China":132}]}
-                                mostDeaths={stateTop5CasesInputValue}
-                                mostRecovered={[{"US":231,"China":132}]}
+                                data = {stateAnalyticsInputValue}
+                                type = {"Recovered"}
+                                stat = {"averages"}
+                                shouldTruncate={1}
                             ></List>
                         </Typography>
                     </Grid>
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
-                                category={"Deaths"}
-                                location={"State"}
-                                mostConfirmed={[{"US":231,"China":132}]}
-                                mostDeaths={stateTop5DeathsInputValue}
-                                mostRecovered={[{"US":231,"China":132}]}
+                                data = {stateAnalyticsInputValue}
+                                type = {"Deaths"}
+                                stat = {"averages"}
+                                shouldTruncate={1}
                             ></List>
                         </Typography>
                     </Grid>
-                    <Grid item align="center" xs={3}>
+                    <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                category={"Recovered"}
-                                location={"State"}
-                                mostConfirmed={[{"US":231,"China":132}]}
-                                mostDeaths={stateTop5RecoveryInputValue}
-                                mostRecovered={[{"US":231,"China":132}]}
+                                data = {stateAnalyticsInputValue}
+                                type = {"Confirmed"}
+                                stat = {"std"}
+                                shouldTruncate={1}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                data = {stateAnalyticsInputValue}
+                                type = {"Recovered"}
+                                stat = {"std"}
+                                shouldTruncate={1}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                data = {stateAnalyticsInputValue}
+                                type = {"Deaths"}
+                                stat = {"std"}
+                                shouldTruncate={1}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                data = {stateAnalyticsInputValue}
+                                type = {"Confirmed"}
+                                stat = {"percentages"}
+                                shouldTruncate={0}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                data = {stateAnalyticsInputValue}
+                                type = {"Recovered"}
+                                stat = {"percentages"}
+                                shouldTruncate={0}
+                            ></List>
+                        </Typography>
+                    </Grid>
+                    <Grid item align="center" xs={4}>
+                        <Typography component="h6" variant="h6">
+                            <List
+                                data = {stateAnalyticsInputValue}
+                                type = {"Deaths"}
+                                stat = {"percentages"}
+                                shouldTruncate={0}
                             ></List>
                         </Typography>
                     </Grid>
@@ -750,7 +823,7 @@ export default function HomePage(props) {
                     </Grid>
                     <Grid item align="center" xs={12}>
                         {/* {resultText != "" ? displayResultText() : ""} */}
-                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" )? displayResultText() : ""}
+                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" && stateAnalyticsInputValue != "" && stateAnalyticsInputValue != "" )? displayResultText() : ""}
                     </Grid>
                 </Grid>
             </div>
