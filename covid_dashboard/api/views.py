@@ -175,7 +175,7 @@ def update_Value(country_query, state_query, type_query, amount_query):
 		.reprJSON()[total_type_query]
 	)
 	total_days = 493 + 1
-	print(incremental_analytic)
+	print(incremental_analytic[country_query]["avg"])
 	# tmp_total = incremental_analytic[country_query]["avg"] * total_days 
 	# average = (tmp_total + amount_query)/total_days
 	# variance = pow(incremental_analytic[country_query]["std"], 2)
