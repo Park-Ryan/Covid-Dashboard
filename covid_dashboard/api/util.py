@@ -9,6 +9,7 @@ from queue import PriorityQueue
 
 did_change = False
 
+
 def Reverse_String(dict):
 
 	payload = dict["payload_bus"]
@@ -64,19 +65,23 @@ def Get_Top_5_Countries_Deaths():
 	# 		}
 	# 	)
 
-
 	for i in range(0, 5):
 		payload.append(
 			{
-				"Country":data_layer.top_5_death_pq.queue[i][1].country_name,
+				"Country": data_layer.top_5_death_pq.queue[i][1].country_name,
 				"State": empty,
 				"Date": empty,
-				"Types": {"Confirmed": empty, "Deaths": data_layer.top_5_death_pq.queue[i][1].total_deaths, "Recovered": empty},
+				"Types": {
+					"Confirmed": empty,
+					"Deaths": data_layer.top_5_death_pq.queue[i][1].total_deaths,
+					"Recovered": empty,
+				},
 			}
 		)
 	return payload
 
-#not using currently
+
+# not using currently
 def Get_Top_5_States_Cases():
 	from .urls import data_layer
 
@@ -119,10 +124,11 @@ def Get_Top_5_States_Cases():
 				"Types": {"Confirmed": top_five_values[i], "Deaths": empty, "Recovered": empty},
 			}
 		)
-	#print(payload)
+	# print(payload)
 	return payload
 
-#not using
+
+# not using
 def Get_Top_5_States_Deaths():
 	from .urls import data_layer
 
@@ -178,11 +184,11 @@ def Get_Top_5_States_Deaths():
 				"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
 			}
 		)
-	#print(payload)
+	# print(payload)
 	return payload
 
 
-#not using
+# not using
 def Get_Top_5_States_Recovered():
 	from .urls import data_layer
 
@@ -235,7 +241,7 @@ def Get_Top_5_States_Recovered():
 				"Types": {"Confirmed": empty, "Deaths": empty, "Recovered": top_five_values[i]},
 			}
 		)
-	#print(payload)
+	# print(payload)
 	return payload
 
 
@@ -304,7 +310,7 @@ def Create_Csv(country, state, type, date, amount):
 			date_obj = Date(date, "0", "0", str(amount))
 			# sets country object dates to the date object
 		tmp_countries_list[country].states[state].dates[date] = date_obj
-		
+
 		# finally add the country object to the countries list
 		# based on the country parameter from user
 
@@ -354,7 +360,7 @@ def Update_Csv(country, state, type, date, value):
 						date,
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
-						str(value)
+						str(value),
 					)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 					print("Edit Recovered")
@@ -372,7 +378,6 @@ def Update_Csv(country, state, type, date, value):
 			else:
 				print("Update couldn't find date")
 	data_layer.set_countries(tmp_countries_list)
-
 
 
 # type doesn't matter because you're deleting the whole row of values
@@ -548,37 +553,70 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 	return payload
 
 
+# TODO: Move to another file
+def Calc_Analytics(type_query, types_dict):
+	type_nums = types_dict[type_query]
+	averages = max(type_nums) / len(type_nums)
+	variance = sum(pow(x - averages, 2) for x in type_nums)
+	variance /= len(type_nums)
+	std = math.sqrt(variance)
+	return (averages, std)
+
+
+def Calc_Percentage(state_query, type_query, country_total, state_total):
+	from .urls import data_layer
+
+	percentages = 0
+	# Given only country: country total / global total = percentage
+	if not state_query:  # empty state query
+		percentages = (
+			float(country_total) / float(data_layer.global_total_types.get(type_query))
+		) * 100
+	# Given country and state: state total / country total = percentage
+	else:
+		# print("state total", state_total, "country total", country_total)
+		if country_total > 0:
+			percentages = (float(state_total) / float(country_total)) * 100
+		else:
+			percentages = 0
+
+	return percentages
+
+
+def Get_Totals(country_query, state_query, type_query):
+	from .urls import data_layer
+
+	# change type query str to match Total_ + case
+	total_type_query = "Total_" + type_query
+	# NOTE: reprJSON is read only
+	# TODO: CHANGE TO FLOAT
+	country_total = data_layer.countries_data.get(country_query).reprJSON()[
+		total_type_query
+	]
+	state_total = (
+		data_layer.countries_data.get(country_query)
+		.states.get(state_query)
+		.reprJSON()[total_type_query]
+	)
+	return (float(country_total), float(state_total))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+
+
 # TODO: if state is empty, calc the analytics for country
 # if type is empty, calc all the anayltics for each type
-# if
-def Get_Analytics(country_query, state_query, type_query, start_date, end_date) -> dict:
+
+# TODO: Have this method return all 3 types instead of needing a type query.
+# This is because it calls Get Date Range 3 times since thats how many types we have
+# O(States * Dates * Types) -> O(States * Dates)
+def Get_Analytics(country_query, state_query, start_date, end_date) -> dict:
 	from .urls import data_layer
 
 	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
-
-	# if date does exist do what?
-
-	# function to get the date range
-	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
-	averages = max(type_nums) / len(type_nums)
-	variance = sum(pow(x-averages,2) for x in type_nums)
-	variance /= (len(type_nums))
-	std = math.sqrt(variance)
-	
-	# print(type_nums)
-	# print("this is numpy")
-	# a= np.array(type_nums)
-	# stds = np.std(a)
-	# averagess = np.average(a)
-	# print(averagess)
-	# print(stds)
-	# print("end")
-	# print("type nums:", type_nums, "std:", std, "averages:", averages)
-	# if start_date == end_date:
-	# 	std = type_nums[0]
-	# 	averages = type_nums[0]
+	# type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
 
 	# if country and state are given, compute the percentage of covid (confirmed/deaths/recovered) cases
 	# to the total country (confirmed/deaths/recovered)
@@ -595,46 +633,38 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 		Add that total to the country total
 		
 	"""
-	# change type query str to match Total_ + case
-	total_type_query = "Total_" + type_query
-	# NOTE: reprJSON is read only
-	country_total = data_layer.countries_data.get(country_query).reprJSON()[
-		total_type_query
-	]
-	state_total = (
-		data_layer.countries_data.get(country_query)
-		.states.get(state_query)
-		.reprJSON()[total_type_query]
-	)
-	# Given only country: country total / global total = percentage
-	if not state_query:  # empty state query
-		percentages = (
-			float(country_total) / float(data_layer.global_total_types.get(total_type_query))
-		) * 100
-	# Given country and state: state total / country total = percentage
-	else:
-		percentages = (float(state_total) / float(country_total)) * 100
 
-	payload = {
-		"state": state_query,
-		"type": type_query,
-		"start-date": start_date,
-		"end-date": end_date,
-		"std": std,
-		"averages": averages,
-		"percentages": percentages,
-	}
-	
+	payload = []
+	types_dict = Get_Date_Range_All_Types(start_date, end_date, dates_dict)
+	types = ["Confirmed", "Deaths", "Recovered"]
+	for type in types:
+		averages, std = Calc_Analytics(type, types_dict)
+		country_total, state_total = Get_Totals(country_query, state_query, type)
+		percentages = Calc_Percentage(state_query, type, state_total, country_total)
+		payload.append(
+			{
+				"state": state_query,
+				"type": type,
+				"start-date": start_date,
+				"end-date": end_date,
+				"std": std,
+				"averages": averages,
+				"percentages": percentages,
+			}
+		)
+
 	return payload
 
 
 def is_in_queue(x, q):
-   with q.mutex:
-      return x in q.queue
+	with q.mutex:
+		return x in q.queue
+
 
 def exists(self, item):
-   if item in (x[1] for x in self.heap):
-   	return True
+	if item in (x[1] for x in self.heap):
+		return True
+
 
 def Only_Country_Analytic(country_query, state_query, type_query, start_date, end_date):
 	from .urls import data_layer
@@ -643,7 +673,7 @@ def Only_Country_Analytic(country_query, state_query, type_query, start_date, en
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
 	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
-	
+
 	"""
 		pq(max value, state)
 		range is same for everyone variable for total days (type num len)
@@ -651,7 +681,6 @@ def Only_Country_Analytic(country_query, state_query, type_query, start_date, en
 	if not exists(data_layer.only_country_analytic_pq, state_query):
 		data_layer.only_country_analytic_pq.put((max(type_nums), state_query))
 
-	
 
 # Returns a list of the dates in between two ranges
 def Get_Date_Range(type_query, start_date, end_date, dates_dict):
@@ -684,7 +713,44 @@ def Get_Date_Range(type_query, start_date, end_date, dates_dict):
 	"""
 	[0,2,3,4,...23423]
 	"""
-		
+
+	# print(date_key)
+	# print(test)
+	return type_nums
+
+
+def Get_Date_Range_All_Types(start_date, end_date, dates_dict) -> dict:
+	type_nums = {"Confirmed": [], "Deaths": [], "Recovered": []}
+
+	# TODO: Handle dates that DNE
+	# TODO: Handle same date
+	if start_date == end_date:
+		# print("IN GET DATE RANGE", dates_dict.get(start_date))
+		type_nums["Confirmed"].append(float(dates_dict.get(start_date).confirmed))
+		type_nums["Deaths"].append(float(dates_dict.get(start_date).deaths))
+		type_nums["Recovered"].append(float(dates_dict.get(start_date).recovered))
+		# print("START IS EQUAL TO END")
+		return type_nums
+
+	# TODO: write function that grabs all dates in between the start and end and returns a list
+
+	# Get index of our start date and start iterating from there until we reach the end date
+	# how about get a list of the keys(dates) we need to iterate over and plug them into our dict
+	date_keys_list = list(dates_dict.keys())
+	# slicing list of keys to get the date ranges in between included them
+	for date_key in date_keys_list[
+		date_keys_list.index(start_date) : date_keys_list.index(end_date)
+	]:
+		# TODO: maybe add a function that maps date object to a dict,
+		# so we dont have to check each type case w/ a cn if
+		# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
+		# type_nums.append(
+		# 	float(dates_dict.get(date_key).reprJSON()[type_query])
+		# )  # credit to alan
+		type_nums["Confirmed"].append(float(dates_dict.get(date_key).confirmed))
+		type_nums["Deaths"].append(float(dates_dict.get(date_key).deaths))
+		type_nums["Recovered"].append(float(dates_dict.get(date_key).recovered))
+
 	# print(date_key)
 	# print(test)
 	return type_nums
