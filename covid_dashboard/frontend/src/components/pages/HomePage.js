@@ -92,33 +92,7 @@ export default function HomePage(props) {
     const [stateAnalytics, setstateAnalyticsValue] = React.useState("");
     const [stateAnalyticsInputValue, setstateAnalyticsInputValue] = React.useState("");
 
-    const [stateConfirmedAvg, setstateConfirmedAvgValue] = React.useState("");
-    const [stateConfirmedAvgInputValue, setstateConfirmedAvgInputValue] = React.useState("");
-
-    const [stateConfirmedStd, setstateConfirmedStdValue] = React.useState("");
-    const [stateConfirmedStdInputValue, setstateConfirmedStdInputValue] = React.useState("");
-
-    const [stateConfirmedPercent, setstateConfirmedPercentValue] = React.useState("");
-    const [stateConfirmedPercentInputValue, setstateConfirmedPercentInputValue] = React.useState("");
-    
-    const [stateDeathsAvg, setstateDeathsAvgValue] = React.useState("");
-    const [stateDeathsAvgInputValue, setstateDeathsAvgInputValue] = React.useState("");
-
-    const [stateDeathsStd, setstateDeathsStdValue] = React.useState("");
-    const [stateDeathsStdInputValue, setstateDeathsStdInputValue] = React.useState("");
-
-    const [stateDeathsPercent, setstateDeathsPercentValue] = React.useState("");
-    const [stateDeathsPercentInputValue, setstateDeathsPercentInputValue] = React.useState("");
-
-    const [stateRecoveredAvg, setstateRecoveredAvgValue] = React.useState("");
-    const [stateRecoveredAvgInputValue, setstateRecoveredAvgInputValue] = React.useState("");
-
-    const [stateRecoveredStd, setstateRecoveredStdValue] = React.useState("");
-    const [stateRecoveredStdInputValue, setstateRecoveredStdInputValue] = React.useState("");
-
-    const [stateRecoveredPercent, setstateRecoveredPercentValue] = React.useState("");
-    const [stateRecoveredPercentInputValue, setstateRecoveredPercentInputValue] = React.useState("");
-
+  
     //Textfield updating logic
     function handleCountryInputChange(e){
         modCountrySetInputValue(e.target.value);
@@ -247,110 +221,14 @@ export default function HomePage(props) {
                 setStateTop5RecoveryInputValue(JSON.stringify(data));
             });
         
-        setstateConfirmedAvgInputValue("");
-        
-        console.log("State Confirmed Avg Endpoint fetched");
-        fetch("/api/ConfirmedAvgEndpoint", requestOptions)
+      
+        console.log("state Analytics Value Endpoint Fetched");
+        fetch("/api/AnalyticsEndpoint", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
                 // for testing!
-                setstateConfirmedAvgInputValue(JSON.stringify(data));
-            });
-        
-            
-        setstateConfirmedStdInputValue("");
-
-        console.log("State Confirmed Std Endpoint fetched");
-        fetch("/api/ConfirmedStdEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateConfirmedStdInputValue(JSON.stringify(data));
-            });
-            
-        setstateConfirmedPercentInputValue("");
-
-        console.log("State Confirmed Percent Endpoint fetched");
-        fetch("/api/ConfirmedPercentageEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateConfirmedPercentInputValue(JSON.stringify(data));
-            });
-            
-        setstateRecoveredAvgInputValue("");
-
-        console.log("State Recovered Avg Endpoint fetched");
-        fetch("/api/RecoveredAvgEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateRecoveredAvgInputValue(JSON.stringify(data));
-            });
-        
-        
-			
-		setstateRecoveredStdInputValue("");
-        
-		console.log("State Recovered Std Endpoint fetched");
-        fetch("/api/RecoveredStdEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateRecoveredStdInputValue(JSON.stringify(data));
-            });
-
-		
-		setstateRecoveredPercentInputValue("");
-        
-		console.log("State Recovered Percent Endpoint fetched");
-        fetch("/api/RecoveredPercentageEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateRecoveredPercentInputValue(JSON.stringify(data));
-            });
-
-		
-		setstateDeathsAvgInputValue("");
-
-        console.log("State Deaths Avg Endpoint fetched");
-        fetch("/api/DeathsAvgEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateDeathsAvgInputValue(JSON.stringify(data));
-            });
-        
-        setstateDeathsStdInputValue("");    
-
-        console.log("State Deaths Std Endpoint fetched");
-        fetch("/api/DeathsStdEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateDeathsStdInputValue(JSON.stringify(data));
-            });
-            
-            
-        
-        setstateDeathsPercentInputValue("");
-        
-        console.log("State Deaths Percent Endpoint fetched");
-        fetch("/api/DeathsPercentageEndpoint", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // for testing!
-                setstateDeathsPercentInputValue(JSON.stringify(data));
+                setstateAnalyticsInputValue(JSON.stringify(data));
             });
 
     }
@@ -597,11 +475,8 @@ export default function HomePage(props) {
 
 
     function displayResultText() {
-        
-        //print("money");
-
         console.log("START: ");
-        console.log(JSON.parse(stateConfirmedAvgInputValue));
+        console.log(JSON.parse(stateAnalyticsInputValue));
         console.log("END : ");
         return(
             <div>
@@ -615,7 +490,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
-                               data = {stateConfirmedAvgInputValue}
+                               data = {stateAnalyticsInputValue}
                                type = {"Confirmed"}
                                stat = {"averages"}
                                shouldTruncate={1}
@@ -625,7 +500,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateRecoveredAvgInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Recovered"}
                                 stat = {"averages"}
                                 shouldTruncate={1}
@@ -635,7 +510,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={3}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateDeathsAvgInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Deaths"}
                                 stat = {"averages"}
                                 shouldTruncate={1}
@@ -645,7 +520,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateConfirmedStdInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Confirmed"}
                                 stat = {"std"}
                                 shouldTruncate={1}
@@ -655,7 +530,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateRecoveredStdInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Recovered"}
                                 stat = {"std"}
                                 shouldTruncate={1}
@@ -665,7 +540,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateDeathsStdInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Deaths"}
                                 stat = {"std"}
                                 shouldTruncate={1}
@@ -675,7 +550,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateConfirmedPercentInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Confirmed"}
                                 stat = {"percentages"}
                                 shouldTruncate={0}
@@ -685,7 +560,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateRecoveredPercentInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Recovered"}
                                 stat = {"percentages"}
                                 shouldTruncate={0}
@@ -695,7 +570,7 @@ export default function HomePage(props) {
                     <Grid item align="center" xs={4}>
                         <Typography component="h6" variant="h6">
                             <List
-                                data = {stateDeathsPercentInputValue}
+                                data = {stateAnalyticsInputValue}
                                 type = {"Deaths"}
                                 stat = {"percentages"}
                                 shouldTruncate={0}
@@ -949,10 +824,7 @@ export default function HomePage(props) {
                     </Grid>
                     <Grid item align="center" xs={12}>
                         {/* {resultText != "" ? displayResultText() : ""} */}
-                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" 
-							&& stateDeathsAvgInputValue != "" && stateDeathsStdInputValue != "" && stateDeathsPercentInputValue != ""
-							&& stateConfirmedAvgInputValue != "" && stateConfirmedStdInputValue != "" && stateConfirmedPercentInputValue != ""
-                            && stateRecoveredAvgInputValue != "" && stateRecoveredStdInputValue != "" && stateRecoveredPercentInputValue != "")? displayResultText() : ""}
+                        {(resultText != "" && countryTop5DeathsInputValue != "" && stateTop5CasesInputValue != "" && stateTop5DeathsInputValue != "" && stateTop5RecoveryInputValue != "" && stateAnalyticsInputValue != "" && stateAnalyticsInputValue != "" )? displayResultText() : ""}
                     </Grid>
                 </Grid>
             </div>

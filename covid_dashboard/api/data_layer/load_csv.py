@@ -4,6 +4,7 @@ import csv
 import copy
 from enum import Enum
 from typing import Dict, OrderedDict
+from queue import PriorityQueue
 
 
 class Date:
@@ -99,6 +100,14 @@ class Country:
 			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
+	
+
+
+	def __lt__(self, other):
+		#(country.total_deaths, country_obj)
+		selfPriority = self.total_deaths
+		otherPriority = other.total_deaths
+		return selfPriority < otherPriority
 
 
 class Fields(Enum):
@@ -127,6 +136,8 @@ class DataLayer:
 			"Total_Deaths": 0,
 			"Total_Recovered": 0,
 		}
+		self.top_5_death_pq = PriorityQueue()
+		self.only_country_analytic_pq = PriorityQueue()
 
 	def test(self):
 		print("works")
@@ -305,6 +316,13 @@ class DataLayer:
 		self.global_total_types["Total_Deaths"] = global_deaths
 		self.global_total_types["Total_Recovered"] = global_recovered
 
+	#TODO: need to update this every call
+
+	def init_top_5_country(self):	
+		countries = self.countries_data
+		for country_obj in countries.values():
+			self.top_5_death_pq.put((country_obj.total_deaths*(-1), country_obj))
+				
 
 # data_layer = data_layer()
 # data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")

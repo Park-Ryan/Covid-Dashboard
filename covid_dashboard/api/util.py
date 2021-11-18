@@ -5,6 +5,9 @@ import copy
 from array import array
 import math
 import numpy as np
+from queue import PriorityQueue
+
+did_change = False
 
 def Reverse_String(dict):
 
@@ -51,18 +54,29 @@ def Get_Top_5_Countries_Deaths():
 	death_dict_values = death_dict.values()
 	top_five_values = list(death_dict_values)[:5]
 
+	# for i in range(0, 5):
+	# 	payload.append(
+	# 		{
+	# 			"Country": top_five_keys[i],
+	# 			"State": empty,
+	# 			"Date": empty,
+	# 			"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
+	# 		}
+	# 	)
+
+
 	for i in range(0, 5):
 		payload.append(
 			{
-				"Country": top_five_keys[i],
+				"Country":data_layer.top_5_death_pq.queue[i][1].country_name,
 				"State": empty,
 				"Date": empty,
-				"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
+				"Types": {"Confirmed": empty, "Deaths": data_layer.top_5_death_pq.queue[i][1].total_deaths, "Recovered": empty},
 			}
 		)
 	return payload
 
-
+#not using currently
 def Get_Top_5_States_Cases():
 	from .urls import data_layer
 
@@ -108,7 +122,7 @@ def Get_Top_5_States_Cases():
 	#print(payload)
 	return payload
 
-
+#not using
 def Get_Top_5_States_Deaths():
 	from .urls import data_layer
 
@@ -168,7 +182,7 @@ def Get_Top_5_States_Deaths():
 	return payload
 
 
-# left as the same in case we need to go back to this version
+#not using
 def Get_Top_5_States_Recovered():
 	from .urls import data_layer
 
@@ -290,6 +304,7 @@ def Create_Csv(country, state, type, date, amount):
 			date_obj = Date(date, "0", "0", str(amount))
 			# sets country object dates to the date object
 		tmp_countries_list[country].states[state].dates[date] = date_obj
+		
 		# finally add the country object to the countries list
 		# based on the country parameter from user
 
@@ -357,6 +372,7 @@ def Update_Csv(country, state, type, date, value):
 			else:
 				print("Update couldn't find date")
 	data_layer.set_countries(tmp_countries_list)
+
 
 
 # type doesn't matter because you're deleting the whole row of values
@@ -541,11 +557,11 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
+
 	# if date does exist do what?
 
 	# function to get the date range
 	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
-
 	averages = max(type_nums) / len(type_nums)
 	variance = sum(pow(x-averages,2) for x in type_nums)
 	variance /= (len(type_nums))
@@ -612,6 +628,31 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	return payload
 
 
+def is_in_queue(x, q):
+   with q.mutex:
+      return x in q.queue
+
+def exists(self, item):
+   if item in (x[1] for x in self.heap):
+   	return True
+
+def Only_Country_Analytic(country_query, state_query, type_query, start_date, end_date):
+	from .urls import data_layer
+
+	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
+	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
+
+	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
+	
+	"""
+		pq(max value, state)
+		range is same for everyone variable for total days (type num len)
+	"""
+	if not exists(data_layer.only_country_analytic_pq, state_query):
+		data_layer.only_country_analytic_pq.put((max(type_nums), state_query))
+
+	
+
 # Returns a list of the dates in between two ranges
 def Get_Date_Range(type_query, start_date, end_date, dates_dict):
 	type_nums = []
@@ -639,6 +680,11 @@ def Get_Date_Range(type_query, start_date, end_date, dates_dict):
 		type_nums.append(
 			float(dates_dict.get(date_key).reprJSON()[type_query])
 		)  # credit to alan
+
+	"""
+	[0,2,3,4,...23423]
+	"""
+		
 	# print(date_key)
 	# print(test)
 	return type_nums
