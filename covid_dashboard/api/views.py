@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .util import Backup_Csv, Get_Filtered_Data, Create_Csv, Delete_Csv, Get_Top_5_Countries_Deaths, Get_Top_5_States_Cases, Get_Top_5_States_Deaths, Get_Top_5_States_Recovered, Update_Csv
+import time
+
 from .util import *
 from datetime import datetime
 
@@ -18,7 +21,23 @@ import json
 # # import the data layer object to the views
 # from .apps import *
 
-# Create your views here.
+
+
+only_country_analytics = {}
+state_startDate_analytics = {}
+state_noDate_analytics = {}
+noState_twoDate_analytics = {}
+noState_startDate_analytics = {}
+country_State_twoDate_analytics = {}
+
+tmp_only_country = []
+tmp_state_startDate = []
+tmp_state_noDate = []
+tmp_noState_twoDate = []
+tmp_noState_startDate = []
+tmp_country_State_twoDate = []
+
+default_days = 7
 
 
 class SampleEndpoint(APIView):
@@ -58,162 +77,612 @@ class CountriesEndpoint(APIView):
 
 # TODO: Refactor to not call get analytics 3 times since we get all 3 types in one go
 # TODO: its slow when analytics for all states, optimize later
-# TODO: maybe a better format for json as well but later
-class AnalyticsEndpoint(APIView):
+# # TODO: maybe a better format for json as well but later
+# class AnalyticsEndpoint(APIView):
+# 	from .urls import data_layer
+
+# 	"""
+# 		TODO: We need to store the analytics after each computation
+# 		IDEA:
+# 			1. Create a separate dict for each if statement below
+# 				- This allows for quicker individual searching possibly?
+	
+# 	"""
+# 	#If statement 5: Country, no state, no date -> from beginning date to end [{"State" : [confirmed, deaths, recovered]}, ...]
+# 	#this dictionary will store the info
+	
+# 	default_days = 7
+# 	types = ["Confirmed", "Deaths", "Recovered"]
+# 	input_payload = self.request.data
+# 	payload = []
+
+# 	country_query = input_payload["payload"]["countryVal"]
+# 	state_query = input_payload["payload"]["stateVal"]
+# 	type_query = input_payload["payload"]["typeVal"]
+# 	date_query = input_payload["payload"]["dateVal"]
+
+# 		"""
+# 		Cases:
+# 			1. Input country, state, and two dates ->  [{"State" : [confirmed, deaths, recovered]}]
+# 			2. Country, state, one date ->  [{"State" : [confirmed, deaths, recovered]}]
+# 			3. Country, state, no date -> from beginning date to end  [{"State" : [confirmed, deaths, recovered]}]
+# 			4. Country, no state, two dates -> [{"State" : [confirmed, deaths, recovered]}, ...]
+# 			5. Country, no state, one date -> [{"State" : [confirmed, deaths, recovered]}, ...]
+# 			6. Country, no state, no date -> from beginning date to end [{"State" : [confirmed, deaths, recovered]}, ...]
+		
+# 		"""
+
+# 		# TESTING, take this out when actual args get passed
+# 		# country_query = "US"
+# 		# state_query = ""
+# 		# type_query = ""
+# 		# date_query = ""
+# 		end_date_query = ""
+# 		# default is to get the past 7 days if end date query is empty
+# 		# end_date_query = input_payload["payload"]["dateVal"]
+
+# 		# TODO: Check if date is valid/exists within database
+
+# 		# if end date is empty str, we need end date to be the starting date
+# 		# bc its the previous last 7 days
+
+
+def state_startDate(country_query, type_query, state_query, date_query):
+	from .urls import data_layer
+	payload = []
+	temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
+	# subtracting 7 days to current date,
+	# TODO: Default is 7 days, make a var to make it easily editable
+	# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
+	temp_date_obj -= timedelta(days=default_days)
+
+	start_date_query = temp_date_obj.strftime("%m/%d/%Y")
+	
+	payload.append(	
+			Get_Analytics(
+				country_query, state_query, type_query, start_date_query, date_query
+			)
+	)
+	return payload
+	#print(payload)
+def state_noDate(country_query, type_query, state_query):
+	from .urls import data_layer
+	payload = []
+	# no dates return all days for that one state
+	# Get earliest available date & last date
+	date_query = list(
+		data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
+	)[0]
+	end_date_query = list(
+		data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
+	)[-1]
+	payload.append(
+			Get_Analytics(
+				country_query, state_query, type_query, date_query, end_date_query
+			)
+	)
+	return payload
+# Case: no state, but given date range
+
+def noState_twoDate(country_query, type_query, date_query, end_date_query):
+# if state empty return all states
+	from .urls import data_layer
+	payload = []
+	for state_key in data_layer.countries_data.get(country_query).states.keys():
+		# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
+		# NOTE: What if user inputs the same date for both start and end?
+		# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
+		if (
+			date_query
+			not in data_layer.countries_data.get(country_query)
+			.states.get(state_key)
+			.dates.keys()
+		):
+			# print("start: ", date_query, "end:", end_date_query)
+			continue
+		
+		payload.append(
+			Get_Analytics(
+				country_query, state_key, type_query, date_query, end_date_query
+			)
+		)
+	return payload
+
+def noState_StartDate(country_query, date_query, type_query):
+	# if state empty return all states
+	from .urls import data_layer
+	payload = []
+	for state_key in data_layer.countries_data.get(country_query).states.keys():
+
+		temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
+		temp_date_obj -= timedelta(days=default_days)
+		start_date_query = temp_date_obj.strftime("%m/%d/%Y")
+
+		# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
+		if (
+			start_date_query
+			not in data_layer.countries_data.get(country_query)
+			.states.get(state_key)
+			.dates.keys()
+		):
+			# print("start: ", start_date_query, "end:", date_query)
+			continue
+
+		
+		payload.append(
+				Get_Analytics(
+					country_query, state_key, type_query, start_date_query, date_query
+				)
+		)
+	return payload
+			# print(payload)
+def only_Country(country_query, type_query):
+	# print("IN NO STATE, NO START DATE, NO END DATE, CASE")
+	from .urls import data_layer
+	#payload = []
+	if country_query not in only_country_analytics.keys():
+		for state_key in data_layer.countries_data.get(country_query).states.keys():
+			# Get earliest available date & last date
+			date_query = list(
+				data_layer.countries_data.get(country_query).states.get(state_key).dates.keys()
+			)[0]
+			end_date_query = list(
+				data_layer.countries_data.get(country_query).states.get(state_key).dates.keys()
+			)[-1]     
+
+			# print("start: ", date_query, "end:", end_date_query, "\n")
+
+			# if both dates are the same, then skip bc its not important
+			if date_query == end_date_query:
+				continue
+
+			
+			tmp_only_country.append(
+					Get_Analytics(
+						country_query, state_key, type_query, date_query, end_date_query
+					)
+			)
+		only_country_analytics[country_query].
+
+	return 
+
+def country_State_twoDate(country_query, state_query, date_query, end_date_query, type_query):  # Regular process
+	payload = []
+	payload.append(
+				Get_Analytics(
+					country_query, state_query, type_query, date_query, end_date_query
+				)
+	)
+	return payload
+# print(payload)
+	
+
+
+#confirmed analytics
+class ConfirmedPercentageEndpoint(APIView):
 	def post(self, request, format=None):
 		from .urls import data_layer
-
-		default_days = 7
-		types = ["Confirmed", "Deaths", "Recovered"]
 		input_payload = self.request.data
-		payload = []
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
 
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Confirmed", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Confirmed", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Confirmed", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Confirmed")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Confirmed")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Confirmed")
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for confirmed percent analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class ConfirmedAvgEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Confirmed", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Confirmed", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Confirmed", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Confirmed")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Confirmed")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Confirmed") 
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for confirmed avg analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class ConfirmedStdEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
 		country_query = input_payload["payload"]["countryVal"]
 		state_query = input_payload["payload"]["stateVal"]
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
-
-		"""
-		Cases:
-			1. Input country, state, and two dates ->  [{"State" : [confirmed, deaths, recovered]}]
-			2. Country, state, one date ->  [{"State" : [confirmed, deaths, recovered]}]
-			3. Country, state, no date -> from beginning date to end  [{"State" : [confirmed, deaths, recovered]}]
-			4. Country, no state, two dates -> [{"State" : [confirmed, deaths, recovered]}, ...]
-			5. Country, no state, one date -> [{"State" : [confirmed, deaths, recovered]}, ...]
-			6. Country, no state, no date -> from beginning date to end [{"State" : [confirmed, deaths, recovered]}, ...]
-		
-		"""
-
-		# TESTING, take this out when actual args get passed
-		# country_query = "US"
-		# state_query = ""
-		# type_query = ""
-		# date_query = ""
 		end_date_query = ""
-		# default is to get the past 7 days if end date query is empty
-		# end_date_query = input_payload["payload"]["dateVal"]
 
-		# TODO: Check if date is valid/exists within database
-
-		# if end date is empty str, we need end date to be the starting date
-		# bc its the previous last 7 days
+		payload = []
+		
 		if state_query and date_query and not end_date_query:
-			temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
-			# subtracting 7 days to current date,
-			# TODO: Default is 7 days, make a var to make it easily editable
-			# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
-			temp_date_obj -= timedelta(days=default_days)
-
-			start_date_query = temp_date_obj.strftime("%m/%d/%Y")
-
-			for type in types:
-				payload.append(
-					
-						Get_Analytics(
-							country_query, state_query, type, start_date_query, date_query
-						)
-					
-				)
-			print(payload)
+			start_time = time.time()
+			payload = state_startDate(country_query, "Confirmed", state_query, date_query)
+		
 		elif (
 			state_query and not date_query and not end_date_query
-		):  # no dates return all days for that one state
-			# Get earliest available date & last date
-			date_query = list(
-				data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
-			)[0]
-			end_date_query = list(
-				data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
-			)[-1]
-			for type in types:
-				payload.append(
-						Get_Analytics(
-							country_query, state_query, type, date_query, end_date_query
-						)
-				)
-		# Case: no state, but given date range
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Confirmed", state_query)
+
 		elif (
 			not state_query and date_query and end_date_query
-		):  # if state empty return all states
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Confirmed", date_query, end_date_query)
 
-			for state_key in data_layer.countries_data.get(country_query).states.keys():
-				# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
-				# NOTE: What if user inputs the same date for both start and end?
-				# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
-				if (
-					date_query
-					not in data_layer.countries_data.get(country_query)
-					.states.get(state_key)
-					.dates.keys()
-				):
-					# print("start: ", date_query, "end:", end_date_query)
-					continue
-				for type in types:
-					payload.append(
-							Get_Analytics(
-								country_query, state_key, type, date_query, end_date_query
-							)
-					)
 		elif (
 			not state_query and date_query and not end_date_query
-		):  # if state empty return all states
-			for state_key in data_layer.countries_data.get(country_query).states.keys():
-
-				temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
-				temp_date_obj -= timedelta(days=default_days)
-				start_date_query = temp_date_obj.strftime("%m/%d/%Y")
-
-				# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
-				if (
-					start_date_query
-					not in data_layer.countries_data.get(country_query)
-					.states.get(state_key)
-					.dates.keys()
-				):
-					# print("start: ", start_date_query, "end:", date_query)
-					continue
-
-				for type in types:
-					payload.append(
-							Get_Analytics(
-								country_query, state_key, type, start_date_query, date_query
-							)
-					)
-					# print(payload)
-
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Confirmed")
+		
 		elif not state_query and not date_query and not end_date_query:
-			# print("IN NO STATE, NO START DATE, NO END DATE, CASE")
-			for state_key in data_layer.countries_data.get(country_query).states.keys():
+			start_time = time.time()
+			payload = only_Country(country_query, "Confirmed")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Confirmed") 
 
-				# Get earliest available date & last date
-				date_query = list(
-					data_layer.countries_data.get(country_query).states.get(state_key).dates.keys()
-				)[0]
-				end_date_query = list(
-					data_layer.countries_data.get(country_query).states.get(state_key).dates.keys()
-				)[-1]
-
-				# print("start: ", date_query, "end:", end_date_query, "\n")
-
-				# if both dates are the same, then skip bc its not important
-				if date_query == end_date_query:
-					continue
-
-				for type in types:
-					payload.append(
-							Get_Analytics(
-								country_query, state_key, type, date_query, end_date_query
-							)
-					)
-		else:  # Regular process
-			for type in types:
-				payload.append(
-						Get_Analytics(
-							country_query, state_query, type, date_query, end_date_query
-						)
-				)
-		# print(payload)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for confirmed std analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
 		return Response(payload, status=status.HTTP_200_OK)
+
+#end of confirmed analytics
+
+
+
+#Recovered Analytics
+class RecoveredPercentageEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Recovered", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Recovered", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Recovered", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Recovered")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Recovered")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Recovered")
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for recovered percent analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class RecoveredAvgEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Recovered", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Recovered", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Recovered", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Recovered")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Recovered")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Recovered") 
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for recovered avg analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class RecoveredStdEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Recovered", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Recovered", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Recovered", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Recovered")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Recovered")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Recovered") 
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for recovered std analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+#end of recovered analytics
+
+#Deaths analytics
+class DeathsPercentageEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Deaths", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Deaths", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Deaths", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Deaths")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Deaths")
+		else:
+			start_time = time.time()
+			payload = country_State_twoDate(country_query, state_query, date_query, end_date_query, "Deaths")
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for deaths percent analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class DeathsAvgEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		if state_query and date_query and not end_date_query:
+				start_time = time.time()
+				payload = state_startDate(country_query, "Deaths", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Deaths", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):	
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Deaths", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Deaths")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Deaths")
+		else:
+			start_time = time.time()
+			payload = 	country_State_twoDate(country_query, state_query, date_query, end_date_query, "Deaths") 
+
+		
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for deaths avg analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+
+class DeathsStdEndpoint(APIView):
+	def post(self, request, format=None):
+		from .urls import data_layer
+		input_payload = self.request.data
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+		end_date_query = ""
+
+		payload = []
+		
+		if state_query and date_query and not end_date_query:
+			start_time = time.time()
+			payload = state_startDate(country_query, "Deaths", state_query, date_query)
+		
+		elif (
+			state_query and not date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = 	state_noDate(country_query, "Deaths", state_query)
+
+		elif (
+			not state_query and date_query and end_date_query
+		):	
+			start_time = time.time()
+			payload = noState_twoDate(country_query, "Deaths", date_query, end_date_query)
+
+		elif (
+			not state_query and date_query and not end_date_query
+		):
+			start_time = time.time()
+			payload = noState_StartDate(country_query, date_query, "Deaths")
+		
+		elif not state_query and not date_query and not end_date_query:
+			start_time = time.time()
+			payload = only_Country(country_query, "Deaths")
+		else:
+			start_time = time.time()
+			payload = country_State_twoDate(country_query, state_query, date_query, end_date_query, "Deaths") 
+
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for deaths std analytics endpoint is : " + str(elapsed_time) + " seconds")
+		
+		return Response(payload, status=status.HTTP_200_OK)
+
+#end of death analytics
 
 
 # def informationList(self, request):
@@ -240,7 +709,6 @@ class AnalyticsEndpoint(APIView):
 # serializer.save()
 #            return Response(status=status.HTTP_201_CREATED)
 
-
 class QueryEndpoint(APIView):
 	def post(self, request, format=None):
 
@@ -251,7 +719,10 @@ class QueryEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for query endpoint is : " + str(elapsed_time) + " seconds")
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -268,7 +739,10 @@ class AddEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for add endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -286,7 +760,10 @@ class EditEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -304,7 +781,10 @@ class DeleteEndpoint(APIView):
 		date_query = input_payload["payload"]["dateVal"]
 		amount_query = input_payload["payload"]["amountVal"]
 
+		start_time = time.time()
 		payload = Delete_Csv(country_query, state_query, date_query)
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for delete endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -316,9 +796,12 @@ class BackupEndpoint(APIView):
 
 		# TODO : Implement backend logic
 
+		start_time = time.time()
 		# Backup doesn't require any data to be passed in from the frontend
 
 		payload = Backup_Csv("api/data/archive/Copy_covid_19_data.csv")
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for backup endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
 
@@ -333,7 +816,11 @@ class CountryTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_Countries_Deaths()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for country top deaths endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -347,7 +834,12 @@ class StateTopCasesEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Cases()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top cases endpoint is : " + str(elapsed_time) + " seconds")
+
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -361,7 +853,11 @@ class StateTopDeathsEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Deaths()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top deaths endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -375,5 +871,9 @@ class StateTopRecoveryEndpoint(APIView):
 		type_query = input_payload["payload"]["typeVal"]
 		date_query = input_payload["payload"]["dateVal"]
 
+		start_time = time.time()
 		payload = Get_Top_5_States_Recovered()
+		elapsed_time = (time.time() - start_time)
+		print("Time elapsed for state top recovery endpoint is : " + str(elapsed_time) + " seconds")
+
 		return Response(payload, status=status.HTTP_200_OK)
