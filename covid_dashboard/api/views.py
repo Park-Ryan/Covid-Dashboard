@@ -242,7 +242,7 @@ def only_Country(country_query, type_query):
 						country_query, state_key, type_query, date_query, end_date_query
 					)
 			)
-		only_country_analytics[country_query].
+		#only_country_analytics[country_query].
 
 	return 
 
