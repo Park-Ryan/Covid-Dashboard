@@ -4,6 +4,7 @@ import csv
 import copy
 from enum import Enum
 from typing import Dict, OrderedDict
+from queue import PriorityQueue
 
 
 class Date:
@@ -12,6 +13,7 @@ class Date:
 		self.confirmed = confirmed
 		self.deaths = deaths
 		self.recovered = recovered
+		self.json = {}
 
 	def __repr__(self):
 		return "Date: % s, Confirmed: % s, Deaths: % s, Recovered: % s" % (
@@ -21,8 +23,14 @@ class Date:
 			self.recovered,
 		)
 
+	def init_reprJSON(self):
+		self.json = dict(
+			Confirmed=self.confirmed, Deaths=self.deaths, Recovered=self.recovered
+		)
+		return self.json
+
 	def reprJSON(self):
-		return dict(Confirmed=self.confirmed, Deaths=self.deaths, Recovered=self.recovered,)
+		return self.json
 
 
 class State:
@@ -33,6 +41,7 @@ class State:
 		self.total_deaths = 0
 		self.total_recovered = 0
 		self.dates = {}
+		self.json = {}
 
 	def __repr__(self):
 		return "% s, dates: %s" % (self.state_name, self.dates)
@@ -40,15 +49,15 @@ class State:
 	def __eq__(self, other):
 		return self.state_name == other.state_name
 
-	def reprJSON(self):
+	def init_reprJSON(self):
 		# turns the date objects into json but does not save,
 		# this is to prevent calling reprJSON once it was turned into a dict
 		# so whenever this is called it might take some take to convert all of it into json
 		temp_dates = {}
 		for k, v in self.dates.items():
-			temp_dates[k] = v.reprJSON()
+			temp_dates[k] = v.init_reprJSON()
 
-		return dict(
+		self.json = dict(
 			Country=self.country_name,
 			State=self.state_name,
 			Total_Confirmed=self.total_confirmed,
@@ -56,6 +65,11 @@ class State:
 			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
+
+		return self.json
+
+	def reprJSON(self):
+		return self.json
 
 
 # Every single province/state after merging all the dates togethers
@@ -71,6 +85,7 @@ class Country:
 		# Some countries don't have a state/province, but if they do we put it into the states list and leave dates in country empty
 		# Stores date objs
 		self.dates = {}
+		self.json = {}
 
 	def __repr__(self):
 		return "country name is % s, states are % s, dates are % s" % (
@@ -79,19 +94,20 @@ class Country:
 			self.dates,
 		)
 
-	def reprJSON(self):
+	# TODO: Cache
+	def init_reprJSON(self):
 		temp_states = {}
 		for k, v in self.states.items():
-			temp_states[k] = v.reprJSON()
+			temp_states[k] = v.init_reprJSON()
 
 		# turns the date objects into json but does not save,
 		# this is to prevent calling reprJSON once it was turned into a dict
 		# so whenever this is called it might take some take to convert all of it into json
 		temp_dates = {}
 		for k, v in self.dates.items():
-			temp_dates[k] = v.reprJSON()
+			temp_dates[k] = v.init_reprJSON()
 
-		return dict(
+		self.json = dict(
 			Country=self.country_name,
 			States=temp_states,
 			Total_Confirmed=self.total_confirmed,
@@ -99,6 +115,17 @@ class Country:
 			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
+
+		return self.json
+
+	def reprJSON(self):
+		return self.json
+
+	def __lt__(self, other):
+		# (country.total_deaths, country_obj)
+		selfPriority = self.total_deaths
+		otherPriority = other.total_deaths
+		return selfPriority < otherPriority
 
 
 class Fields(Enum):
@@ -127,6 +154,8 @@ class DataLayer:
 			"Total_Deaths": 0,
 			"Total_Recovered": 0,
 		}
+		self.top_5_death_pq = PriorityQueue()
+		self.only_country_analytic_pq = PriorityQueue()
 
 	def test(self):
 		print("works")
@@ -304,6 +333,19 @@ class DataLayer:
 		self.global_total_types["Total_Confirmed"] = global_confirmed
 		self.global_total_types["Total_Deaths"] = global_deaths
 		self.global_total_types["Total_Recovered"] = global_recovered
+
+	# TODO: need to update this every call
+
+	def init_top_5_country(self):
+		countries = self.countries_data
+		for country_obj in countries.values():
+			self.top_5_death_pq.put((country_obj.total_deaths * (-1), country_obj))
+
+	def init_reprJSON(self):
+		countries = self.countries_data
+		for country_obj in countries.values():
+			country_obj.init_reprJSON()
+		print("Finish init_reprJSON")
 
 
 # data_layer = data_layer()
