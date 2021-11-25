@@ -1,10 +1,7 @@
 from os import stat
 from .data_layer.load_csv import *
-import json
-import copy
 from array import array
 import math
-import numpy as np
 from queue import PriorityQueue
 
 did_change = False
@@ -127,19 +124,6 @@ def Get_Top_5_States_Deaths():
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
-	# TotalArray = []
-	# total_deaths = 0.0
-	# finalTotal = []
-
-	# for country_key, country_obj in tmp_countries_list.items():
-	# 	if stateFilter in country_obj.states:
-	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Deaths"]))
-
-	# 	TotalArray.append(total_deaths)
-	# for x in range(5):
-	# 	finalTotal.append(max(TotalArray))
-	# 	TotalArray.remove(max(TotalArray))
 
 	payload = []
 	tmp_list = []
@@ -187,17 +171,7 @@ def Get_Top_5_States_Recovered():
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
-	# TotalArray = {}
-	# total_deaths = 0.0
-
-	# for country_key, country_obj in tmp_countries_list.items():
-	# 	if stateFilter in country_obj.states:
-	# 		for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-	# 				total_deaths += float((tmp_countries_list[country_key].states[stateFilter].dates[date_key].reprJSON()["Recovered"]))
-
-	# 	TotalArray[country_key] = total_deaths
-
-	# print(max(TotalArray.values()))
+	
 	payload = []
 	tmp_list = []
 	case_dict = {}
@@ -238,8 +212,73 @@ def Get_Top_5_States_Recovered():
 	#print(payload)
 	return payload
 
+#Getter functions
+def Find_Country(country):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()	
 
-# def Copy_Csv(self, pathOfOriginal):
+	if country in tmp_countries_list:
+		return 1
+	else:
+		return 0
+					
+def Find_State(country, state):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()	
+
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+			return 1
+		else:
+			return 0
+	else:
+		return 0
+
+def Find_Date(country, state, type, date):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()	
+
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+				if date in tmp_countries_list[country].states[state].dates:
+					return 1
+				else:
+					return 0
+		else:
+			return 0
+	else:
+		return 0
+
+def Find_Cases(country, state, type, date):
+	from .urls import data_layer
+	tmp_countries_list = data_layer.get_countries()	
+
+	if country in tmp_countries_list:
+		if state in tmp_countries_list[country].states:
+				if date in tmp_countries_list[country].states[state].dates:
+					#this wont work until Edit CSV is fixed
+					if type == "Confirmed":
+						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
+					elif type == "Deaths":
+						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
+					elif type == "Recovered":
+						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
+					# country_total = data_layer.countries_data.get(country_query).reprJSON()[
+					# 	total_type_query
+					# ]
+					# state_total = (
+					# 	data_layer.countries_data.get(country_query)
+					# 	.states.get(state_query)
+					# 	.reprJSON()[total_type_query]
+					# )
+
+					# (dates_dict.get(start_date).reprJSON()[type_query])
+				else:
+					return 0
+		else:
+			return 0
+	else:
+		return 0
 
 # Backup CSV
 def Backup_Csv(path):
@@ -290,39 +329,53 @@ def Create_Csv(country, state, type, date, amount):
 	# Since function only takes in specified input then we have to check
 	# which type it is. After entering specified amount for type then
 	# make the other 2 types default 0
-	if date in tmp_countries_list[country].states[state].dates:
 
-		print("Create Exist. Go To Edit Instead.")
+	if country in tmp_countries_list:
+		print("The country is in it")
+		if date in tmp_countries_list[country].states[state].dates:
+			print("Create Exist. Go To Edit Instead.")
+		else:
+
+			if type == "Deaths":
+				date_obj = Date(date, "0", str(amount), "0")
+			elif type == "Confirmed":
+				date_obj = Date(date, str(amount), "0", "0")
+			elif type == "Recovered":
+				# then make a date object to add to the country object
+				date_obj = Date(date, "0", "0", str(amount))
+				# sets country object dates to the date object
+			tmp_countries_list[country].states[state].dates[date] = date_obj
+
 	else:
-
+		#Ask how to add it correctly
+		print("The country not is in it")
+		#print("Country: ", tmp_countries_list["US"])
 		if type == "Deaths":
 			date_obj = Date(date, "0", str(amount), "0")
 		elif type == "Confirmed":
 			date_obj = Date(date, str(amount), "0", "0")
-		elif type == "Recovered":
-			# then make a date object to add to the country object
-			date_obj = Date(date, "0", "0", str(amount))
-			# sets country object dates to the date object
-		tmp_countries_list[country].states[state].dates[date] = date_obj
-		
-		# finally add the country object to the countries list
-		# based on the country parameter from user
 
-	# else:
-	# 	#the country doesn't exist  so need to make a country object
-	# 	country_obj = Country(country)
-	# 	if type == "Deaths":
-	# 		date_obj = Date(date,"0", str(amount), "0")
-	# 	elif type == "Confirmed":
-	# 		date_obj = Date(date,str(amount), "0", "0")
-	# 	elif type == "Recovered":
-	# 		#then make a date object to add to the country object
-	# 		date_obj = Date( date,"0", "0", str(amount))
-	# 		#sets country object dates to the date object
-	# 	country_obj.states[state].dates[date] = date_obj
-	# 		#finally add the country object to the countries list
-	# 		#based on the country parameter from user
-	# 	tmp_countries_list[country] = country_obj
+			#Temp add date object to country dict
+			#But no state object added
+			tmp_countries_list[country] = date_obj
+		elif type == "Recovered":
+			date_obj = Date(date, "0", "0", str(amount))
+			
+			"""
+			Not Like this
+				tmp_countries_list.append(
+					{ 
+						"Country": country,
+						"State": state,
+						"Date": date,
+						"Types": {"Confirmed": str(amount), "Deaths": empty, "Recovered": empty},
+					}
+				)
+			"""
+		#print("Added: ", tmp_countries_list["US"].states)
+		#print("Added: ", tmp_countries_list["Hololive"].states)
+		# finally add the country object to the countries list
+
 
 	# back in the load_csv.py
 	# will set the countries_data to tmp_countries_list so we can use the updated data
@@ -335,6 +388,8 @@ def Update_Csv(country, state, type, date, value):
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
+	print("Before: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
+
 	if country in tmp_countries_list:
 		if state in tmp_countries_list[country].states:
 			if date in tmp_countries_list[country].states[state].dates:
@@ -365,13 +420,18 @@ def Update_Csv(country, state, type, date, value):
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
+					print("After: ", date_obj)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
-					print("Edit Confirmed")
+					print("Currently: ", tmp_countries_list[country].states[state].dates[date])
+					print("Edit Confirmed") 
 				else:
-					print("Update doesnt work")
+					print("Edit doesnt work")
 			else:
-				print("Update couldn't find date")
+				print("Edit couldn't find date")
 	data_layer.set_countries(tmp_countries_list)
+	#print("Current: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
+	#print("Cases: ", Find_Cases(country, state, type, date))
+
 
 
 
@@ -428,119 +488,122 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 	# this accounts for when country is empty or not empty, doesnt matter
 	# when no fields are empty
 	# return a json of of specific date of a state
-	if countryFilter != "" and dateFilter != "" and stateFilter != "":
-		if dateFilter in countries_list[countryFilter].states[stateFilter].dates:
-			# just return the whole JSON instead of a specific case, let the front end pick which type of case
-			payload.append(
-				{
-					"Country": countryFilter,
-					"State": stateFilter,
-					"Date": dateFilter,
-					# maybe for larger objects like country and state we could use the total cases instead of per date
-					"Types": countries_list[countryFilter]
-					.states[stateFilter]
-					.dates[dateFilter]
-					.reprJSON(),
-				}
-			)
-			# print("at country, date, state filled")
 
-	# when country is empty
-	# return data for that state and date
-	elif countryFilter == "" and stateFilter != "" and dateFilter != "":
-		for country_key, country_obj in countries_list.items():
-			if stateFilter in country_obj.states:
-				# checking if the date is a key within the state's dates dictionary
-				if dateFilter in country_obj.states[stateFilter].dates:
-					# just return the whole JSON instead of a specific case, let the front end pick which type of case
-					payload.append(
-						{
-							"Country": country_key,  # <- these change
-							"State": stateFilter,  # <- these change
-							"Date": dateFilter,  # <- when var is given, this will always be the same so you can just slap it there
-							"Types": country_obj.states[stateFilter].dates[dateFilter].reprJSON(),
-						}
-					)
-
-	# when date field is empty
-	# in this case, return all dates for a state
-	elif countryFilter != "" and stateFilter != "" and dateFilter == "":
-		# need date_key bc date filter is empty
-		for date_key, date_obj in (
-			countries_list[countryFilter].states[stateFilter].dates.items()
-		):
-			# adding to payload list
-			payload.append(
-				{
-					# we already know the country since every state obj has a country name member within it
-					"Country": countries_list[countryFilter].states[stateFilter].country_name,
-					"State": stateFilter,
-					"Date": date_key,
-					"Types": date_obj.reprJSON(),
-				}
-			)
-
-	# when country and date are empty
-	# in this case, return all the dates of that state
-	elif countryFilter == "" and stateFilter != "" and dateFilter == "":
-		for country_key, country_obj in countries_list.items():
-			if stateFilter in country_obj.states:
-				for date_key, date_obj in country_obj.states[stateFilter].dates.items():
-					# just return the whole JSON instead of a specific case, let the front end pick which type of case
-					payload.append(
-						{
-							"Country": country_key,  # <- these change
-							"State": stateFilter,  # <- these change
-							"Date": date_key,  # <- when var is given, this will always be the same so you can just slap it there
-							"Types": country_obj.states[stateFilter].dates[date_key].reprJSON(),
-						}
-					)
-
-	# when state and date field is empty(basically all country data) TODO: maybe include country.dates
-	# in this case, return all states and dates
-	elif countryFilter != "" and stateFilter == "" and dateFilter == "":
-		for state_key, state_obj in countries_list[countryFilter].states.items():
-			for date_key, date_obj in state_obj.dates.items():
-				if date_key in state_obj.dates:  # .dates returns a dictonary
-					payload.append(
-						{
-							"Country": countryFilter,
-							"State": state_key,
-							"Date": date_key,
-							"Types": date_obj.reprJSON(),
-						}
-					)
-
-	# when state is empty
-	# in this case, return all states, but only use the date given
-	elif countryFilter != "" and stateFilter == "" and dateFilter != "":
-		for state_key, state_obj in countries_list[countryFilter].states.items():
-			# checking if the date is a key within the state's dates dictionary
-			if dateFilter in state_obj.dates:
+	#add this temporay condition to avoid error when adding a ENTIRELY new country i.e. Hololive
+	if countryFilter in countries_list:
+		if countryFilter != "" and dateFilter != "" and stateFilter != "":
+			if dateFilter in countries_list[countryFilter].states[stateFilter].dates:
+				# just return the whole JSON instead of a specific case, let the front end pick which type of case
 				payload.append(
 					{
 						"Country": countryFilter,
-						"State": state_key,
+						"State": stateFilter,
 						"Date": dateFilter,
-						"Types": state_obj.dates[dateFilter].reprJSON(),
+						# maybe for larger objects like country and state we could use the total cases instead of per date
+						"Types": countries_list[countryFilter]
+						.states[stateFilter]
+						.dates[dateFilter]
+						.reprJSON(),
+					}
+				)
+				# print("at country, date, state filled")
+
+		# when country is empty
+		# return data for that state and date
+		elif countryFilter == "" and stateFilter != "" and dateFilter != "":
+			for country_key, country_obj in countries_list.items():
+				if stateFilter in country_obj.states:
+					# checking if the date is a key within the state's dates dictionary
+					if dateFilter in country_obj.states[stateFilter].dates:
+						# just return the whole JSON instead of a specific case, let the front end pick which type of case
+						payload.append(
+							{
+								"Country": country_key,  # <- these change
+								"State": stateFilter,  # <- these change
+								"Date": dateFilter,  # <- when var is given, this will always be the same so you can just slap it there
+								"Types": country_obj.states[stateFilter].dates[dateFilter].reprJSON(),
+							}
+						)
+
+		# when date field is empty
+		# in this case, return all dates for a state
+		elif countryFilter != "" and stateFilter != "" and dateFilter == "":
+			# need date_key bc date filter is empty
+			for date_key, date_obj in (
+				countries_list[countryFilter].states[stateFilter].dates.items()
+			):
+				# adding to payload list
+				payload.append(
+					{
+						# we already know the country since every state obj has a country name member within it
+						"Country": countries_list[countryFilter].states[stateFilter].country_name,
+						"State": stateFilter,
+						"Date": date_key,
+						"Types": date_obj.reprJSON(),
 					}
 				)
 
-	# when country and state is empty
-	# in this case, return all the dates, but only use the date given
-	elif countryFilter == "" and stateFilter == "" and dateFilter != "":
-		for country_key, country_obj in countries_list.items():
-			for state_key, state_obj in country_obj.states.items():
+		# when country and date are empty
+		# in this case, return all the dates of that state
+		elif countryFilter == "" and stateFilter != "" and dateFilter == "":
+			for country_key, country_obj in countries_list.items():
+				if stateFilter in country_obj.states:
+					for date_key, date_obj in country_obj.states[stateFilter].dates.items():
+						# just return the whole JSON instead of a specific case, let the front end pick which type of case
+						payload.append(
+							{
+								"Country": country_key,  # <- these change
+								"State": stateFilter,  # <- these change
+								"Date": date_key,  # <- when var is given, this will always be the same so you can just slap it there
+								"Types": country_obj.states[stateFilter].dates[date_key].reprJSON(),
+							}
+						)
+
+		# when state and date field is empty(basically all country data) TODO: maybe include country.dates
+		# in this case, return all states and dates
+		elif countryFilter != "" and stateFilter == "" and dateFilter == "":
+			for state_key, state_obj in countries_list[countryFilter].states.items():
+				for date_key, date_obj in state_obj.dates.items():
+					if date_key in state_obj.dates:  # .dates returns a dictonary
+						payload.append(
+							{
+								"Country": countryFilter,
+								"State": state_key,
+								"Date": date_key,
+								"Types": date_obj.reprJSON(),
+							}
+						)
+
+		# when state is empty
+		# in this case, return all states, but only use the date given
+		elif countryFilter != "" and stateFilter == "" and dateFilter != "":
+			for state_key, state_obj in countries_list[countryFilter].states.items():
 				# checking if the date is a key within the state's dates dictionary
 				if dateFilter in state_obj.dates:
 					payload.append(
 						{
-							"Country": country_key,  # <- these change
-							"State": state_key,  # <- these change
-							"Date": dateFilter,  # <- when var is given, this will always be the same so you can just slap it there
+							"Country": countryFilter,
+							"State": state_key,
+							"Date": dateFilter,
 							"Types": state_obj.dates[dateFilter].reprJSON(),
 						}
 					)
+
+		# when country and state is empty
+		# in this case, return all the dates, but only use the date given
+		elif countryFilter == "" and stateFilter == "" and dateFilter != "":
+			for country_key, country_obj in countries_list.items():
+				for state_key, state_obj in country_obj.states.items():
+					# checking if the date is a key within the state's dates dictionary
+					if dateFilter in state_obj.dates:
+						payload.append(
+							{
+								"Country": country_key,  # <- these change
+								"State": state_key,  # <- these change
+								"Date": dateFilter,  # <- when var is given, this will always be the same so you can just slap it there
+								"Types": state_obj.dates[dateFilter].reprJSON(),
+							}
+						)
 
 	# print(payload)
 	# if payload is empty, no results found / api responsed with nothing
@@ -566,18 +629,6 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	variance /= (len(type_nums))
 	std = math.sqrt(variance)
 	
-	# print(type_nums)
-	# print("this is numpy")
-	# a= np.array(type_nums)
-	# stds = np.std(a)
-	# averagess = np.average(a)
-	# print(averagess)
-	# print(stds)
-	# print("end")
-	# print("type nums:", type_nums, "std:", std, "averages:", averages)
-	# if start_date == end_date:
-	# 	std = type_nums[0]
-	# 	averages = type_nums[0]
 
 	# if country and state are given, compute the percentage of covid (confirmed/deaths/recovered) cases
 	# to the total country (confirmed/deaths/recovered)

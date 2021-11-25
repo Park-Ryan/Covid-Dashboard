@@ -406,11 +406,11 @@ class EditEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
-		print("Did change bool:")
-		print(did_change)
-		if did_change:
-			update_Value(country_query, state_query, type_query, amount_query)
-			did_change = False
+		#print("Did change bool:")
+		#print(did_change)
+		#if did_change:
+		#	update_Value(country_query, state_query, type_query, amount_query)
+		#	did_change = False
 		elapsed_time = (time.time() - start_time)
 		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
