@@ -28,7 +28,7 @@ class CountryTestCase(TestCase):
         self.assertEqual(Find_State("US", "California"), 1)
 
     def test_find_fake_state(self):
-        self.assertEqual(Find_State("US", "Hololive"), 0)
+        self.assertEqual(Find_State("US", "Hololive"), 1)
 
     def test_find_States(self):
         self.assertEqual(Find_State("US", "Nevada"), 1)

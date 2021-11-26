@@ -256,23 +256,12 @@ def Find_Cases(country, state, type, date):
 	if country in tmp_countries_list:
 		if state in tmp_countries_list[country].states:
 				if date in tmp_countries_list[country].states[state].dates:
-					#this wont work until Edit CSV is fixed
 					if type == "Confirmed":
-						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
+						return tmp_countries_list[country].states[state].dates[date].reprJSON()[type]
 					elif type == "Deaths":
-						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
+						return tmp_countries_list[country].states[state].dates[date].reprJSON()[type]
 					elif type == "Recovered":
-						return tmp_countries_list[country].states[state].dates[date].repreJSON()[type]
-					# country_total = data_layer.countries_data.get(country_query).reprJSON()[
-					# 	total_type_query
-					# ]
-					# state_total = (
-					# 	data_layer.countries_data.get(country_query)
-					# 	.states.get(state_query)
-					# 	.reprJSON()[total_type_query]
-					# )
-
-					# (dates_dict.get(start_date).reprJSON()[type_query])
+						return tmp_countries_list[country].states[state].dates[date].reprJSON()[type]
 				else:
 					return 0
 		else:
@@ -371,6 +360,22 @@ def Create_Csv(country, state, type, date, amount):
 						"Types": {"Confirmed": str(amount), "Deaths": empty, "Recovered": empty},
 					}
 				)
+
+
+	with open(path, "w") as outfile:
+		#for countryKey, country in tmp_countries_list.items():
+			csv_country = country
+			#for stateKey, state in country.states.items():
+				csv_state = state
+				#for dates in state.dates.values():
+					date = date
+					confirmed = confirmed_value
+					deaths = "0"
+					recovered = "0"
+					tmp_join = [SNo, date, csv_state, csv_country, date, confirmed, deaths, recovered]
+					tmp_string = ",".join(tmp_join)
+					tmp_string += "\n"
+					outfile.write(tmp_string)
 			"""
 		#print("Added: ", tmp_countries_list["US"].states)
 		#print("Added: ", tmp_countries_list["Hololive"].states)
@@ -388,49 +393,90 @@ def Update_Csv(country, state, type, date, value):
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
-	print("Before: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
+	#print("Before: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
+
+	#See confirmed if condition for comments
 
 	if country in tmp_countries_list:
 		if state in tmp_countries_list[country].states:
 			if date in tmp_countries_list[country].states[state].dates:
 				if type == "Deaths":
-					# print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+					tmp_recovered = tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]
+					tmp_confirmed = tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"]
 					date_obj = Date(
 						date,
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"],
-						str(value),
+						str(float(value)),
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
+
+					tmp_countries_list[country].states[state].dates[date].confirmed = tmp_confirmed
+					tmp_countries_list[country].states[state].dates[date].deaths = str(float(value))
+					tmp_countries_list[country].states[state].dates[date].recovered = tmp_recovered
+
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"] = tmp_confirmed
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"] = str(float(value))
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"] = tmp_recovered
+
 					print("Edit Deaths")
-					# print(tmp_countries_list[country].states[state].dates[date].reprJSON()[type])
+
 				elif type == "Recovered":
+					tmp_deaths = tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]
+					tmp_confirmed = tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"]
 					date_obj = Date(
 						date,
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
-						str(value)
+						str(float(value))
 					)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
+
+					tmp_countries_list[country].states[state].dates[date].confirmed = tmp_confirmed
+					tmp_countries_list[country].states[state].dates[date].deaths = tmp_deaths
+					tmp_countries_list[country].states[state].dates[date].recovered = str(float(value))
+
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"] = tmp_confirmed
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"] = tmp_deaths
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"] = str(float(value))
+
 					print("Edit Recovered")
+
 				elif type == "Confirmed":
+					tmp_deaths = tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"]
+					tmp_recovered = tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"]
 					date_obj = Date(
 						date,
-						str(value),
+						str(float(value)),
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
-					print("After: ", date_obj)
+					"""
+					There was an issue when adding it back as a date object. When doing so the JSON format gets
+					deleted / disappears, so you have to add it back. Don't know other ways other than manually
+					adding each type back to the JSON format.
+					"""
+					#print("After: ", date_obj)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
-					print("Currently: ", tmp_countries_list[country].states[state].dates[date])
+
+					tmp_countries_list[country].states[state].dates[date].confirmed = str(float(value))
+					tmp_countries_list[country].states[state].dates[date].deaths = tmp_deaths
+					tmp_countries_list[country].states[state].dates[date].recovered = tmp_recovered
+
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Confirmed"] = str(float(value))
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"] = tmp_deaths
+					tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"] = tmp_recovered
+
+					#print("Currently: ", tmp_countries_list[country].states[state].dates[date])
 					print("Edit Confirmed") 
+
 				else:
 					print("Edit doesnt work")
 			else:
 				print("Edit couldn't find date")
 	data_layer.set_countries(tmp_countries_list)
 	#print("Current: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
-	#print("Cases: ", Find_Cases(country, state, type, date))
+	#print("Check: ", tmp_countries_list[country].states[state].dates[date])
 
 
 
