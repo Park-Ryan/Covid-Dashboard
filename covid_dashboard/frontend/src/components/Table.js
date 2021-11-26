@@ -263,16 +263,16 @@ export default function EnhancedTable(props) {
     
 
     // setData(JSON.parse(data));
-    console.log("Hello from Table component");
-    console.log(data);
-    console.log(country);
-    console.log(state);
-    console.log(type);
-    console.log(date);
+    // console.log("Hello from Table component");
+    // console.log(data);
+    // console.log(country);
+    // console.log(state);
+    // console.log(type);
+    // console.log(date);
 
-    console.log("I want to print the countries");
+    // console.log("I want to print the countries");
 
-    console.log(data.length);
+    // console.log(data.length);
 
     function printCountryLoop(){
         for(let i = 0; i < data.length; ++i){
