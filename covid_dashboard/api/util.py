@@ -346,37 +346,16 @@ def Create_Csv(country, state, type, date, amount):
 
 			#Temp add date object to country dict
 			#But no state object added
-			tmp_countries_list[country] = date_obj
+			country_obj = Country(country)
+			country_obj.states[state] = State(state, country)
+			country_obj.states[state].dates[date] = date_obj
+
+			tmp_countries_list[country] = country_obj
 		elif type == "Recovered":
 			date_obj = Date(date, "0", "0", str(amount))
 			
-			"""
-			Not Like this
-				tmp_countries_list.append(
-					{ 
-						"Country": country,
-						"State": state,
-						"Date": date,
-						"Types": {"Confirmed": str(amount), "Deaths": empty, "Recovered": empty},
-					}
-				)
+		
 
-
-	with open(path, "w") as outfile:
-		#for countryKey, country in tmp_countries_list.items():
-			csv_country = country
-			#for stateKey, state in country.states.items():
-				csv_state = state
-				#for dates in state.dates.values():
-					date = date
-					confirmed = confirmed_value
-					deaths = "0"
-					recovered = "0"
-					tmp_join = [SNo, date, csv_state, csv_country, date, confirmed, deaths, recovered]
-					tmp_string = ",".join(tmp_join)
-					tmp_string += "\n"
-					outfile.write(tmp_string)
-			"""
 		#print("Added: ", tmp_countries_list["US"].states)
 		#print("Added: ", tmp_countries_list["Hololive"].states)
 		# finally add the country object to the countries list
@@ -385,7 +364,7 @@ def Create_Csv(country, state, type, date, amount):
 	# back in the load_csv.py
 	# will set the countries_data to tmp_countries_list so we can use the updated data
 	# print(tmp_countries_list[country].states[state])
-	data_layer.set_countries(tmp_countries_list)
+	#data_layer.set_countries(tmp_countries_list)
 
 
 # only update the confirmed, deaths, or recovered cases
@@ -665,7 +644,11 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
+	"""
+				 01/15/2020 <- this does not exist
+	California : 01/22/2020
 
+	"""
 	# if date does exist do what?
 
 	# function to get the date range
@@ -777,9 +760,6 @@ def Get_Date_Range(type_query, start_date, end_date, dates_dict):
 			float(dates_dict.get(date_key).reprJSON()[type_query])
 		)  # credit to alan
 
-	"""
-	[0,2,3,4,...23423]
-	"""
 		
 	# print(date_key)
 	# print(test)
