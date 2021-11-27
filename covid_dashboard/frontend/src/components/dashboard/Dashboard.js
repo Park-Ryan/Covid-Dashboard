@@ -22,26 +22,9 @@ import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
 import Demo from "./demo";
+import { MainInputFields } from "./InputFields"
 
-// function Copyright(props) {
-// 	return (
-// 		<Typography
-// 			variant="body2"
-// 			color="text.secondary"
-// 			align="center"
-// 			{...props}
-// 		>
-// 			{"Copyright © "}
-// 			<Link color="inherit" href="https://mui.com/">
-// 				Your Website
-// 			</Link>{" "}
-// 			{new Date().getFullYear()}
-// 			{"."}
-// 		</Typography>
-// 	);
-// }
-
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 const AppBar = styled(MuiAppBar, {
 	shouldForwardProp: (prop) => prop !== "open",
@@ -167,7 +150,7 @@ function DashboardContent() {
 					<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
 						<Grid container spacing={3}>
 							{/* Chart */}
-							<Grid item xs={12} md={8} lg={9}>
+							<Grid item xs={12} md={8} lg={12}>
 								<Paper
 									sx={{
 										p: 2,
@@ -176,11 +159,12 @@ function DashboardContent() {
 										height: 240,
 									}}
 								>
-									<Chart />
+									{/* <Chart /> */}
+									<MainInputFields/>
 								</Paper>
 							</Grid>
 							{/* Recent Deposits */}
-							<Grid item xs={12} md={4} lg={3}>
+							{/* <Grid item xs={12} md={4} lg={3}>
 								<Paper
 									sx={{
 										p: 2,
@@ -191,8 +175,8 @@ function DashboardContent() {
 								>
 									<Deposits />
 								</Paper>
-							</Grid>
-							{/* Recent Orders */}
+							</Grid> */}
+							{/* Covid Table */}
 							<Grid item xs={12}>
 								<Paper
 									sx={{
