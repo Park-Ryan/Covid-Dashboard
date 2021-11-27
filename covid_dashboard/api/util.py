@@ -3,6 +3,9 @@ from .data_layer.load_csv import *
 from array import array
 import math
 from queue import PriorityQueue
+import time
+from datetime import datetime
+from datetime import timedelta
 
 did_change = False
 
@@ -275,8 +278,6 @@ def Backup_Csv(path):
 
 	tmp_countries_list = data_layer.get_countries()
 
-	# print(tmp_countries_list["US"])
-
 	SNo = ""
 	LastUpdate = ""
 	csv_country = ""
@@ -358,12 +359,8 @@ def Create_Csv(country, state, type, date, amount):
 
 		#print("Added: ", tmp_countries_list["US"].states)
 		#print("Added: ", tmp_countries_list["Hololive"].states)
-		# finally add the country object to the countries list
 
 
-	# back in the load_csv.py
-	# will set the countries_data to tmp_countries_list so we can use the updated data
-	# print(tmp_countries_list[country].states[state])
 	#data_layer.set_countries(tmp_countries_list)
 
 
@@ -652,7 +649,7 @@ def Get_Analytics(country_query, state_query, type_query, start_date, end_date) 
 	# if date does exist do what?
 
 	# function to get the date range
-	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
+	type_nums = Get_Date_Range(country_query, state_query, type_query, start_date, end_date, dates_dict)
 	averages = max(type_nums) / len(type_nums)
 	variance = sum(pow(x-averages,2) for x in type_nums)
 	variance /= (len(type_nums))
@@ -721,7 +718,7 @@ def Only_Country_Analytic(country_query, state_query, type_query, start_date, en
 	# passing in cities like chicago / LA, which doesnt have valid dates for 3/30/2021
 	dates_dict = data_layer.countries_data.get(country_query).states.get(state_query).dates
 
-	type_nums = Get_Date_Range(type_query, start_date, end_date, dates_dict)
+	type_nums = Get_Date_Range(country_query, type_query, start_date, end_date, dates_dict)
 	
 	"""
 		pq(max value, state)
@@ -733,16 +730,21 @@ def Only_Country_Analytic(country_query, state_query, type_query, start_date, en
 	
 
 # Returns a list of the dates in between two ranges
-def Get_Date_Range(type_query, start_date, end_date, dates_dict):
-	type_nums = []
+def Get_Date_Range(country_query, state_query, type_query, start_date, end_date, dates_dict):
+	from .urls import data_layer
+	countries_list = data_layer.get_countries()
 
+	type_nums = []
+	real_dates = []
+	tmp_type_nums = []
 	# TODO: Handle dates that DNE
 	# TODO: Handle same date
 	if start_date == end_date:
 		# print("IN GET DATE RANGE", dates_dict.get(start_date))
-		type_nums.append(float(dates_dict.get(start_date).reprJSON()[type_query]))
-		# print("START IS EQUAL TO END")
-		return type_nums
+		if start_date in countries_list[country_query].states[state_query].dates:
+			type_nums.append(float(dates_dict.get(start_date).reprJSON()[type_query]))
+			print("START IS EQUAL TO END")
+			return type_nums
 
 	# TODO: write function that grabs all dates in between the start and end and returns a list
 
@@ -750,17 +752,40 @@ def Get_Date_Range(type_query, start_date, end_date, dates_dict):
 	# how about get a list of the keys(dates) we need to iterate over and plug them into our dict
 	date_keys_list = list(dates_dict.keys())
 	# slicing list of keys to get the date ranges in between included them
-	for date_key in date_keys_list[
-		date_keys_list.index(start_date) : date_keys_list.index(end_date)
-	]:
-		# TODO: maybe add a function that maps date object to a dict,
-		# so we dont have to check each type case w/ a cn if
-		# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
-		type_nums.append(
-			float(dates_dict.get(date_key).reprJSON()[type_query])
-		)  # credit to alan
+	# for date_key in date_keys_list[
+	# 	date_keys_list.index(start_date) : date_keys_list.index(end_date)
+	# ]:
+	# 	# TODO: maybe add a function that maps date object to a dict,
+	# 	# so we dont have to check each type case w/ a cn if
+	# 	# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
+	# 	tmp_type_nums.append(
+	# 		float(dates_dict.get(date_key).reprJSON()[type_query])
+	# 	)  # credit to alan
+	#print("Tmp_Type_Name: ", tmp_type_nums)
+	#print("START DATE: ", start_date, " END DATE: ", end_date)
+	tmp_start_date = end_date
 
-		
-	# print(date_key)
-	# print(test)
+	array_dates = []
+	int_date = datetime.strptime(tmp_start_date, "%m/%d/%Y")
+
+	for x in range(8):
+		start_int_date = int_date.strftime("%m/%d/%Y")
+		array_dates.insert(0, start_int_date)
+		int_date -= timedelta(days=1)
+
+	print("Array date: ", array_dates)
+	
+	for x in range(7):
+		#print("START DATE: ", array_dates[x])
+		if array_dates[x] in countries_list[country_query].states[state_query].dates:
+			print("QUALIFY DATES: ", array_dates[x])
+			type_nums.append(float(dates_dict.get(array_dates[x]).reprJSON()[type_query])) 
+		#else:
+			#print("NOT QUALIFY DATES: ", array_dates[x])
+
+	print("TYPE ARRAY: ", type_nums)
+
+
+	
+	#return tmp_type_nums
 	return type_nums

@@ -204,7 +204,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 			# TODO: Default is 7 days, make a var to make it easily editable
 			# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
 			temp_date_obj -= timedelta(days=default_days)
-
+			
 			start_date_query = temp_date_obj.strftime("%m/%d/%Y")
 
 			for type in types:
@@ -215,7 +215,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 						)
 					
 				)
-			print(payload)
+			#print(payload)
 		elif (
 			state_query and not date_query and not end_date_query
 		):  # no dates return all days for that one state
