@@ -74,7 +74,7 @@ const mdTheme = createTheme({ palette: { mode: "dark" } });
 
 function DashboardContent() {
 	const [open, setOpen] = React.useState(true);
-	const [payload, setPayload] = React.useState("");
+	const [payload, setPayload] = React.useState({});
 	const [mainInputs, setMainInputs] = React.useState({});
 
 	// whenever state updates, this will be called
@@ -109,8 +109,8 @@ function DashboardContent() {
 			.then((response) => response.json())
 			.then((data) => {
 				// for testing
-				console.log(data);
-				setPayload(JSON.stringify(data));
+				// console.log(data);
+				setPayload(data);
 			});
 	};
 
