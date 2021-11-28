@@ -1,51 +1,10 @@
 import * as React from "react";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { display, flexbox } from "@mui/system";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
-// pass in props data to make custom input fields
 // when user selects a country, the next input field will only show states from that country.
 // use a dictonary for that
-function SelectInputField(props) {
-	const [InputLabel, setInputLabel] = React.useState(props.InputLabel);
-	const [InputOptions, setInputOptions] = React.useState(props.InputOptions);
-
-	const handleChange = (event) => {
-		setInput(event.target.value);
-	};
-
-	const listInputs = InputOptions.map((input) => (
-		<MenuItem value="">{input}</MenuItem>
-	));
-
-	return (
-		<div>
-			<FormControl required sx={{ m: 1, minWidth: 120 }}>
-				<InputLabel id="demo-simple-select-required-label">
-					{InputLabel}
-				</InputLabel>
-				<Select
-					labelId="demo-simple-select-required-label"
-					id="demo-simple-select-required"
-					value={InputLabel}
-					label={`${InputLabel}"*"`}
-					onChange={handleChange}
-				>
-					{listInputs}
-				</Select>
-				{/* <FormHelperText>nah</FormHelperText> */}
-			</FormControl>
-		</div>
-	);
-}
-
 // https://javascript.plainenglish.io/how-to-use-the-autocomplete-component-in-material-ui-11a7132d2b71?gi=eb1a40c3a4fe
 function AutocompleteInputField(props) {
 	const [InputLabel, setInputLabel] = React.useState(props.InputLabel);
