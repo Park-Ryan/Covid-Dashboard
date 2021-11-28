@@ -8,7 +8,7 @@ class CountryTestCase(TestCase):
         self.assertEqual(Find_Country("US"), 1)
     
     def test_find_fake_country(self):
-        self.assertEqual(Find_Country("Hololive"), 0)
+        self.assertEqual(Find_Country("Gawr"), 0)
 
     def test_find_all_countries(self):
         self.assertEqual(Find_Country("Hong Kong"), 1)

@@ -9,17 +9,6 @@ from datetime import timedelta
 
 did_change = False
 
-def Reverse_String(dict):
-
-	payload = dict["payload_bus"]
-
-	payload = str(payload[::-1])
-
-	payload = payload.replace("'", '"')
-
-	return payload
-
-
 def Get_Top_5_Countries_Deaths():
 	from .urls import data_layer
 
@@ -64,6 +53,25 @@ def Get_Top_5_Countries_Deaths():
 	# 		}
 	# 	)
 
+	"""
+	7, 6, 4, 2, 1, 1, 1, 1, 1, 1
+
+	7 = US
+
+	get_countries_death() -> 7, 6, 4, 2, 1
+
+
+	somewhere later the user adds a value 
+	ie US = 9 <- US, NOT CA
+
+	pq.pop()
+	pq.put(9, country_obj)
+	get_countries_death() -> 9, 6, 4, 2, 1, 1, 1, 1, 1, 1
+
+
+	
+
+	"""
 
 	for i in range(0, 5):
 		payload.append(
@@ -75,6 +83,14 @@ def Get_Top_5_Countries_Deaths():
 			}
 		)
 	return payload
+
+def PQ_Update(country_name, updated_value):
+	"""
+	1. Get the PQ
+	2. Search country in that PQ
+	3. Replace/Update that country with specified value
+
+	"""
 
 #not using currently
 def Get_Top_5_States_Cases():
@@ -123,7 +139,7 @@ def Get_Top_5_States_Cases():
 	return payload
 
 #not using
-def Get_Top_5_States_Deaths():
+def Get_Top_5_States_Deaths():	
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
@@ -337,21 +353,16 @@ def Create_Csv(country, state, type, date, amount):
 			tmp_countries_list[country].states[state].dates[date] = date_obj
 
 	else:
-		#Ask how to add it correctly
 		print("The country not is in it")
 		#print("Country: ", tmp_countries_list["US"])
 		if type == "Deaths":
 			date_obj = Date(date, "0", str(amount), "0")
 		elif type == "Confirmed":
 			date_obj = Date(date, str(amount), "0", "0")
-
-			#Temp add date object to country dict
-			#But no state object added
-			country_obj = Country(country)
-			country_obj.states[state] = State(state, country)
-			country_obj.states[state].dates[date] = date_obj
-
-			tmp_countries_list[country] = country_obj
+			# country_obj = Country(country)
+			# country_obj.states[state] = State(state, country)
+			# country_obj.states[state].dates[date] = date_obj
+			# tmp_countries_list[country] = country_obj
 		elif type == "Recovered":
 			date_obj = Date(date, "0", "0", str(amount))
 			
@@ -360,7 +371,11 @@ def Create_Csv(country, state, type, date, amount):
 		#print("Added: ", tmp_countries_list["US"].states)
 		#print("Added: ", tmp_countries_list["Hololive"].states)
 
+		country_obj = Country(country)
+		country_obj.states[state] = State(state, country)
+		country_obj.states[state].dates[date] = date_obj
 
+		tmp_countries_list[country] = country_obj
 	#data_layer.set_countries(tmp_countries_list)
 
 
@@ -395,6 +410,30 @@ def Update_Csv(country, state, type, date, value):
 					tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"] = str(float(value))
 					tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"] = tmp_recovered
 
+					"""
+					1,   2,   3,   4,  5,  6,  7
+					100, 200, 150, 20, 30, 90, 10
+
+					100, 300, 450, 470, 500, 590, 600
+
+					EDIT ELEMENT 3
+					+10
+
+					100, 200, 160, 20, 30, 90, 10
+
+							       +10 +10 +10 +10
+					total_deaths
+					country.total_deaths += value
+					50
+
+					100
+					
+					50
+					tmp_country[country].total_deaths += value - tmp_deaths
+					
+					
+					"""
+
 					print("Edit Deaths")
 
 				elif type == "Recovered":
@@ -427,11 +466,6 @@ def Update_Csv(country, state, type, date, value):
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
-					"""
-					There was an issue when adding it back as a date object. When doing so the JSON format gets
-					deleted / disappears, so you have to add it back. Don't know other ways other than manually
-					adding each type back to the JSON format.
-					"""
 					#print("After: ", date_obj)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 
@@ -735,7 +769,6 @@ def Get_Date_Range(country_query, state_query, type_query, start_date, end_date,
 	countries_list = data_layer.get_countries()
 
 	type_nums = []
-	real_dates = []
 	tmp_type_nums = []
 	# TODO: Handle dates that DNE
 	# TODO: Handle same date
