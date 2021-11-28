@@ -96,6 +96,7 @@ function DashboardContent() {
 		// they create queues to optimize performance, which is why the changes don't update immediately.
 		// console.log(inputs)
 
+		// TODO: extract method
 		const requestOptions = {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },

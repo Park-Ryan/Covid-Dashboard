@@ -168,28 +168,47 @@ export default function EnhancedTable({ data }) {
 	const [rowsPerPage, setRowsPerPage] = React.useState(10);
 	const [rows, setRows] = React.useState([]);
 
+	// Will trigger whenever props is changed as well
 	React.useEffect(() => {
 		console.log("From Table.js: ");
-		console.log(data);
+		console.log("SETTING ROWS TO EMPTY");
+		// https://stackoverflow.com/questions/61898184/state-doesnt-clear-in-useeffect
 		UpdateTable(data);
 	}, [data]);
 
 	const UpdateTable = (data) => {
-		setRows([]);
+		const rows = [];
+	
 		for (let i = 0; i < data.length; i++) {
-			setRows((rows) => [
-				...rows,
-				createData(
-					data[i]["Country"],
-					data[i]["State"],
-					data[i]["Date"],
-					data[i]["Types"]["Confirmed"],
-					data[i]["Types"]["Deaths"],
-					data[i]["Types"]["Recovered"]
-				),
-			]);
+			rows.push(createData(
+				data[i]["Country"],
+				data[i]["State"],
+				data[i]["Date"],
+				data[i]["Types"]["Confirmed"],
+				data[i]["Types"]["Deaths"],
+				data[i]["Types"]["Recovered"]
+			));
 		}
-	};
+	
+		setRows(rows);
+		console.log(data);
+	}
+
+	// const UpdateTable = (data) => {
+	// 	for (let i = 0; i < data.length; i++) {
+	// 		setRows(() => [
+	// 			createData(
+	// 				data[i]["Country"],
+	// 				data[i]["State"],
+	// 				data[i]["Date"],
+	// 				data[i]["Types"]["Confirmed"],
+	// 				data[i]["Types"]["Deaths"],
+	// 				data[i]["Types"]["Recovered"]
+	// 			),
+	// 		]);
+	// 	}
+	// 	console.log(data);
+	// };
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === "asc";
@@ -272,13 +291,10 @@ export default function EnhancedTable({ data }) {
 									return (
 										<TableRow
 											hover
-											onClick={(event) =>
-												handleClick(event, row.country)
-											}
 											role="checkbox"
 											aria-checked={isItemSelected}
 											tabIndex={-1}
-											key={row.country}
+											key={index}
 											selected={isItemSelected}
 										>
 											<TableCell

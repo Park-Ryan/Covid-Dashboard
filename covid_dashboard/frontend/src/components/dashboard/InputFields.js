@@ -2,14 +2,15 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
+import { CountryData } from "../data/CountryData";
+import { CountryStateMap } from "../data/CountryStateMap";
+import { TypeData } from "../data/TypeData";
+import { DateData } from "../data/DateData";
 
 // when user selects a country, the next input field will only show states from that country.
 // use a dictonary for that
 // https://javascript.plainenglish.io/how-to-use-the-autocomplete-component-in-material-ui-11a7132d2b71?gi=eb1a40c3a4fe
 function AutocompleteInputField(props) {
-	const [InputLabel, setInputLabel] = React.useState(props.InputLabel);
-	const [InputOptions, setInputOptions] = React.useState(props.InputOptions);
-	// const [input, setInput] = React.useState(""); // '' is the initial state value
 
 	const handleChange = (event, newInput, reason) => {
 		if (reason === "clear") {
@@ -23,13 +24,13 @@ function AutocompleteInputField(props) {
 		<div>
 			<Autocomplete
 				disablePortal
-				id={`${InputLabel}-combo-box`}
+				id={`${props.InputLabel}-combo-box`}
 				onInputChange={handleChange}
 				value={props.input}
-				options={InputOptions}
+				options={props.InputOptions}
 				sx={{ width: 200 }}
 				renderInput={(params) => (
-					<TextField {...params} label={InputLabel} />
+					<TextField {...params} label={props.InputLabel} />
 				)}
 			/>
 		</div>
@@ -45,8 +46,10 @@ export function MainInputFields({ parentCallback }) {
 	const [typeInput, setTypeInput] = React.useState("");
 	const [dateInput, setDateInput] = React.useState("");
 
-	// test inputs
-	const inputs = ["US", "China", "Japan", "Africa"];
+	const countryOptions = CountryData;
+	const countryStateMapOptions = CountryStateMap;
+	const typeOptions = TypeData;
+	const dateOptions = DateData;
 
 	// pass back up the input values, then use those input values to make api call
 	const handleSubmit = (event) => {
@@ -65,35 +68,31 @@ export function MainInputFields({ parentCallback }) {
 		// pass input values back to parent component
 		parentCallback(inputValues);
 
-		// console.log(inputValues)
-		// then use those values to call the parent component's onSubmit method to call api
-		// not sure if this will work since the inputs arent passed back up yet - I was right
-		// onSubmit();
 	};
 
 	return (
 		<div style={{ display: "flex", flexWrap: "wrap" }}>
 			<AutocompleteInputField
 				InputLabel="Country"
-				InputOptions={inputs}
+				InputOptions={countryOptions}
 				input={countryInput}
 				setInput={setCountryInput}
 			/>
 			<AutocompleteInputField
 				InputLabel="State"
-				InputOptions={inputs}
+				InputOptions={countryStateMapOptions[countryInput]}
 				input={stateInput}
 				setInput={setStateInput}
 			/>
 			<AutocompleteInputField
 				InputLabel="Type"
-				InputOptions={inputs}
+				InputOptions={typeOptions}
 				input={typeInput}
 				setInput={setTypeInput}
 			/>
 			<AutocompleteInputField
 				InputLabel="Date"
-				InputOptions={inputs}
+				InputOptions={dateOptions}
 				input={dateInput}
 				setInput={setDateInput}
 			/>

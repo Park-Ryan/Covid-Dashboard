@@ -1,4 +1,5 @@
 var CountryStateMap = {
+    "" : [],
     "Mainland China": [
         "Anhui",
         "Beijing",
