@@ -76,22 +76,50 @@ const mdTheme = createTheme({ palette: { mode: "dark" } });
 function DashboardContent() {
 	const [open, setOpen] = React.useState(true);
 	const [payload, setPayload] = React.useState({});
-	const [mainInputs, setMainInputs] = React.useState({});
+	const [searchInputs, setSearchInputs] = React.useState({});
+	const [editInputs, setEditInputs] = React.useState({});
 
 	// whenever state updates, this will be called
 	// that means if ANY of the hooks are changed, it will trigger
 	// maybe use this to rerender components?
 	React.useEffect(() => {
-		console.log(mainInputs);
+		console.log(searchInputs);
 	});
 
 	const toggleDrawer = () => {
 		setOpen(!open);
 	};
 
-	const callback = (inputs) => {
+	const searchCallback = (inputs) => {
 		// do something with value in parent component, like save to state
-		setMainInputs(inputs);
+		setSearchInputs(inputs);
+
+		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
+		// they create queues to optimize performance, which is why the changes don't update immediately.
+		// console.log(inputs)
+
+		// TODO: extract method
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				inputs,
+			}),
+		};
+
+		console.log("Query Endpoint Fetched");
+		fetch("/api/QueryEndpoint", requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				// for testing
+				// console.log(data);
+				setPayload(data);
+			});
+	};
+
+	const editCallback = (inputs) => {
+		// do something with value in parent component, like save to state
+		setSearchInputs(inputs);
 
 		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
 		// they create queues to optimize performance, which is why the changes don't update immediately.
@@ -199,10 +227,10 @@ function DashboardContent() {
 								>
 									{/* <Chart /> */}
 									<SearchInputFields
-										parentCallback={callback}
+										parentCallback={searchCallback}
 									/>
 									<EditInputFields
-										parentCallback={callback}
+										parentCallback={editCallback}
 									/>
 								</Paper>
 							</Grid>
