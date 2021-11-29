@@ -1,7 +1,3 @@
-var TypeData = [
-    'Confirmed',
-    'Recovered',
-    'Deaths',
-];
+var TypeData = ["Confirmed", "Recovered", "Deaths"];
 
-export {TypeData};
+export { TypeData };

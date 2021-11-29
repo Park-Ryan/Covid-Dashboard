@@ -1,5 +1,6 @@
 import heapq
 from os import stat
+
 from .data_layer.load_csv import *
 from array import array
 import math
@@ -88,12 +89,8 @@ def Update_Deaths(country_name, updated_value):
 	"""
 	for index in range(0, len(data_layer.top_5_death_heap)):
 		if country_name == data_layer.top_5_death_heap[index][1].country_name:
-			print("updated reached")
 			tmp_total = float(data_layer.top_5_death_heap[index][1].total_deaths)
-			print("updated total - tmp total")
-			print(abs(float(updated_value) - tmp_total))
 			data_layer.top_5_death_heap[index][1].total_deaths = abs(float(updated_value) - tmp_total)
-			print("Data layer top 5")
 			print(data_layer.top_5_death_heap[index][1].total_deaths)
 	heapq.heapify(data_layer.top_5_death_heap)
 
@@ -108,13 +105,8 @@ def Update_Confirmed(country_name, updated_value):
 	"""
 	for index in range(0, len(data_layer.top_5_confirmed_heap)):
 		if country_name == data_layer.top_5_confirmed_heap[index][1].country_name:
-			print("updated reached")
 			tmp_total = float(data_layer.top_5_confirmed_heap[index][1].total_confirmed)
-			print("updated total - tmp total")
-			print(abs(float(updated_value) - tmp_total))
 			data_layer.top_5_confirmed_heap[index][1].total_confirmed = abs(float(updated_value) - tmp_total)
-			print("Data layer top 5 confirmed")
-			print(data_layer.top_5_confirmed_heap[index][1].total_deaths)
 	heapq.heapify(data_layer.top_5_confirmed_heap)
 
 #not using currently
@@ -349,6 +341,8 @@ def Create_Csv(country, state, type, date, amount):
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
+
+	need_update = False
 	# if country is not in the tmp list
 	# then we can just append to the dictionary becasuse that country doesn't exist
 	# else it exists
@@ -377,6 +371,9 @@ def Create_Csv(country, state, type, date, amount):
 				# then make a date object to add to the country object
 				date_obj = Date(date, "0", "0", str(amount))
 				# sets country object dates to the date object
+			print("Reached add for country")
+			date_obj.init_reprJSON()
+			need_update = True
 			tmp_countries_list[country].states[state].dates[date] = date_obj
 
 	else:
@@ -412,9 +409,19 @@ def Create_Csv(country, state, type, date, amount):
 			heapq.heapify(data_layer.top_5_death_heap)
 			print(data_layer.top_5_death_heap[0][1].total_deaths)
 		elif type == "Confirmed":
-			Update_Confirmed(country, amount)
+			heapq.heappush(data_layer.top_5_confirmed_heap, (-country_obj.total_confirmed, country_obj))
+			heapq.heapify(data_layer.top_5_confirmed_heap)
+			#Update_Confirmed(country, amount)
 
+
+	#case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True))
+	ordered_data = dict(sorted(tmp_countries_list[country].states[state].dates.items(), key = lambda x:datetime.strptime(x[0], "%m/%d/%Y")))
+	tmp_countries_list[country].states[state].dates = ordered_data
 	data_layer.set_countries(tmp_countries_list)
+	if need_update:
+		print("Reached need update")
+		Update_Value(country, state, type, date, amount)
+		need_update = False
 
 
 # only update the confirmed, deaths, or recovered cases
@@ -616,6 +623,7 @@ def Update_Value(country, state, type, date, amount):
 	from .urls import data_layer
 	
 	#updating the countries dict
+	print("Reached update value")
 	dates_dict = data_layer.countries_data.get(country).states.get(state).dates
 	date_keys_list = list(dates_dict.keys())
 	for date_key in date_keys_list[
