@@ -83,9 +83,9 @@ function DashboardContent() {
 	// that means if ANY of the hooks are changed, it will trigger
 	// maybe use this to rerender components?
 	React.useEffect(() => {
-		console.log();
 		console.log(searchInputs);
 		console.log(editInputs);
+		console.log(payload);
 	});
 
 	const toggleDrawer = () => {
@@ -115,6 +115,7 @@ function DashboardContent() {
 		// TODO: Figure out how to do that
 		CallAPI(inputs, endPoint);
 		// Might work, lets table rerender without pressing submit again
+		// NOTE: CAN ONLY SET STATE OF ANY HOOK ONCE, CALLAPI DOES IT EVERY CALL
 		CallAPI(inputs, "QueryEndpoint");
 	};
 
@@ -262,9 +263,17 @@ function DashboardContent() {
 			.then((data) => {
 				// for testing
 				// console.log(data);
-				setPayload(data);
+				// if the data is empty we do not setPayload bc we can only do it once per render!
+				if (!isEmpty(data)) {
+					console.log(!isEmpty(data));
+					setPayload(data);
+				}
 			});
 	}
+}
+
+function isEmpty(obj) {
+	return Object.keys(obj).length === 0;
 }
 
 export default function Dashboard() {
