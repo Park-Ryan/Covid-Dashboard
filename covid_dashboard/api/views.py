@@ -218,6 +218,17 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 
 		start_date_query = temp_date_obj.strftime("%m/%d/%Y")
 
+	payload = []
+	types = ["Confirmed", "Deaths", "Recovered"]
+	if state_query and date_query and not end_date_query:
+		temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
+		# subtracting 7 days to current date,
+		# TODO: Default is 7 days, make a var to make it easily editable
+		# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
+		temp_date_obj -= timedelta(days=default_days)
+
+		start_date_query = temp_date_obj.strftime("%m/%d/%Y")
+
 		for type in types:
 			payload.append(
 				Get_Analytics(country_query, state_query, type, start_date_query, date_query)
@@ -258,30 +269,22 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 				payload.append(
 					Get_Analytics(country_query, state_key, type, date_query, end_date_query)
 				)
+			# print(payload)
 	elif (
-		not state_query and date_query and not end_date_query
-	):  # if state empty return all states
-		for state_key in data_layer.countries_data.get(country_query).states.keys():
-
-			temp_date_obj = datetime.strptime(date_query, "%m/%d/%Y")
-			temp_date_obj -= timedelta(days=default_days)
-			start_date_query = temp_date_obj.strftime("%m/%d/%Y")
-
-			# TODO: Check if date is valid/exists within database, if it does not skip/continue? this state
-			if (
-				start_date_query
-				not in data_layer.countries_data.get(country_query)
-				.states.get(state_key)
-				.dates.keys()
-			):
-				# print("start: ", start_date_query, "end:", date_query)
-				continue
-
-			for type in types:
-				payload.append(
-					Get_Analytics(country_query, state_key, type, start_date_query, date_query)
-				)
-				# print(payload)
+		state_query and not date_query and not end_date_query
+	):  # no dates return all days for that one state
+		# Get earliest available date & last date
+		date_query = list(
+			data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
+		)[0]
+		end_date_query = list(
+			data_layer.countries_data.get(country_query).states.get(state_query).dates.keys()
+		)[-1]
+		for type in types:
+			payload.append(
+				Get_Analytics(country_query, state_query, type, start_date_query, date_query)
+			)
+			# print(payload)
 
 	elif not state_query and not date_query and not end_date_query:
 		# print("IN NO STATE, NO START DATE, NO END DATE, CASE")
@@ -378,6 +381,10 @@ class AddEndpoint(APIView):
 		amount_query = input_payload["amountVal"]
 		start_time = time.time()
 		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+
+		# For testing
+		# payload = Create_Csv("US", "California", "Confirmed", "01/22/2020", 99999)
+
 		elapsed_time = time.time() - start_time
 		print("Time elapsed for add endpoint is : " + str(elapsed_time) + " seconds")
 
@@ -398,11 +405,11 @@ class EditEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
-		print("Did change bool:")
-		print(did_change)
-		if did_change:
-			update_Value(country_query, state_query, type_query, amount_query)
-			did_change = False
+		# print("Did change bool:")
+		# print(did_change)
+		# if did_change:
+		# 	update_Value(country_query, state_query, type_query, amount_query)
+		# 	did_change = False
 		elapsed_time = time.time() - start_time
 		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
@@ -419,7 +426,7 @@ class DeleteEndpoint(APIView):
 		amount_query = input_payload["amountVal"]
 
 		start_time = time.time()
-		payload = Delete_Csv(country_query, state_query, date_query)
+		payload = Delete_Csv(country_query, state_query, date_query, type_query)
 		elapsed_time = time.time() - start_time
 		print("Time elapsed for delete endpoint is : " + str(elapsed_time) + " seconds")
 
