@@ -18,7 +18,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
-import BarChart from "./BarChart";
+import BarChart from "../BarChart";
+import TopList from "../list"
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
@@ -71,7 +72,7 @@ const Drawer = styled(MuiDrawer, {
 	},
 }));
 
-const mdTheme = createTheme({ palette: { mode: "dark" } });
+const mdTheme = createTheme({ palette: { mode: "light" } });
 
 function DashboardContent() {
 	const [open, setOpen] = React.useState(true);
@@ -145,7 +146,7 @@ function DashboardContent() {
 							noWrap
 							sx={{ flexGrow: 1 }}
 						>
-							Covid Dashboard
+							Analytics
 						</Typography>
 						{/* <IconButton color="inherit">
 							<Badge badgeContent={4} color="secondary">
@@ -178,7 +179,7 @@ function DashboardContent() {
 						backgroundColor: (theme) =>
 							theme.palette.mode === "light"
 								? theme.palette.grey[100]
-								: theme.palette.grey[900],
+								: theme.palette.grey[100],
 						flexGrow: 1,
 						height: "100vh",
 						overflow: "auto",
@@ -189,22 +190,24 @@ function DashboardContent() {
 						<Grid container spacing={3}>
 							{/* Chart */}
 							<Grid item xs={12} md={8} lg={12}>
-								<Paper
+								{/* <Paper
 									sx={{
 										p: 2,
 										display: "flex",
 										flexDirection: "column",
 										height: 240,
 									}}
-								>
+								> */}
 									{/* <Chart /> */}
-									<MainInputFields
+									{/* <MainInputFields
 										parentCallback={callback}
-									/>
-								</Paper>
+									/> */}
+                            		<BarChart mostDeaths={[{'Country':"USA", 'Types':{'Deaths':1000}}]}>
+                            		</BarChart>  
+								{/* </Paper> */}
 							</Grid>
-							{/* Recent Deposits */}
-							{/* <Grid item xs={12} md={4} lg={3}>
+							{/* Recent Deposits
+							<Grid item xs={12} md={4} lg={3}>
 								<Paper
 									sx={{
 										p: 2,
@@ -217,17 +220,40 @@ function DashboardContent() {
 								</Paper>
 							</Grid> */}
 							{/* Covid Table */}
-							<Grid item xs={12}>
-								<Paper
+							<Grid item xs={6}>
+								{/* <Paper
 									sx={{
 										p: 2,
 										display: "flex",
 										flexDirection: "column",
 									}}
-								>
+								> */}
 									{/* <Orders /> */}
 									<Table data={payload}/>
-								</Paper>
+								{/* </Paper> */}
+							</Grid>
+							<Grid item xs={6}>
+								{/* <Paper
+									sx={{
+										p: 2,
+										display: "flex",
+										flexDirection: "column",
+									}}
+								> */}
+									{/* <Orders /> */}
+									{/* <Table data={payload}/>
+									 */}
+									<BarChart mostDeaths={[{'Country':"USA", 'Types':{'Deaths':1000}}]}>
+                            		</BarChart>  
+								{/* </Paper> */}
+							</Grid>
+							<Grid item xs ={6}>
+								{/* <TopList
+                                data = {[{'Country':'USA', 'Types':{'Recovered':1000}, 'State']}
+                                type = {"Recovered"}
+                                stat = {"percentages"}
+                                shouldTruncate={0}
+                            ></TopList> */}
 							</Grid>
 						</Grid>
 						{/* <Copyright sx={{ pt: 4 }} /> */}
