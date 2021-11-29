@@ -16,29 +16,47 @@ export function EditInputFields({ parentCallback }) {
 	const [stateInput, setStateInput] = React.useState("");
 	const [typeInput, setTypeInput] = React.useState("");
 	const [dateInput, setDateInput] = React.useState("");
-	const [amountInput, setAmountInput] = React.useState(0);
+	const [amountInput, setAmountInput] = React.useState("");
+	const [endPoint, setEndpoint] = React.useState("");
 
 	const countryOptions = CountryData;
 	const countryStateMapOptions = CountryStateMap;
 	const typeOptions = TypeData;
 	const dateOptions = DateData;
 
-	// pass back up the input values, then use those input values to make api call
-	const handleSubmit = (event) => {
-		const inputValues = {
+	function getInputValues() {
+		return {
 			countryVal: countryInput,
 			stateVal: stateInput,
 			typeVal: typeInput,
 			dateVal: dateInput,
+			amountVal: Number(amountInput),
 		};
+	}
 
-		// pass input values back to parent component
-		parentCallback(inputValues);
+	// pass back up the input values, then use those input values to make api call
+
+	const handleAdd = (event) => {
+		parentCallback(getInputValues(), "AddEndpoint");
+	};
+
+	const handleEdit = (event) => {
+		parentCallback(getInputValues(), "EditEndpoint");
+	};
+
+	const handleDelete = (event) => {
+		parentCallback(getInputValues(), "DeleteEndpoint");
+	};
+
+	const handleBackup = (event) => {
+		parentCallback(getInputValues(), "BackupEndpoint");
 	};
 
 	return (
 		<>
-			<div style={{ display: "flex", flexWrap: "wrap" }}>
+			<div
+				style={{ display: "flex", flexWrap: "wrap", marginTop: "30px" }}
+			>
 				<AutocompleteInputField
 					InputLabel="Country"
 					InputOptions={countryOptions}
@@ -64,15 +82,28 @@ export function EditInputFields({ parentCallback }) {
 					setInput={setDateInput}
 				/>
 				<TextField
-					id="outlined-basic"
+					id="amount-text-field"
 					label="Amount"
+					type="number"
+					onInput={(e) => {
+						e.target.value = Math.max(0, parseInt(e.target.value))
+							.toString()
+							.slice(0, 12);
+					}}
 					variant="outlined"
+					value={amountInput}
+					onChange={(e) => {
+						setAmountInput(e.target.value);
+					}}
 				/>
 			</div>
 			{/* 0 auto margin apparently centers a div lol */}
-			<div style={{ display: "flex", flexWrap: "wrap", margin: "0 auto"}}>
+			<div
+				style={{ display: "flex", flexWrap: "wrap", margin: "0 auto" }}
+			>
 				<Button
-					onClick={handleSubmit}
+					id="Add"
+					onClick={handleAdd}
 					variant="outlined"
 					style={{
 						borderColor: "#FFFFFF",
@@ -82,7 +113,8 @@ export function EditInputFields({ parentCallback }) {
 					Add
 				</Button>
 				<Button
-					onClick={handleSubmit}
+					id="Edit"
+					onClick={handleEdit}
 					variant="outlined"
 					style={{
 						borderColor: "#FFFFFF",
@@ -92,7 +124,8 @@ export function EditInputFields({ parentCallback }) {
 					Edit
 				</Button>
 				<Button
-					onClick={handleSubmit}
+					id="Delete"
+					onClick={handleDelete}
 					variant="outlined"
 					style={{
 						borderColor: "#FFFFFF",
@@ -102,7 +135,8 @@ export function EditInputFields({ parentCallback }) {
 					Delete
 				</Button>
 				<Button
-					onClick={handleSubmit}
+					id="Backup"
+					onClick={handleBackup}
 					variant="outlined"
 					style={{
 						borderColor: "#FFFFFF",

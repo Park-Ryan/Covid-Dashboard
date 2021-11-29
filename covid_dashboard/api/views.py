@@ -354,14 +354,13 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 
 class QueryEndpoint(APIView):
 	def post(self, request, format=None):
+		input_payload = list(self.request.data.values())[0]
+		# print(input_payload)
 
-		input_payload = self.request.data
-		print(input_payload)
-
-		country_query = input_payload["inputs"]["countryVal"]
-		state_query = input_payload["inputs"]["stateVal"]
-		type_query = input_payload["inputs"]["typeVal"]
-		date_query = input_payload["inputs"]["dateVal"]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
 		start_time = time.time()
 		payload = Get_Filtered_Data(country_query, state_query, type_query, date_query)
 		elapsed_time = time.time() - start_time
@@ -371,15 +370,12 @@ class QueryEndpoint(APIView):
 
 class AddEndpoint(APIView):
 	def post(self, request, format=None):
-		input_payload = self.request.data
-
-		# TODO : Implement backend logic
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
-		amount_query = input_payload["payload"]["amountVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
+		amount_query = input_payload["amountVal"]
 		start_time = time.time()
 		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
 		elapsed_time = time.time() - start_time
@@ -390,17 +386,15 @@ class AddEndpoint(APIView):
 
 class EditEndpoint(APIView):
 	def post(self, request, format=None):
-
-		input_payload = self.request.data
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
+		amount_query = input_payload["amountVal"]
 
 		# TODO : Implement backend logic
 		did_change = True
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
-		amount_query = input_payload["payload"]["amountVal"]
 
 		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
@@ -417,16 +411,12 @@ class EditEndpoint(APIView):
 
 class DeleteEndpoint(APIView):
 	def post(self, request, format=None):
-
-		input_payload = self.request.data
-
-		# TODO : Implement backend logic
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
-		amount_query = input_payload["payload"]["amountVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
+		amount_query = input_payload["amountVal"]
 
 		start_time = time.time()
 		payload = Delete_Csv(country_query, state_query, date_query)

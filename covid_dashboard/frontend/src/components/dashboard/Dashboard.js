@@ -83,7 +83,9 @@ function DashboardContent() {
 	// that means if ANY of the hooks are changed, it will trigger
 	// maybe use this to rerender components?
 	React.useEffect(() => {
+		console.log();
 		console.log(searchInputs);
+		console.log(editInputs);
 	});
 
 	const toggleDrawer = () => {
@@ -99,49 +101,20 @@ function DashboardContent() {
 		// console.log(inputs)
 
 		// TODO: extract method
-		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				inputs,
-			}),
-		};
-
-		console.log("Query Endpoint Fetched");
-		fetch("/api/QueryEndpoint", requestOptions)
-			.then((response) => response.json())
-			.then((data) => {
-				// for testing
-				// console.log(data);
-				setPayload(data);
-			});
+		CallAPI(inputs, "QueryEndpoint");
 	};
 
-	const editCallback = (inputs) => {
+	const editCallback = (inputs, endPoint) => {
 		// do something with value in parent component, like save to state
-		setSearchInputs(inputs);
+		setEditInputs(inputs);
 
 		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
 		// they create queues to optimize performance, which is why the changes don't update immediately.
 		// console.log(inputs)
 
-		// TODO: extract method
-		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				inputs,
-			}),
-		};
-
-		console.log("Query Endpoint Fetched");
-		fetch("/api/QueryEndpoint", requestOptions)
-			.then((response) => response.json())
-			.then((data) => {
-				// for testing
-				// console.log(data);
-				setPayload(data);
-			});
+		// Each button calls a different endpoint
+		// TODO: Figure out how to do that
+		CallAPI(inputs, endPoint);
 	};
 
 	return (
@@ -267,6 +240,30 @@ function DashboardContent() {
 			</Box>
 		</ThemeProvider>
 	);
+
+	function CallAPI(inputs, endPoint) {
+		// Checks if empty
+		Object.values(inputs).forEach((val) => {
+			console.log(val);
+			if (val === "") return;
+		});
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				inputs,
+			}),
+		};
+
+		console.log(`${endPoint} Fetched`);
+		fetch(`/api/${endPoint}`, requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				// for testing
+				// console.log(data);
+				setPayload(data);
+			});
+	}
 }
 
 export default function Dashboard() {

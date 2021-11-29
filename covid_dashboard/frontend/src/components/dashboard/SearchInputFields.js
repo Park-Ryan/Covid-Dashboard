@@ -11,7 +11,6 @@ import { DateData } from "../data/DateData";
 // use a dictonary for that
 // https://javascript.plainenglish.io/how-to-use-the-autocomplete-component-in-material-ui-11a7132d2b71?gi=eb1a40c3a4fe
 export function AutocompleteInputField(props) {
-
 	const handleChange = (event, newInput, reason) => {
 		if (reason === "clear") {
 			props.setInput("");
@@ -53,10 +52,6 @@ export function SearchInputFields({ parentCallback }) {
 
 	// pass back up the input values, then use those input values to make api call
 	const handleSubmit = (event) => {
-		// console.log(countryInput);
-		// console.log(stateInput);
-		// console.log(typeInput);
-		// console.log(dateInput);
 
 		const inputValues = {
 			countryVal: countryInput,
@@ -67,7 +62,6 @@ export function SearchInputFields({ parentCallback }) {
 
 		// pass input values back to parent component
 		parentCallback(inputValues);
-
 	};
 
 	return (
@@ -100,9 +94,11 @@ export function SearchInputFields({ parentCallback }) {
 				onClick={handleSubmit}
 				variant="outlined"
 				style={{
-					marginLeft: "2rem",
+					marginLeft: "5rem",
 					borderColor: "#FFFFFF",
 					color: "#FFFFFF",
+					maxHeight: "45px",
+					marginTop : "5px",
 				}}
 			>
 				Submit
