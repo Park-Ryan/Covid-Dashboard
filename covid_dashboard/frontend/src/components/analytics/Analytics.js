@@ -249,7 +249,7 @@ function DashboardContent() {
 							</Grid>
 							<Grid item xs ={6}>
 								{/* <TopList
-                                data = {[{'Country':'USA', 'Types':{'Recovered':1000}, 'State']}
+                                data = {[{state:'California', type:'Recovered' , percentages:1000}]}
                                 type = {"Recovered"}
                                 stat = {"percentages"}
                                 shouldTruncate={0}
