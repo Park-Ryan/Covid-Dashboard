@@ -9,21 +9,16 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "./listItems";
-import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
-import Table from "./Table";
-import { SearchInputFields } from "./SearchInputFields";
-import { EditInputFields } from "./EditInputFields.js";
+import { mainListItems } from "../dashboard/listItems";
+import PieChart from "../PieChart";
+import BarChart from "../BarChart";
+import SplineChart from "../SplineChart";
+import RotatedBarChart from "../RotatedBarChart";
 
 const drawerWidth = 220;
 
@@ -76,46 +71,16 @@ const mdTheme = createTheme({ palette: { mode: "dark" } });
 function DashboardContent() {
 	const [open, setOpen] = React.useState(true);
 	const [payload, setPayload] = React.useState({});
-	const [searchInputs, setSearchInputs] = React.useState({});
-	const [editInputs, setEditInputs] = React.useState({});
 
 	// whenever state updates, this will be called
 	// that means if ANY of the hooks are changed, it will trigger
 	// maybe use this to rerender components?
 	React.useEffect(() => {
 		console.log();
-		console.log(searchInputs);
-		console.log(editInputs);
 	});
 
 	const toggleDrawer = () => {
 		setOpen(!open);
-	};
-
-	const searchCallback = (inputs) => {
-		// do something with value in parent component, like save to state
-		setSearchInputs(inputs);
-
-		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
-		// they create queues to optimize performance, which is why the changes don't update immediately.
-		// console.log(inputs)
-
-		CallAPI(inputs, "QueryEndpoint");
-	};
-
-	const editCallback = (inputs, endPoint) => {
-		// do something with value in parent component, like save to state
-		setEditInputs(inputs);
-
-		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
-		// they create queues to optimize performance, which is why the changes don't update immediately.
-		// console.log(inputs)
-
-		// Each button calls a different endpoint
-		// TODO: Figure out how to do that
-		CallAPI(inputs, endPoint);
-		// Might work, lets table rerender without pressing submit again
-		CallAPI(inputs, "QueryEndpoint");
 	};
 
 	return (
@@ -149,11 +114,6 @@ function DashboardContent() {
 						>
 							Covid Dashboard
 						</Typography>
-						{/* <IconButton color="inherit">
-							<Badge badgeContent={4} color="secondary">
-								<NotificationsIcon />
-							</Badge>
-						</IconButton> */}
 					</Toolbar>
 				</AppBar>
 				<Drawer variant="permanent" open={open}>
@@ -172,7 +132,6 @@ function DashboardContent() {
 					<Divider />
 					<List>{mainListItems}</List>
 					<Divider />
-					{/* <List>{secondaryListItems}</List> */}
 				</Drawer>
 				<Box
 					component="main"
@@ -187,55 +146,24 @@ function DashboardContent() {
 					}}
 				>
 					<Toolbar />
-					<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+					<Container maxWidth="100" sx={{ mt: 4, mb: 4 }}>
 						<Grid container spacing={3}>
-							{/* Chart */}
-							<Grid item xs={12} md={8} lg={12}>
-								<Paper
-									sx={{
-										p: 2,
-										display: "flex",
-										flexDirection: "column",
-										height: 240,
-									}}
-								>
-									{/* <Chart /> */}
-									<SearchInputFields
-										parentCallback={searchCallback}
-									/>
-									<EditInputFields
-										parentCallback={editCallback}
-									/>
-								</Paper>
+							<Grid item xs={12} md={4} lg={4}>
+								<PieChart />
 							</Grid>
-							{/* Recent Deposits */}
-							{/* <Grid item xs={12} md={4} lg={3}>
-								<Paper
-									sx={{
-										p: 2,
-										display: "flex",
-										flexDirection: "column",
-										height: 240,
-									}}
-								>
-									<Deposits />
-								</Paper>
-							</Grid> */}
-							{/* Covid Table */}
-							<Grid item xs={12}>
-								<Paper
-									sx={{
-										p: 2,
-										display: "flex",
-										flexDirection: "column",
-									}}
-								>
-									{/* <Orders /> */}
-									<Table data={payload} />
-								</Paper>
+							<Grid item xs={12} md={4} lg={4}>
+								<BarChart />
+							</Grid>
+							<Grid item xs={12} md={4} lg={4}>
+								<SplineChart />
+							</Grid>
+							<Grid item xs={12} md={4} lg={4}>
+								<RotatedBarChart />
+							</Grid>
+							<Grid item xs={12} md={4} lg={4}>
+								{/* <RotatedBarChart /> */}
 							</Grid>
 						</Grid>
-						{/* <Copyright sx={{ pt: 4 }} /> */}
 					</Container>
 				</Box>
 			</Box>
