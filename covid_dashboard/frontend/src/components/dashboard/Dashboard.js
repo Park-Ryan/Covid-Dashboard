@@ -100,7 +100,6 @@ function DashboardContent() {
 		// they create queues to optimize performance, which is why the changes don't update immediately.
 		// console.log(inputs)
 
-		// TODO: extract method
 		CallAPI(inputs, "QueryEndpoint");
 	};
 
@@ -115,6 +114,8 @@ function DashboardContent() {
 		// Each button calls a different endpoint
 		// TODO: Figure out how to do that
 		CallAPI(inputs, endPoint);
+		// Might work, lets table rerender without pressing submit again
+		CallAPI(inputs, "QueryEndpoint");
 	};
 
 	return (
