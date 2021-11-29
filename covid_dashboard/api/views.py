@@ -206,6 +206,7 @@ def update_Value(country_query, state_query, type_query, amount_query):
 
 def query_selector(country_query, state_query, date_query, end_date_query):
 	from .urls import data_layer
+
 	payload = []
 	types = ["Confirmed", "Deaths", "Recovered"]
 	if state_query and date_query and not end_date_query:
@@ -214,7 +215,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 		# TODO: Default is 7 days, make a var to make it easily editable
 		# handles case if near the end of the month ex. day 30 - 7 = 03/23/2021
 		temp_date_obj -= timedelta(days=default_days)
-		
+
 		start_date_query = temp_date_obj.strftime("%m/%d/%Y")
 
 	payload = []
@@ -268,7 +269,7 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 				payload.append(
 					Get_Analytics(country_query, state_key, type, date_query, end_date_query)
 				)
-			#print(payload)
+			# print(payload)
 	elif (
 		state_query and not date_query and not end_date_query
 	):  # no dates return all days for that one state
@@ -380,6 +381,10 @@ class AddEndpoint(APIView):
 		amount_query = input_payload["amountVal"]
 		start_time = time.time()
 		payload = Create_Csv(country_query, state_query, type_query, date_query, amount_query)
+
+		# For testing
+		# payload = Create_Csv("US", "California", "Confirmed", "01/22/2020", 99999)
+
 		elapsed_time = time.time() - start_time
 		print("Time elapsed for add endpoint is : " + str(elapsed_time) + " seconds")
 
@@ -400,12 +405,12 @@ class EditEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
-		#print("Did change bool:")
-		#print(did_change)
-		#if did_change:
-		#	update_Value(country_query, state_query, type_query, amount_query)
-		#	did_change = False
-		elapsed_time = (time.time() - start_time)
+		# print("Did change bool:")
+		# print(did_change)
+		# if did_change:
+		# 	update_Value(country_query, state_query, type_query, amount_query)
+		# 	did_change = False
+		elapsed_time = time.time() - start_time
 		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
@@ -422,7 +427,7 @@ class DeleteEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Delete_Csv(country_query, state_query, date_query, type_query)
-		elapsed_time = (time.time() - start_time)
+		elapsed_time = time.time() - start_time
 		print("Time elapsed for delete endpoint is : " + str(elapsed_time) + " seconds")
 
 		return Response(payload, status=status.HTTP_200_OK)
@@ -457,9 +462,10 @@ class CountryTopDeathsEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Get_Top_5_Countries_Deaths()
-		elapsed_time = (time.time() - start_time)
-		print("Time elapsed for country top deaths endpoint is : " + str(elapsed_time) + " seconds")
-	
+		elapsed_time = time.time() - start_time
+		print(
+			"Time elapsed for country top deaths endpoint is : " + str(elapsed_time) + " seconds"
+		)
 
 		return Response(payload, status=status.HTTP_200_OK)
 
