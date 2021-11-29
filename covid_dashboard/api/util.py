@@ -643,6 +643,7 @@ def Delete_Value(country, state, type, date):
 			print("Values list index of 0: ")
 			print(value_list[0].deaths)
 			subtract_amount = float(value_list[0].deaths)
+			Update_Deaths(country, subtract_amount)
 		if type == "Recovered":
 			subtract_amount = float(value_list[0].recovered)
 
@@ -654,6 +655,7 @@ def Delete_Value(country, state, type, date):
 			subtract_amount = float(value_list[i].confirmed) - float(value_list[i - 1].confirmed)
 		if type == "Deaths":
 			subtract_amount = float(value_list[i].deaths) - float(value_list[i - 1].deaths)
+			Update_Deaths(country, subtract_amount)
 		if type == "Recovered":
 			subtract_amount = float(value_list[i].recovered) - float(value_list[i - 1].recovered)
 
