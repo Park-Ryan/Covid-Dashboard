@@ -22,7 +22,8 @@ import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
 import Table from "./Table";
-import { MainInputFields } from "./InputFields";
+import { SearchInputFields } from "./SearchInputFields";
+import { EditInputFields } from "./EditInputFields.js";
 
 const drawerWidth = 220;
 
@@ -92,7 +93,7 @@ function DashboardContent() {
 		// do something with value in parent component, like save to state
 		setMainInputs(inputs);
 
-		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object; 
+		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
 		// they create queues to optimize performance, which is why the changes don't update immediately.
 		// console.log(inputs)
 
@@ -114,7 +115,6 @@ function DashboardContent() {
 				setPayload(data);
 			});
 	};
-
 
 	return (
 		<ThemeProvider theme={mdTheme}>
@@ -198,7 +198,10 @@ function DashboardContent() {
 									}}
 								>
 									{/* <Chart /> */}
-									<MainInputFields
+									<SearchInputFields
+										parentCallback={callback}
+									/>
+									<EditInputFields
 										parentCallback={callback}
 									/>
 								</Paper>
@@ -226,7 +229,7 @@ function DashboardContent() {
 									}}
 								>
 									{/* <Orders /> */}
-									<Table data={payload}/>
+									<Table data={payload} />
 								</Paper>
 							</Grid>
 						</Grid>

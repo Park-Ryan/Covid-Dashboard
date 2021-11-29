@@ -10,7 +10,7 @@ import { DateData } from "../data/DateData";
 // when user selects a country, the next input field will only show states from that country.
 // use a dictonary for that
 // https://javascript.plainenglish.io/how-to-use-the-autocomplete-component-in-material-ui-11a7132d2b71?gi=eb1a40c3a4fe
-function AutocompleteInputField(props) {
+export function AutocompleteInputField(props) {
 
 	const handleChange = (event, newInput, reason) => {
 		if (reason === "clear") {
@@ -40,7 +40,7 @@ function AutocompleteInputField(props) {
 // pass these inputs values back up using callback? or lifting
 // when submit is pressed pass up the values and make GET request for table?
 // https://stackoverflow.com/questions/55726886/react-hook-send-data-from-child-to-parent-component
-export function MainInputFields({ parentCallback }) {
+export function SearchInputFields({ parentCallback }) {
 	const [countryInput, setCountryInput] = React.useState("");
 	const [stateInput, setStateInput] = React.useState("");
 	const [typeInput, setTypeInput] = React.useState("");

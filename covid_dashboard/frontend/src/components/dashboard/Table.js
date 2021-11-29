@@ -172,6 +172,8 @@ export default function EnhancedTable({ data }) {
 	React.useEffect(() => {
 		console.log("From Table.js: ");
 		console.log("SETTING ROWS TO EMPTY");
+		// Fix for bug when you move to different page and then only search for a specific country state date
+		setPage(0);
 		// https://stackoverflow.com/questions/61898184/state-doesnt-clear-in-useeffect
 		UpdateTable(data);
 	}, [data]);
@@ -294,7 +296,7 @@ export default function EnhancedTable({ data }) {
 											role="checkbox"
 											aria-checked={isItemSelected}
 											tabIndex={-1}
-											key={index}
+											key={`${row.country}|${row.state}|${row.date}`}
 											selected={isItemSelected}
 										>
 											<TableCell
