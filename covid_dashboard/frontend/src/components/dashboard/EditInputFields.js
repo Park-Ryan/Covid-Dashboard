@@ -65,7 +65,7 @@ export function EditInputFields({ parentCallback }) {
 				/>
 				<AutocompleteInputField
 					InputLabel="State"
-					InputOptions={countryStateMapOptions[countryInput]}
+					InputOptions={countryInput in countryStateMapOptions ? countryStateMapOptions[countryInput] : []}
 					input={stateInput}
 					setInput={setStateInput}
 				/>
