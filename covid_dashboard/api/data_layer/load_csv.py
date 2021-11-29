@@ -5,6 +5,7 @@ import copy
 from enum import Enum
 from typing import Dict, OrderedDict
 from queue import PriorityQueue
+import heapq
 
 
 class Date:
@@ -156,6 +157,8 @@ class DataLayer:
 		}
 		self.top_5_death_pq = PriorityQueue()
 		self.only_country_analytic_pq = PriorityQueue()
+		self.top_5_death_heap = []
+		self.top_5_confirmed_heap = []
 
 	def test(self):
 		print("works")
@@ -338,8 +341,12 @@ class DataLayer:
 
 	def init_top_5_country(self):
 		countries = self.countries_data
+		heapq.heapify(self.top_5_death_heap)
+		heapq.heapify(self.top_5_confirmed_heap)
 		for country_obj in countries.values():
-			self.top_5_death_pq.put((country_obj.total_deaths * (-1), country_obj))
+			heapq.heappush(self.top_5_death_heap, (-country_obj.total_deaths, country_obj))
+			heapq.heappush(self.top_5_confirmed_heap, (-country_obj.total_confirmed, country_obj))
+		
 
 	def init_reprJSON(self):
 		countries = self.countries_data

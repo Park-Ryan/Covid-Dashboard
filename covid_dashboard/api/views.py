@@ -431,7 +431,7 @@ class DeleteEndpoint(APIView):
 		amount_query = input_payload["payload"]["amountVal"]
 
 		start_time = time.time()
-		payload = Delete_Csv(country_query, state_query, date_query)
+		payload = Delete_Csv(country_query, state_query, date_query, type_query)
 		elapsed_time = (time.time() - start_time)
 		print("Time elapsed for delete endpoint is : " + str(elapsed_time) + " seconds")
 
@@ -469,6 +469,7 @@ class CountryTopDeathsEndpoint(APIView):
 		payload = Get_Top_5_Countries_Deaths()
 		elapsed_time = (time.time() - start_time)
 		print("Time elapsed for country top deaths endpoint is : " + str(elapsed_time) + " seconds")
+	
 
 		return Response(payload, status=status.HTTP_200_OK)
 
