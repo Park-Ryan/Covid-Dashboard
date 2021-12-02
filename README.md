@@ -10,7 +10,7 @@
 
 ## Architecture Diagram
 
-(Insert a UML diagram here)
+![GUI Design - Page 4](https://user-images.githubusercontent.com/46156230/144409514-ba1ae6f8-2add-4327-863b-a9aacf6a3744.png)
 
 ## Setup Instructions
 
