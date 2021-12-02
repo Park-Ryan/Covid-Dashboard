@@ -2,11 +2,16 @@
 
 ## Summary
 
-(Insert Summary Here)
+Covid Dashboard is a web application built to analyze a COVID-19 dataset. The goal is to help users understand statistical information about COVID-19 globally. 
 
 ## Features
 
-(Insert Feature information Here)
+- Search cases by type (Confirmed, Death, Recovered)
+- Update and modify records
+- Backup records to a CSV
+- Data visualization
+  - Statistics to show standard deviation, percentages and averages
+  - Bar chart for country with most deaths
 
 ## Architecture Diagram
 
@@ -38,7 +43,7 @@
 
 ## Data
 
-(Insert data information)
+https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 
 ## Contributors
 
