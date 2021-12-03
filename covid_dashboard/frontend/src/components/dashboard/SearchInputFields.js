@@ -6,6 +6,7 @@ import { CountryData } from "../data/CountryData";
 import { CountryStateMap } from "../data/CountryStateMap";
 import { TypeData } from "../data/TypeData";
 import { DateData } from "../data/DateData";
+import { SearchInputsContext } from "./SearchInputsContext";
 
 // when user selects a country, the next input field will only show states from that country.
 // use a dictonary for that
@@ -40,10 +41,11 @@ export function AutocompleteInputField(props) {
 // when submit is pressed pass up the values and make GET request for table?
 // https://stackoverflow.com/questions/55726886/react-hook-send-data-from-child-to-parent-component
 export function SearchInputFields({ parentCallback }) {
-	const [countryInput, setCountryInput] = React.useState("");
-	const [stateInput, setStateInput] = React.useState("");
-	const [typeInput, setTypeInput] = React.useState("");
-	const [dateInput, setDateInput] = React.useState("");
+	const {searchInputsValues, setSearchInputsValues} = React.useContext(SearchInputsContext)
+	const [countryInput, setCountryInput] = React.useState(searchInputsValues["countryVal"]);
+	const [stateInput, setStateInput] = React.useState(searchInputsValues["stateVal"]);
+	const [typeInput, setTypeInput] = React.useState(searchInputsValues["typeVal"]);
+	const [dateInput, setDateInput] = React.useState(searchInputsValues["dateVal"]);
 
 	const countryOptions = CountryData;
 	const countryStateMapOptions = CountryStateMap;
@@ -63,6 +65,14 @@ export function SearchInputFields({ parentCallback }) {
 		// pass input values back to parent component
 		parentCallback(inputValues);
 	};
+
+	// const useContext = ()  => {
+	// 	// if country input is empty and input context's country input is not blank, then there is cached valued we can use
+	// 	if(countryInput === "" && inputsContext["countryVal"] != "") {
+	// 		setCountryInput(inputsContext["countryVal"])
+	// 	}
+	// 	return countryInput
+	// };
 
 	return (
 		<div style={{ display: "flex", flexWrap: "wrap" }}>

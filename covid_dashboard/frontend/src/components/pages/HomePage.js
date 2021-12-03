@@ -17,7 +17,7 @@ import { hasNoLocationConflict } from "../tests/SearchValidation";
 
 import { StyledEngineProvider } from "@mui/material/styles";
 import Table from "../Table";
-import List from "../List";
+import List from "../myList";
 import BarChart from "../BarChart";
 
 const countryOptions = CountryData;

@@ -21,6 +21,9 @@ import SplineChart from "../SplineChart";
 import RotatedBarChart from "../RotatedBarChart";
 import StreamGraph from "../StreamGraph";
 import LineChart from "../LineChart";
+import AnalyticsList from "../AnalyticsList";
+import Statistic from "../Statistics";
+import { SearchInputsContext } from "../dashboard/SearchInputsContext";
 
 const drawerWidth = 220;
 
@@ -70,14 +73,18 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme({ palette: { mode: "dark" } });
 
-function AnalyticsContent() {
+export default function AnalyticsContent(props) {
 	const [open, setOpen] = React.useState(true);
 	const [payload, setPayload] = React.useState("");
+	const [confirmedPayload, setConfirmedPayload] = React.useState("");
+    const [stateAnalyticsPayload, setstateAnalyticsPaylod] = React.useState("");
+	const [inputsValues, setInputValues] = React.useState({});
+	const {searchInputsValues, setSearchInputsValues} = React.useContext(SearchInputsContext)
 
 	const inputs = {};
+	const confirmedInput = {};
 
-	console.log("Helloo");
-
+	// const msg = React.useContext(userInputContext)
 	// timer for the rerender of chart
 	// setInterval(function(){
 	// 	CallAPI(inputs, "CountryTopDeaths");
@@ -94,17 +101,55 @@ function AnalyticsContent() {
 		console.log("Calling useEffect");
 		// rerender when new data in payload
 		// const inputs = {}
-		// // timer for the rerender of chart
-		// setInterval(function(){
-		CallAPI(inputs, "CountryTopDeaths");
-		// }, 10000);
-		console.log(payload);
-	}, []);
+		CallAPI(inputs, "CountryTopDeaths", setPayload);
+		CallAPI(confirmedInput, "CountryTopConfirmed",setConfirmedPayload);
+		
+		CallAPI(searchInputsValues, "AnalyticsEndpoint",setstateAnalyticsPaylod);
+		
+		console.log("Printing analytics");
+		console.log(stateAnalyticsPayload);
+		// console.log(payload);
+	}, [searchInputsValues]);
 	// },[]);
 
 	const toggleDrawer = () => {
 		setOpen(!open);
 	};
+	console.log("From analytics");
+	console.log(props.inputValues);
+
+	const dummy = [   
+	{
+        "Washington": {
+            "type": "Confirmed",
+            "start-date": "01/22/2020",
+            "end-date": "05/29/2021",
+            "std": 144822.76730905243,
+            "averages": 162055.16483516485,
+            "percentages": 1.310744548217932
+        }
+    },
+    {
+        "Washington": {
+            "type": "Confirmed",
+            "start-date": "01/22/2020",
+            "end-date": "05/29/2021",
+            "std": 1757.440701538113,
+            "averages": 2674.0505494505496,
+            "percentages": 0.9700390034763238
+        }
+    },
+    {
+        "Washington": {
+            "type": "Confirmed",
+            "start-date": "01/22/2020",
+            "end-date": "05/29/2021",
+            "std": 0.13142783637561364,
+            "averages": 0.017582417582417582,
+            "percentages": 0.0
+        }
+    }
+	];
 
 	return (
 		<ThemeProvider theme={mdTheme}>
@@ -173,10 +218,31 @@ function AnalyticsContent() {
 						<Grid container spacing={3}>
 							<Grid item xs={12} md={4} lg={4}>
 								{/* Call which endpoint? Top 5 country deaths*/}
-								<PieChart data={payload} />
-							</Grid>
+								<PieChart data={payload} /> 
+							</Grid>  
 							<Grid item xs={12} md={4} lg={4}>
-								<BarChart data={payload} />
+								<BarChart data={payload} type = {"Deaths"}/>
+							</Grid> 
+							<Grid item xs={12} md={4} lg={4}>
+								<BarChart data={confirmedPayload} type = {"Confirmed"}/>
+							</Grid>  
+							<Grid  item xs={12} md={4} lg={4}>
+									<AnalyticsList 
+										data={stateAnalyticsPayload}
+										type="Confirmed"
+									/>
+							</Grid>
+							<Grid  item xs={12} md={4} lg={4}>
+									<AnalyticsList 
+										data={stateAnalyticsPayload}
+										type="Deaths"
+									/>
+							</Grid>
+							<Grid  item xs={12} md={4} lg={4}>
+									<AnalyticsList 
+										data={stateAnalyticsPayload}
+										type="Recovered"
+									/>
 							</Grid>
 							{/* <Grid item xs={12} md={4} lg={4}>
 								<SplineChart />
@@ -197,16 +263,16 @@ function AnalyticsContent() {
 		</ThemeProvider>
 	);
 
-	function CallAPI(inputs, endPoint) {
+	function CallAPI(inputs, endPoint, setterHook) {
 		console.log("CallAPI called");
 		// if (isEmpty(inputs)) {
 		// 	return;
 		// }
 		// Checks if empty
-		Object.values(inputs).forEach((val) => {
-			console.log(val);
-			if (val === "") return;
-		});
+		// Object.values(inputs).forEach((val) => {
+		// 	console.log(val);
+		// 	if (val === "") return;
+		// });
 		const requestOptions = {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -224,16 +290,14 @@ function AnalyticsContent() {
 				// if the data is empty we do not setPayload bc we can only do it once per render!
 				if (!isEmpty(data)) {
 					console.log(!isEmpty(data));
-					setPayload(data);
+					setterHook(data);
 				}
 			});
+		
 	}
 }
 
+
 function isEmpty(obj) {
 	return Object.keys(obj).length === 0;
-}
-
-export default function Analytics() {
-	return <AnalyticsContent />;
 }

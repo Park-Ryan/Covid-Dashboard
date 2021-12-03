@@ -410,12 +410,12 @@ class BackupEndpoint(APIView):
 
 class CountryTopConfirmedEndpoint(APIView):
 	def post(self, request, format=None):
-		input_payload = self.request.data
+		#input_payload = self.request.data
 
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		# country_query = input_payload["payload"]["countryVal"]
+		# state_query = input_payload["payload"]["stateVal"]
+		# type_query = input_payload["payload"]["typeVal"]
+		# date_query = input_payload["payload"]["dateVal"]
 
 		start_time = time.time()
 		payload = Get_Top_5_Countries_Confirmed()

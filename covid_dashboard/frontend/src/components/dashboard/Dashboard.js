@@ -23,7 +23,9 @@ import Deposits from "./Deposits";
 import Orders from "./Orders";
 import Table from "./Table";
 import { SearchInputFields } from "./SearchInputFields";
-import { EditInputFields } from "./EditInputFields.js";
+import { EditInputFields } from "./EditInputFields";
+import { SearchInputsContext } from "./SearchInputsContext"
+
 
 const drawerWidth = 220;
 
@@ -78,6 +80,8 @@ export default function DashboardContent({grandparentCallback}) {
 	const [payload, setPayload] = React.useState({});
 	const [searchInputs, setSearchInputs] = React.useState({});
 	const [editInputs, setEditInputs] = React.useState({});
+	const {searchInputsValues, setSearchInputsValues} = React.useContext(SearchInputsContext)
+
 	// const [grandparentCallback, setGrandparentCallback ] = React.useState(props.grandparentCallback); 
 
 	// whenever state updates, this will be called
@@ -87,24 +91,29 @@ export default function DashboardContent({grandparentCallback}) {
 		console.log(searchInputs);
 		console.log(editInputs);
 		console.log(payload);
+		console.log("Context Values");
+		console.log(searchInputsValues);
 	});
 
 	const toggleDrawer = () => {
 		setOpen(!open);
 	};
 
+	
 	const searchCallback = (inputs) => {
 		// do something with value in parent component, like save to state
 		setSearchInputs(inputs);
-
 		// If you find that useState / setState are not updating immediately, the answer is simple: they're just queues. React useState and setState don't make changes directly to the state object;
 		// they create queues to optimize performance, which is why the changes don't update immediately.
 		// console.log(inputs)
-
+		
 		CallAPI(inputs, "QueryEndpoint");
+		// const { searchInputs, setSearchInputs } = React.useContext(FooContext);
+		setSearchInputsValues(inputs);
 
 		grandparentCallback(inputs);
 	};
+
 
 	const editCallback = (inputs, endPoint) => {
 		// do something with value in parent component, like save to state
@@ -121,7 +130,7 @@ export default function DashboardContent({grandparentCallback}) {
 		// NOTE: CAN ONLY SET STATE OF ANY HOOK ONCE, CALLAPI DOES IT EVERY CALL
 		CallAPI(inputs, "QueryEndpoint");
 	};
-
+	const value = { searchInputs, setSearchInputs };
 	return (
 		<ThemeProvider theme={mdTheme}>
 			<Box sx={{ display: "flex" }}>
@@ -274,6 +283,7 @@ export default function DashboardContent({grandparentCallback}) {
 			});
 	}
 }
+
 
 function isEmpty(obj) {
 	return Object.keys(obj).length === 0;
