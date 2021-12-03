@@ -45,7 +45,7 @@ Covid Dashboard is a web application built to analyze a COVID-19 dataset. The go
 
 ## Usage
 
-1. Open two terminal tabs, one for frontend and one for backend
+1. Open three terminal tabs, one for frontend, one for backend, and one for testing
 2. Backend
   * cd ./covid_dashboard
   * python3 manage.py runserver
