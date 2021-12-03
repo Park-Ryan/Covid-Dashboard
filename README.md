@@ -71,4 +71,4 @@ https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 ## Final Review
 1. There is unit testing in ./covid_dashboard/api/tests.py
   * The unit test uses Django-Python framework unit testing
-2. Continuous Integration
+2. Continuous Integration is available on PR to main
