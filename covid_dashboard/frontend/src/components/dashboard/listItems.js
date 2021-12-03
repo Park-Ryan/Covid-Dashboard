@@ -27,7 +27,7 @@ export const mainListItems = (
 			<ListItemIcon>
 				<CancelIcon />
 			</ListItemIcon>
-			<ListItemText primary="Old Homepage" />
+			<ListItemText primary="Text Analytics" />
 		</ListItem>
 	</div>
 );

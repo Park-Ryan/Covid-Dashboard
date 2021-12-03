@@ -73,11 +73,12 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme({ palette: { mode: "dark" } });
 
-function DashboardContent() {
+export default function DashboardContent({grandparentCallback}) {
 	const [open, setOpen] = React.useState(true);
 	const [payload, setPayload] = React.useState({});
 	const [searchInputs, setSearchInputs] = React.useState({});
 	const [editInputs, setEditInputs] = React.useState({});
+	// const [grandparentCallback, setGrandparentCallback ] = React.useState(props.grandparentCallback); 
 
 	// whenever state updates, this will be called
 	// that means if ANY of the hooks are changed, it will trigger
@@ -101,6 +102,8 @@ function DashboardContent() {
 		// console.log(inputs)
 
 		CallAPI(inputs, "QueryEndpoint");
+
+		grandparentCallback(inputs);
 	};
 
 	const editCallback = (inputs, endPoint) => {
@@ -276,6 +279,6 @@ function isEmpty(obj) {
 	return Object.keys(obj).length === 0;
 }
 
-export default function Dashboard() {
-	return <DashboardContent />;
-}
+// export default function Dashboard() {
+// 	return <DashboardContent />;
+// }

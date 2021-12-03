@@ -70,7 +70,7 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme({ palette: { mode: "dark" } });
 
-function AnalyticsContent() {
+export default function AnalyticsContent({ parentCallback }) {
 	const [open, setOpen] = React.useState(true);
 	const [payload, setPayload] = React.useState("");
 
@@ -172,13 +172,19 @@ function AnalyticsContent() {
 					<Container maxWidth="100" sx={{ mt: 4, mb: 4 }}>
 						<Grid container spacing={3}>
 							<Grid item xs={12} md={4} lg={4}>
-								{/* Call which endpoint? Top 5 country deaths*/}
-								<PieChart data={payload} />
+								{/* <Typography component="h6" variant="h6">
+									<List
+										data={stateAnalyticsInputValue}
+										type={"Recovered"}
+										stat={"averages"}
+										shouldTruncate={1}
+									></List>
+								</Typography> */}
 							</Grid>
 							<Grid item xs={12} md={4} lg={4}>
-								<BarChart data={payload} />
+								<BarChart />
 							</Grid>
-							{/* <Grid item xs={12} md={4} lg={4}>
+							<Grid item xs={12} md={4} lg={4}>
 								<SplineChart />
 							</Grid>
 							<Grid item xs={12} md={4} lg={4}>
@@ -188,8 +194,8 @@ function AnalyticsContent() {
 								<StreamGraph />
 							</Grid>
 							<Grid item xs={12} md={4} lg={4}>
-								<BarChart />
-							</Grid> */}
+								<LineChart />
+							</Grid>
 						</Grid>
 					</Container>
 				</Box>
@@ -234,6 +240,6 @@ function isEmpty(obj) {
 	return Object.keys(obj).length === 0;
 }
 
-export default function Analytics() {
-	return <AnalyticsContent />;
-}
+// export default function Analytics() {
+// 	return <AnalyticsContent />;
+// }

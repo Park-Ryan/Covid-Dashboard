@@ -128,13 +128,13 @@ class AnalyticsEndpoint(APIView):
 
 		default_days = 7
 		types = ["Confirmed", "Deaths", "Recovered"]
-		input_payload = self.request.data
 		payload = []
 
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
 
 		"""
 			Cases:
@@ -429,12 +429,11 @@ class CountryTopConfirmedEndpoint(APIView):
 class CountryTopDeathsEndpoint(APIView):
 	def post(self, request, format=None):
 
-		input_payload = self.request.data
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		# input_payload = list(self.request.data.values())[0]
+		# country_query = input_payload["countryVal"]
+		# state_query = input_payload["stateVal"]
+		# type_query = input_payload["typeVal"]
+		# date_query = input_payload["dateVal"]
 
 		start_time = time.time()
 		payload = Get_Top_5_Countries_Deaths()
@@ -449,12 +448,11 @@ class CountryTopDeathsEndpoint(APIView):
 class StateTopCasesEndpoint(APIView):
 	def post(self, request, format=None):
 
-		input_payload = self.request.data
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
 
 		start_time = time.time()
 		payload = Get_Top_5_States_Cases()
@@ -469,12 +467,11 @@ class StateTopCasesEndpoint(APIView):
 class StateTopDeathsEndpoint(APIView):
 	def post(self, request, format=None):
 
-		input_payload = self.request.data
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
 
 		start_time = time.time()
 		payload = Get_Top_5_States_Deaths()
@@ -489,12 +486,11 @@ class StateTopDeathsEndpoint(APIView):
 class StateTopRecoveryEndpoint(APIView):
 	def post(self, request, format=None):
 
-		input_payload = self.request.data
-
-		country_query = input_payload["payload"]["countryVal"]
-		state_query = input_payload["payload"]["stateVal"]
-		type_query = input_payload["payload"]["typeVal"]
-		date_query = input_payload["payload"]["dateVal"]
+		input_payload = list(self.request.data.values())[0]
+		country_query = input_payload["countryVal"]
+		state_query = input_payload["stateVal"]
+		type_query = input_payload["typeVal"]
+		date_query = input_payload["dateVal"]
 
 		start_time = time.time()
 		payload = Get_Top_5_States_Recovered()
