@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
-      run:  python --version
+      run:  pip install django, djangorestframework
     - name: Run Tests
       run: |
         cd ./covid_dashboard
