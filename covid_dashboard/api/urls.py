@@ -12,21 +12,16 @@ urlpatterns = [
 	path("DeleteEndpoint", DeleteEndpoint.as_view()),
 	path("BackupEndpoint", BackupEndpoint.as_view()),
 	path("CountryTopDeaths", CountryTopDeathsEndpoint.as_view()),
+	path("CountryTopConfirmed", CountryTopConfirmedEndpoint.as_view()),
 	path("StateTopCases", StateTopCasesEndpoint.as_view()),
 	path("StateTopDeaths", StateTopDeathsEndpoint.as_view()),
 	path("StateTopRecovery", StateTopRecoveryEndpoint.as_view()),
 	path("QueryEndpoint", QueryEndpoint.as_view()),
-	path("ConfirmedAvgEndpoint", ConfirmedAvgEndpoint.as_view()),
-	path("ConfirmedPercentageEndpoint", ConfirmedPercentageEndpoint.as_view()),
-	path("ConfirmedStdEndpoint", ConfirmedStdEndpoint.as_view()),
-	path("RecoveredPercentageEndpoint", RecoveredPercentageEndpoint.as_view()),
-	path("RecoveredAvgEndpoint", RecoveredAvgEndpoint.as_view()),
-	path("RecoveredStdEndpoint", RecoveredStdEndpoint.as_view()),
-	path("DeathsPercentageEndpoint", DeathsPercentageEndpoint.as_view()),
-	path("DeathsAvgEndpoint", DeathsAvgEndpoint.as_view()),
-	path("DeathsStdEndpoint", DeathsStdEndpoint.as_view())
+	path("AnalyticsEndpoint", AnalyticsEndpoint.as_view()),
 ]
 
 data_layer = DataLayer()
-data_layer.initLoadCSV("api/data/archive/covid_19_data.csv")
+data_layer.initLoadCSV("api/data/archive/copy_covid_19_data.csv")
 data_layer.initTotals()
+data_layer.init_top_5_country()
+data_layer.init_reprJSON()

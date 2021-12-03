@@ -4,6 +4,8 @@ import csv
 import copy
 from enum import Enum
 from typing import Dict, OrderedDict
+from queue import PriorityQueue
+import heapq
 
 
 class Date:
@@ -12,6 +14,7 @@ class Date:
 		self.confirmed = confirmed
 		self.deaths = deaths
 		self.recovered = recovered
+		self.json = {}
 
 	def __repr__(self):
 		return "Date: % s, Confirmed: % s, Deaths: % s, Recovered: % s" % (
@@ -21,8 +24,14 @@ class Date:
 			self.recovered,
 		)
 
+	def init_reprJSON(self):
+		self.json = dict(
+			Confirmed=self.confirmed, Deaths=self.deaths, Recovered=self.recovered
+		)
+		return self.json
+
 	def reprJSON(self):
-		return dict(Confirmed=self.confirmed, Deaths=self.deaths, Recovered=self.recovered,)
+		return self.json
 
 
 class State:
@@ -33,6 +42,7 @@ class State:
 		self.total_deaths = 0
 		self.total_recovered = 0
 		self.dates = {}
+		self.json = {}
 
 	def __repr__(self):
 		return "% s, dates: %s" % (self.state_name, self.dates)
@@ -40,15 +50,15 @@ class State:
 	def __eq__(self, other):
 		return self.state_name == other.state_name
 
-	def reprJSON(self):
+	def init_reprJSON(self):
 		# turns the date objects into json but does not save,
 		# this is to prevent calling reprJSON once it was turned into a dict
 		# so whenever this is called it might take some take to convert all of it into json
 		temp_dates = {}
 		for k, v in self.dates.items():
-			temp_dates[k] = v.reprJSON()
+			temp_dates[k] = v.init_reprJSON()
 
-		return dict(
+		self.json = dict(
 			Country=self.country_name,
 			State=self.state_name,
 			Total_Confirmed=self.total_confirmed,
@@ -56,6 +66,11 @@ class State:
 			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
+
+		return self.json
+
+	def reprJSON(self):
+		return self.json
 
 
 # Every single province/state after merging all the dates togethers
@@ -71,6 +86,7 @@ class Country:
 		# Some countries don't have a state/province, but if they do we put it into the states list and leave dates in country empty
 		# Stores date objs
 		self.dates = {}
+		self.json = {}
 
 	def __repr__(self):
 		return "country name is % s, states are % s, dates are % s" % (
@@ -79,19 +95,20 @@ class Country:
 			self.dates,
 		)
 
-	def reprJSON(self):
+	# TODO: Cache
+	def init_reprJSON(self):
 		temp_states = {}
 		for k, v in self.states.items():
-			temp_states[k] = v.reprJSON()
+			temp_states[k] = v.init_reprJSON()
 
 		# turns the date objects into json but does not save,
 		# this is to prevent calling reprJSON once it was turned into a dict
 		# so whenever this is called it might take some take to convert all of it into json
 		temp_dates = {}
 		for k, v in self.dates.items():
-			temp_dates[k] = v.reprJSON()
+			temp_dates[k] = v.init_reprJSON()
 
-		return dict(
+		self.json = dict(
 			Country=self.country_name,
 			States=temp_states,
 			Total_Confirmed=self.total_confirmed,
@@ -99,6 +116,17 @@ class Country:
 			Total_Recovered=self.total_recovered,
 			Dates=temp_dates,
 		)
+
+		return self.json
+
+	def reprJSON(self):
+		return self.json
+
+	def __lt__(self, other):
+		# (country.total_deaths, country_obj)
+		selfPriority = self.total_deaths
+		otherPriority = other.total_deaths
+		return selfPriority < otherPriority
 
 
 class Fields(Enum):
@@ -127,6 +155,10 @@ class DataLayer:
 			"Total_Deaths": 0,
 			"Total_Recovered": 0,
 		}
+		self.top_5_death_pq = PriorityQueue()
+		self.only_country_analytic_pq = PriorityQueue()
+		self.top_5_death_heap = []
+		self.top_5_confirmed_heap = []
 
 	def test(self):
 		print("works")
@@ -194,69 +226,6 @@ class DataLayer:
 			# self.country_objects.append(country_obj)
 		print("Finish loading csv")
 
-	def OldinitLoadCSV(self, csv_name: str):
-		countries_dict = {}
-		self.load_json()
-
-		# loop thru countries list and make a key(country name), value([OrderedDict()])
-		for country in self.countries_list:
-			countries_dict[country] = []
-
-		with open(csv_name, newline="") as csvfile:
-			reader = csv.DictReader(csvfile, delimiter=",")
-
-			for row in reader:
-				# if the value of country is in the countries dict,
-				# take the value and use it as a key in the countries dict and add all the countries with that value into the list
-				if row["Country/Region"] in countries_dict:
-					countries_dict[row["Country/Region"]].append(row)
-
-			# 	print(reader["SNo"])  # prints the whole SNo column
-			# # since dictreader only allows iterability
-			# row = next(reader)  # goes next and keeps pointer position
-			# print(row)
-			# print(countries_dict)
-
-		# iterate thru all the keys and turn all the values into a country object
-		# value is a list containing all the json data for a country
-		# first check if states exist in the list
-		# if it does append and country.states.dates
-
-		# Objects Conversion part
-		for key, value in countries_dict.items():
-			# country_obj => is a tmp country object to pass into function
-			country_obj = Country(key)
-
-			# state is a dict
-			for state in value:
-				# print(state)
-				# convert the date and cases into a date obj
-				date_obj = Date(
-					state["ObservationDate"], state["Confirmed"], state["Deaths"], state["Recovered"]
-				)
-				temp_state = State(state["Province/State"], key)
-				# Add the dates to the states that already exist
-				if state["Province/State"] in country_obj.states:
-					country_obj.states[state["Province/State"]].dates[
-						state["ObservationDate"]
-					] = date_obj
-					# country_obj.states[state["Province/State"]].dates.append(date_obj)
-
-				elif state["Province/State"] not in country_obj.states:
-					# temp_state.dates.append(date_obj)
-					temp_state.dates[state["ObservationDate"]] = date_obj
-					country_obj.states[state["Province/State"]] = temp_state
-					# print(country_obj.states)
-
-				# if there is no value for state/province then add to country obj
-				elif state["Province/State"] == "":
-					# country_obj.dates.append(date_obj)
-					country_obj.dates[state["ObservationDate"]] = date_obj
-
-			self.countries_data[key] = country_obj
-			# self.country_objects.append(country_obj)
-
-		print("Finish loading csv")
 
 	# Returns the lists of all countries
 	def get_countries(self):
@@ -305,15 +274,20 @@ class DataLayer:
 		self.global_total_types["Total_Deaths"] = global_deaths
 		self.global_total_types["Total_Recovered"] = global_recovered
 
+	# TODO: need to update this every call
 
-# data_layer = data_layer()
-# data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
-# countries = data_layer.get_countries()
+	def init_top_5_country(self):
+		countries = self.countries_data
+		heapq.heapify(self.top_5_death_heap)
+		heapq.heapify(self.top_5_confirmed_heap)
+		for country_obj in countries.values():
+			heapq.heappush(self.top_5_death_heap, (-country_obj.total_deaths, country_obj))
+			heapq.heappush(self.top_5_confirmed_heap, (-country_obj.total_confirmed, country_obj))
+		
 
-# # Testing
-# for date in countries["US"].states["California"].dates:
-# 	print(date, "\n")
+	def init_reprJSON(self):
+		countries = self.countries_data
+		for country_obj in countries.values():
+			country_obj.init_reprJSON()
+		print("Finish init_reprJSON")
 
-
-# data_layer.load_json()
-# print(data_layer.countries_list)
