@@ -1,5 +1,13 @@
 # Covid Dashboard
 
+## Contributors
+
+* [Alan Chau](https://github.com/achau6) 
+* [Alex Kuang](https://github.com/Alexk21323) 
+* [Kent Phan](https://github.com/Moltenfuzzy)
+* [Ryan Park](https://github.com/Park-Ryan) 
+* [Kevin Ferrer](https://github.com/kferr0012)
+
 ## Summary
 
 Covid Dashboard is a web application built to analyze a COVID-19 dataset. The goal is to help users understand statistical information about COVID-19 globally. 
@@ -56,14 +64,6 @@ Note: Old Homepage UI is available, but not functional.
 ## Data
 
 https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
-
-## Contributors
-
-* Alan Chau
-* Alex Kuang
-* Kent Phan
-* Ryan Park
-* Kevin Ferrer
 
 ## Final Review
 1. There is unit testing in ./covid_dashboard/api/tests.py
