@@ -48,11 +48,10 @@ Covid Dashboard is a web application built to analyze a COVID-19 dataset. The go
 
 ## Navigation
 1. After running usage command, a homepage will display
-2. Look to the left side of the page where you will see 3 tabs: Dashboard, Analytics, and Old Homepage
-3. Click on Old Homepage to be brought to new page
-  * The new polish feature/improvement was to implement the new Homepage, but there was not even time to fully 
-    get it working and flesh out
-4. Play around with the filters
+2. Look to the left side of the page where you will see 2 tabs: Dashboard and Analytics
+3. Play around with the filters
+
+Note: Old Homepage UI is available, but not functional. 
 
 ## Data
 
