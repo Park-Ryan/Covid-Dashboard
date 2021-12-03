@@ -57,9 +57,10 @@ Covid Dashboard is a web application built to analyze a COVID-19 dataset. The go
   * python manage.py test
 
 ## Navigation
-1. After running usage command, a homepage will display
+1. After running usage command, a dashboard will display
 2. Look to the left side of the page where you will see 2 tabs: Dashboard and Analytics
 3. Play around with the filters
+4. Click the analytics tab to see graphs and statistical values
 
 Note: Old Homepage UI is available, but not functional. 
 
