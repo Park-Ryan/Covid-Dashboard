@@ -3,8 +3,8 @@
 ## Summary
 
 Covid Dashboard is a web application built to analyze a COVID-19 dataset. The goal is to help users understand statistical information about COVID-19 globally. 
-![dashboard](https://user-images.githubusercontent.com/62732152/144628270-4a36a616-01ad-471c-9bcd-1e4222de521b.jpg)
-![analytics](https://user-images.githubusercontent.com/62732152/144628275-5cb9a366-6c0e-4344-8195-5434c60f6b68.jpg)
+![image](https://user-images.githubusercontent.com/46156230/144631184-d1cf3bf5-3532-45a3-955b-d0ebc0b61557.png)
+![image](https://user-images.githubusercontent.com/46156230/144631247-b714d17f-8008-42c3-875f-4449bf6c827b.png)
 
 ## Features
 
