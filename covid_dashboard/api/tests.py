@@ -28,7 +28,7 @@ class CountryTestCase(TestCase):
         self.assertEqual(Find_State("US", "California"), 1)
 
     def test_find_fake_state(self):
-        self.assertEqual(Find_State("US", "Hololive"), 1)
+        self.assertEqual(Find_State("US", "Hololive"), 0)
 
     def test_find_States(self):
         self.assertEqual(Find_State("US", "Nevada"), 1)
@@ -47,3 +47,14 @@ class CountryTestCase(TestCase):
         self.assertEqual(Find_Cases("US", "California", "Confirmed", "05/18/2020"), "82259.0") 
         Update_Csv("US", "California", "Confirmed", "05/18/2020", "90000000.0")
         self.assertEqual(Find_Cases("US", "California", "Confirmed", "05/18/2020"), "90000000.0") 
+
+        self.assertEqual(Find_Cases("US", "California", "Confirmed", "01/27/2020"), "2.0") 
+        Update_Csv("US", "California", "Confirmed", "01/27/2020", "3.0")
+        self.assertEqual(Find_Cases("US", "California", "Confirmed", "01/27/2020"), "3.0") 
+
+    def test_delete_state(self):
+        Delete_Csv("Hololive", "Gawr Gura", "01/12/2021", "confirmed")
+        self.assertEqual(Find_Country("Hololive"), 1)
+
+
+

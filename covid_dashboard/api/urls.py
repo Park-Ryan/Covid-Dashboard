@@ -12,6 +12,7 @@ urlpatterns = [
 	path("DeleteEndpoint", DeleteEndpoint.as_view()),
 	path("BackupEndpoint", BackupEndpoint.as_view()),
 	path("CountryTopDeaths", CountryTopDeathsEndpoint.as_view()),
+	path("CountryTopConfirmed", CountryTopConfirmedEndpoint.as_view()),
 	path("StateTopCases", StateTopCasesEndpoint.as_view()),
 	path("StateTopDeaths", StateTopDeathsEndpoint.as_view()),
 	path("StateTopRecovery", StateTopRecoveryEndpoint.as_view()),
@@ -20,7 +21,7 @@ urlpatterns = [
 ]
 
 data_layer = DataLayer()
-data_layer.initLoadCSV("api/data/archive/covid_19_data.csv")
+data_layer.initLoadCSV("api/data/archive/copy_covid_19_data.csv")
 data_layer.initTotals()
 data_layer.init_top_5_country()
 data_layer.init_reprJSON()

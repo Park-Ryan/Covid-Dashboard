@@ -1,52 +1,55 @@
 import * as React from 'react';
-import Paper from '@mui/material/Paper';
+import Paper from '@material-ui/core/Paper';
 import {
-  Chart,
-  BarSeries,
-  Title,
   ArgumentAxis,
   ValueAxis,
+  Chart,
+  BarSeries,
+  Title
 } from '@devexpress/dx-react-chart-material-ui';
-import { Animation } from '@devexpress/dx-react-chart';
-
-const data = [
-  { year: '1950', population: 2.525 },
-  { year: '1960', population: 3.018 },
-  { year: '1970', population: 3.682 },
-  { year: '1980', population: 4.440 },
-  { year: '1990', population: 5.310 },
-  { year: '2000', population: 6.127 },
-  { year: '2010', population: 6.930 },
-];
-
-export default class Demo extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data,
-    };
+import { modalClasses } from '@mui/material';
+import { CountryData } from './data/CountryData';
+  
+  
+export default function BarChart(props) {
+const [mostDeaths, setMostDeaths] = React.useState(JSON.parse(props.mostDeaths));
+const [type, setType] = React.useState(props.type);
+// Sample data
+console.log("from BarChart")
+// console.log(mostDeaths);
+// const data = [
+//   { argument: 'Monday', value: 30 },
+//   { argument: 'Tuesday', value: 20 },
+//   { argument: 'Wednesday', value: 10 },
+//   { argument: 'Thursday', value: 50 },
+//   { argument: 'Friday', value: 60 },
+// ];
+let data = []
+function createData(country, deaths){
+  return{
+    country, 
+    deaths,
   }
+}
+for (let i= 0; i< mostDeaths.length; i++)
+{
+  data.push(createData(mostDeaths[i]["Country"], mostDeaths[i]["Types"]["Deaths"]));
+}
+console.log("from BarChart")
 
-  render() {
-    const { data: chartData } = this.state;
-
-    return (
-      <Paper>
-        <Chart
-          data={chartData}
-        >
-          <ArgumentAxis />
-          <ValueAxis max={7} />
-
-          <BarSeries
-            valueField="population"
-            argumentField="year"
-          />
-          <Title text="World population" />
-          <Animation />
-        </Chart>
-      </Paper>
-    );
-  }
+console.log(data)
+return (
+    <Paper>
+    
+    <Chart
+      data={data}
+    >
+      <ArgumentAxis />
+      <ValueAxis />
+      <BarSeries valueField="deaths" argumentField="country" />
+      {/* <BarSeries valueField="value" argumentField="argument" /> */}
+      <Title text={`Top 5 Country ${type}`}/>
+    </Chart>
+  </Paper>
+);
 }

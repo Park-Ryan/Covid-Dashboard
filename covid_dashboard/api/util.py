@@ -23,30 +23,9 @@ def Get_Top_5_Countries_Deaths():
 	state_max = 0.0
 	empty = ""
 
-	# for country_key, country_obj in tmp_countries_list.items():
-	# 	country_deaths = 0.0
-	# 	for state_key, state_obj in country_obj.states.items():
-	# 		death_list = []  # deaths list per state
-	# 		for date_obj in state_obj.dates.values():
-	# 			tmp_list = date_obj.deaths
-	# 			# date_obj.deaths returns a list of strings containing all the deaths
-	# 			# then going to use this for loop convert that to a float to use the max
-	# 			for line in tmp_list.splitlines():
-	# 				# splits the in the tmp_list to a float
-	# 				death_list.append(float(line))
-	# 			# at the end of the conversion you now have a list of float values for the state.dates
-	# 		state_max = max(death_list)  # using the max of the list of float for states
-	# 		country_deaths += state_max
-
-	# 	death_dict[country_key] = country_deaths
-
-	# death_dict = dict(sorted(death_dict.items(), key=lambda item: item[1], reverse=True))
-	# death_dict_keys = death_dict.keys()
-	# top_five_keys = list(death_dict_keys)[:5]
-	# death_dict_values = death_dict.values()
-	# top_five_values = list(death_dict_values)[:5]
 
 	heapq.heapify(data_layer.top_5_death_heap)
+	data_layer.top_5_death_heap.sort()
 
 	for i in range(0, 5):
 		payload.append(
@@ -69,7 +48,7 @@ def Get_Top_5_Countries_Confirmed():
 
 	payload = []
 	empty = ""
-
+	data_layer.top_5_confirmed_heap.sort()
 	for i in range(0, 5):
 		payload.append(
 			{
@@ -123,7 +102,6 @@ def Update_Confirmed(country_name, updated_value):
 	heapq.heapify(data_layer.top_5_confirmed_heap)
 
 
-# not using currently
 def Get_Top_5_States_Cases():
 	from .urls import data_layer
 
@@ -170,7 +148,6 @@ def Get_Top_5_States_Cases():
 	return payload
 
 
-# not using
 def Get_Top_5_States_Deaths():
 	from .urls import data_layer
 
@@ -213,11 +190,9 @@ def Get_Top_5_States_Deaths():
 				"Types": {"Confirmed": empty, "Deaths": top_five_values[i], "Recovered": empty},
 			}
 		)
-	# print(payload)
 	return payload
 
 
-# not using
 def Get_Top_5_States_Recovered():
 	from .urls import data_layer
 
@@ -262,7 +237,6 @@ def Get_Top_5_States_Recovered():
 		)
 	# print(payload)
 	return payload
-
 
 # Getter functions
 def Find_Country(country):
@@ -359,7 +333,6 @@ def Backup_Csv(path):
 					outfile.write(tmp_string)
 
 
-# SNo,ObservationDate,Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
 # Create(Country: USA, State: California, Confirmed : 0, Deaths: 0, Recovered: 0, Date: 9/11/2021)
 def Create_Csv(country, state, type, date, amount):
 	from .urls import data_layer
@@ -367,10 +340,6 @@ def Create_Csv(country, state, type, date, amount):
 	countries_dict = data_layer.countries_data
 
 	need_update = False
-	# if country is not in the tmp list
-	# then we can just append to the dictionary becasuse that country doesn't exist
-	# else it exists
-	# then use that country as a key and append to that
 
 	# this checks if the country is in the country list dictionary
 	# if country in tmp_countries_list:
@@ -380,9 +349,9 @@ def Create_Csv(country, state, type, date, amount):
 	# make the other 2 types default 0
 
 	if country in countries_dict:
-		print("The country is in it")
 		if date in countries_dict[country].states[state].dates:
-			print("Create Exist. Go To Edit Instead.")
+			#print("Create Exist. Go To Edit Instead.")
+			print("")
 		else:
 
 			if type == "Deaths":
@@ -395,7 +364,6 @@ def Create_Csv(country, state, type, date, amount):
 				# then make a date object to add to the country object
 				date_obj = Date(date, "0", "0", str(amount))
 				# sets country object dates to the date object
-			print("Reached add for country")
 			date_obj.init_reprJSON()
 			need_update = True
 			countries_dict[country].states[state].dates[date] = date_obj
@@ -403,23 +371,14 @@ def Create_Csv(country, state, type, date, amount):
 	else:
 		country_obj = Country(country)
 		country_obj.states[state] = State(state, country)
-		print("The country not is in it")
-		# print("Country: ", countries_dict["US"])
 		if type == "Deaths":
 			country_obj.total_deaths = float(amount)
 			date_obj = Date(date, "0", str(amount), "0")
 		elif type == "Confirmed":
 			country_obj.total_confirmed = float(amount)
 			date_obj = Date(date, str(amount), "0", "0")
-			# country_obj = Country(country)
-			# country_obj.states[state] = State(state, country)
-			# country_obj.states[state].dates[date] = date_obj
-			# countries_dict[country] = country_obj
 		elif type == "Recovered":
 			date_obj = Date(date, "0", "0", str(amount))
-
-		# print("Added: ", countries_dict["US"].states)
-		# print("Added: ", countries_dict["Hololive"].states)
 
 		country_obj.states[state].dates[date] = date_obj
 
@@ -427,7 +386,6 @@ def Create_Csv(country, state, type, date, amount):
 		country_obj.init_reprJSON()
 
 		if type == "Deaths":
-			print("Reached add")
 			heapq.heappush(data_layer.top_5_death_heap, (-country_obj.total_deaths, country_obj))
 			heapq.heapify(data_layer.top_5_death_heap)
 			print(data_layer.top_5_death_heap[0][1].total_deaths)
@@ -436,7 +394,6 @@ def Create_Csv(country, state, type, date, amount):
 				data_layer.top_5_confirmed_heap, (-country_obj.total_confirmed, country_obj)
 			)
 			heapq.heapify(data_layer.top_5_confirmed_heap)
-			# Update_Confirmed(country, amount)
 
 	# case_dict = dict(sorted(case_dict.items(), key=lambda item: item[1], reverse=True))
 	start_time = time.time()
@@ -454,7 +411,7 @@ def Create_Csv(country, state, type, date, amount):
 	# data_layer.set_countries(countries_dict)
 
 	if need_update:
-		print("Reached need update")
+		#print("Reached need update")
 		Update_Value(country, state, type, date, amount)
 		need_update = False
 
@@ -467,7 +424,6 @@ def Update_Csv(country, state, type, date, value):
 	from .urls import data_layer
 
 	tmp_countries_list = data_layer.get_countries()
-	# print("Before: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
 
 	# See confirmed if condition for comments
 
@@ -504,7 +460,6 @@ def Update_Csv(country, state, type, date, value):
 					] = tmp_recovered
 
 					Update_Deaths(country, value)
-					# Update_Value(country, state, type, date, value)
 					print("Edit Deaths")
 
 				elif type == "Recovered":
@@ -535,7 +490,6 @@ def Update_Csv(country, state, type, date, value):
 					tmp_countries_list[country].states[state].dates[date].reprJSON()[
 						"Recovered"
 					] = str(float(value))
-					# Update_Value(country, state, type, date, value)
 					print("Edit Recovered")
 
 				elif type == "Confirmed":
@@ -551,7 +505,6 @@ def Update_Csv(country, state, type, date, value):
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Deaths"],
 						tmp_countries_list[country].states[state].dates[date].reprJSON()["Recovered"],
 					)
-					# print("After: ", date_obj)
 					tmp_countries_list[country].states[state].dates[date] = date_obj
 
 					tmp_countries_list[country].states[state].dates[date].confirmed = str(float(value))
@@ -568,9 +521,7 @@ def Update_Csv(country, state, type, date, value):
 						"Recovered"
 					] = tmp_recovered
 
-					# print("Currently: ", tmp_countries_list[country].states[state].dates[date])
 					Update_Confirmed(country, value)
-					# Update_Value(country, state, type, date, value)
 					print("Edit Confirmed")
 				else:
 					print("Edit doesnt work")
@@ -579,11 +530,6 @@ def Update_Csv(country, state, type, date, value):
 
 	Update_Value(country, state, type, date, value)
 	data_layer.set_countries(tmp_countries_list)
-	# print("Printing from Update CSV")
-	# print(data_layer.countries_data[country].states[state].dates)
-	# Get_Analytics(country, type, date, end_date)
-	# print("Current: ", tmp_countries_list[country].states[state].dates[date].reprJSON())
-	# print("Check: ", tmp_countries_list[country].states[state].dates[date])
 
 
 # type doesn't matter because you're deleting the whole row of values
@@ -596,11 +542,8 @@ def Delete_Csv(country, state, date, type):
 	if country in data_layer.countries_data:
 		if state in data_layer.countries_data[country].states:
 			if date in data_layer.countries_data[country].states[state].dates:
-				# print(tmp_countries_list[country].states[state].dates[date])
 				Delete_Value(country, state, type, date)
 
-				# print(tmp_countries_list[country].states[state].dates[date])
-				# print(tmp_countries_list)
 		else:
 			print("State no exist")
 	else:
@@ -639,10 +582,12 @@ def Delete_Value(country, state, type, date):
 	if i == 0:
 		if type == "Confirmed":
 			subtract_amount = float(value_list[0].confirmed)
+			Update_Confirmed(country, subtract_amount)
 		if type == "Deaths":
 			print("Values list index of 0: ")
 			print(value_list[0].deaths)
 			subtract_amount = float(value_list[0].deaths)
+			Update_Deaths(country, subtract_amount)
 		if type == "Recovered":
 			subtract_amount = float(value_list[0].recovered)
 
@@ -652,13 +597,12 @@ def Delete_Value(country, state, type, date):
 	else:
 		if type == "Confirmed":
 			subtract_amount = float(value_list[i].confirmed) - float(value_list[i - 1].confirmed)
+			Update_Confirmed(country, subtract_amount)
 		if type == "Deaths":
 			subtract_amount = float(value_list[i].deaths) - float(value_list[i - 1].deaths)
+			Update_Deaths(country, subtract_amount)
 		if type == "Recovered":
 			subtract_amount = float(value_list[i].recovered) - float(value_list[i - 1].recovered)
-
-	# print("Subtract amount")
-	# print(subtract_amount)
 
 	for date_key, date_val in (
 		data_layer.countries_data[country].states[state].dates.items()
@@ -688,7 +632,6 @@ def Update_Value(country, state, type, date, amount):
 	from .urls import data_layer
 
 	# updating the countries dict
-	print("Reached update value")
 	dates_dict = data_layer.countries_data.get(country).states.get(state).dates
 	date_keys_list = list(dates_dict.keys())
 	for date_key in date_keys_list[date_keys_list.index(date) :]:
@@ -701,11 +644,8 @@ def Update_Value(country, state, type, date, amount):
 			elif type == "Recovered":
 				dates_dict[date_key].recovered = str(tmp_amount)
 			dates_dict[date_key].init_reprJSON()
-	# print(dates_dict)
 
 	data_layer.countries_data[country].states[state].dates = dates_dict
-	# print("Data layer countries")
-	# print(data_layer.countries_data[country].states[state].dates)
 
 
 def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
@@ -759,7 +699,6 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 						.reprJSON(),
 					}
 				)
-				# print("at country, date, state filled")
 
 		# when country is empty
 		# return data for that state and date
@@ -785,8 +724,6 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 			for date_key, date_obj in (
 				countries_list[countryFilter].states[stateFilter].dates.items()
 			):
-				# print("RePR: ", date_obj.reprJSON())
-				# adding to payload list
 				payload.append(
 					{
 						# we already know the country since every state obj has a country name member within it
@@ -859,7 +796,6 @@ def Get_Filtered_Data(countryFilter, stateFilter, typeFilter, dateFilter):
 							}
 						)
 
-	# print(payload)
 	# if payload is empty, no results found / api responsed with nothing
 
 	return payload
@@ -967,34 +903,10 @@ def Get_Date_Range(
 	countries_list = data_layer.get_countries()
 
 	type_nums = []
-	large_type_nums = []
-	tmp_type_nums = []
 	# TODO: Handle dates that DNE
 	# TODO: Handle same date
-	# if start_date == end_date:
-	# 	# print("IN GET DATE RANGE", dates_dict.get(start_date))
-	# 	if start_date in countries_list[country_query].states[state_query].dates:
-	# 		type_nums.append(float(dates_dict.get(start_date).reprJSON()[type_query]))
-	# 		print("START IS EQUAL TO END")
-	# 		return type_nums
 
 	# TODO: write function that grabs all dates in between the start and end and returns a list
-
-	# Get index of our start date and start iterating from there until we reach the end date
-	# how about get a list of the keys(dates) we need to iterate over and plug them into our dict
-	date_keys_list = list(dates_dict.keys())
-	# slicing list of keys to get the date ranges in between included them
-	# for date_key in date_keys_list[
-	# 	date_keys_list.index(start_date) : date_keys_list.index(end_date)
-	# ]:
-	# 	# TODO: maybe add a function that maps date object to a dict,
-	# 	# so we dont have to check each type case w/ a cn if
-	# 	# temp fix bc lazy, but it lets me not have to use a bunch of conditionals xd
-	# 	tmp_type_nums.append(
-	# 		float(dates_dict.get(date_key).reprJSON()[type_query])
-	# 	)  # credit to alan
-	# print("Tmp_Type_Name: ", tmp_type_nums)
-	# print("START DATE: ", start_date, " END DATE: ", end_date)
 
 	"""
 	USER inputs nothing
@@ -1016,9 +928,7 @@ def Get_Date_Range(
 			int_date -= timedelta(days=1)
 
 		for x in range(0, len(dates_dict)):
-			# print("START DATE: ", array_dates[x])
 			if array_dates[x] in countries_list[country_query].states[state_query].dates:
-				# print("QUALIFY DATES: ", array_dates[x])
 				type_nums.append(float(dates_dict.get(array_dates[x]).reprJSON()[type_query]))
 		return type_nums
 	else:
@@ -1027,17 +937,8 @@ def Get_Date_Range(
 			array_dates.insert(0, start_int_date)
 			int_date -= timedelta(days=1)
 
-		# print("Array date: ", array_dates)
-
 		for x in range(7):
-			# print("START DATE: ", array_dates[x])
 			if array_dates[x] in countries_list[country_query].states[state_query].dates:
-				# print("QUALIFY DATES: ", array_dates[x])
 				type_nums.append(float(dates_dict.get(array_dates[x]).reprJSON()[type_query]))
-		# else:
-		# print("NOT QUALIFY DATES: ", array_dates[x])
 
-	# print("TYPE ARRAY: ", type_nums)
-
-	# return tmp_type_nums
 	return type_nums

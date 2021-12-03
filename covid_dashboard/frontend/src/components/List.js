@@ -44,7 +44,7 @@ export default function PinnedSubheaderList(props) {
       ].map((sectionId) => (
         <li key={`section-${sectionId}`}>
           <ul>
-            <ListSubheader>{`${stat} ${type} by state `}</ListSubheader>
+            <ListSubheader>{`${stat.toUpperCase()} ${type.toUpperCase()} BY STATE`}</ListSubheader>
             {filterData(type,data).map((item) => (
               <ListItem alignItems="flex-start" key={`item-${sectionId}-${item}-${item}}`}>
                 <ListItemText primary={`${item["state"]}`}/>

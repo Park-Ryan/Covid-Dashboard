@@ -226,69 +226,6 @@ class DataLayer:
 			# self.country_objects.append(country_obj)
 		print("Finish loading csv")
 
-	def OldinitLoadCSV(self, csv_name: str):
-		countries_dict = {}
-		self.load_json()
-
-		# loop thru countries list and make a key(country name), value([OrderedDict()])
-		for country in self.countries_list:
-			countries_dict[country] = []
-
-		with open(csv_name, newline="") as csvfile:
-			reader = csv.DictReader(csvfile, delimiter=",")
-
-			for row in reader:
-				# if the value of country is in the countries dict,
-				# take the value and use it as a key in the countries dict and add all the countries with that value into the list
-				if row["Country/Region"] in countries_dict:
-					countries_dict[row["Country/Region"]].append(row)
-
-			# 	print(reader["SNo"])  # prints the whole SNo column
-			# # since dictreader only allows iterability
-			# row = next(reader)  # goes next and keeps pointer position
-			# print(row)
-			# print(countries_dict)
-
-		# iterate thru all the keys and turn all the values into a country object
-		# value is a list containing all the json data for a country
-		# first check if states exist in the list
-		# if it does append and country.states.dates
-
-		# Objects Conversion part
-		for key, value in countries_dict.items():
-			# country_obj => is a tmp country object to pass into function
-			country_obj = Country(key)
-
-			# state is a dict
-			for state in value:
-				# print(state)
-				# convert the date and cases into a date obj
-				date_obj = Date(
-					state["ObservationDate"], state["Confirmed"], state["Deaths"], state["Recovered"]
-				)
-				temp_state = State(state["Province/State"], key)
-				# Add the dates to the states that already exist
-				if state["Province/State"] in country_obj.states:
-					country_obj.states[state["Province/State"]].dates[
-						state["ObservationDate"]
-					] = date_obj
-					# country_obj.states[state["Province/State"]].dates.append(date_obj)
-
-				elif state["Province/State"] not in country_obj.states:
-					# temp_state.dates.append(date_obj)
-					temp_state.dates[state["ObservationDate"]] = date_obj
-					country_obj.states[state["Province/State"]] = temp_state
-					# print(country_obj.states)
-
-				# if there is no value for state/province then add to country obj
-				elif state["Province/State"] == "":
-					# country_obj.dates.append(date_obj)
-					country_obj.dates[state["ObservationDate"]] = date_obj
-
-			self.countries_data[key] = country_obj
-			# self.country_objects.append(country_obj)
-
-		print("Finish loading csv")
 
 	# Returns the lists of all countries
 	def get_countries(self):
@@ -354,15 +291,3 @@ class DataLayer:
 			country_obj.init_reprJSON()
 		print("Finish init_reprJSON")
 
-
-# data_layer = data_layer()
-# data_layer.initLoadCSV("covid_dashboard/api/data/archive/covid_19_data.csv")
-# countries = data_layer.get_countries()
-
-# # Testing
-# for date in countries["US"].states["California"].dates:
-# 	print(date, "\n")
-
-
-# data_layer.load_json()
-# print(data_layer.countries_list)

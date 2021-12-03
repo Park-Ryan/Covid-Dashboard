@@ -10,6 +10,7 @@ from .util import (
 	Create_Csv,
 	Delete_Csv,
 	Get_Top_5_Countries_Deaths,
+	Get_Top_5_Countries_Confirmed,
 	Get_Top_5_States_Cases,
 	Get_Top_5_States_Deaths,
 	Get_Top_5_States_Recovered,
@@ -60,20 +61,14 @@ class CountriesEndpoint(APIView):
 		from .urls import data_layer, ComplexEncoder
 
 		countries = data_layer.get_countries()
-		# print(countries["US"].states["California"].dates["01/21/2021"])
-
-		# results = CountrySerializer(countries, many=True).data
 		# this is returning str instead of json literal
 		# double encoding happening
 		result = json.dumps(
-			# 	# countries["US"].states["California"].dates["01/21/2021"].reprJSON()
 			countries["US"].states["California"],
 			cls=ComplexEncoder,
 		)
 		countries["US"].states["California"].dates
 
-		# print(countries["US"].states["California"].dates["01/21/2021"])
-		# return Response(countries["US"].states["California"].reprJSON())
 		return Response(countries["Taiwan"].reprJSON())
 
 
@@ -287,11 +282,9 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 			# print(payload)
 
 	elif not state_query and not date_query and not end_date_query:
-		# print("IN NO STATE, NO START DATE, NO END DATE, CASE")
 		start_time = time.time()
 
 		if country_query not in incremental_analytic.keys():
-			print("Reached inside only country for loop")
 			for state_key in data_layer.countries_data.get(country_query).states.keys():
 
 				# Get earliest available date & last date
@@ -327,38 +320,9 @@ def query_selector(country_query, state_query, date_query, end_date_query):
 	return payload
 
 
-# end of death analytics
-
-
-# def informationList(self, request):
-#   if request.method == 'GET':
-#      data = Country.objects.all()
-# or
-# data =  [ {"country: ": CountrySerializer.country_name,
-# "states:": CountrySerializer.states}
-# for data in Country.objects.all() ]
-# return Response(data)
-
-# country_query = request.GET.get('country_name')
-# state_query = request.GET.get('state')
-# date_query = request.GET.get('date')
-
-# if country_query != '' and
-#     serializer = CountrySerializer(data, context={'request': request}, many=True)
-
-#    return Response(serializer.data)
-
-#    elif request.method == 'POST':
-#        serializer = CountrySerializer(data=request.data)
-#        if serializer.is_valid():
-# serializer.save()
-#            return Response(status=status.HTTP_201_CREATED)
-
-
 class QueryEndpoint(APIView):
 	def post(self, request, format=None):
 		input_payload = list(self.request.data.values())[0]
-		# print(input_payload)
 
 		country_query = input_payload["countryVal"]
 		state_query = input_payload["stateVal"]
@@ -405,11 +369,6 @@ class EditEndpoint(APIView):
 
 		start_time = time.time()
 		payload = Update_Csv(country_query, state_query, type_query, date_query, amount_query)
-		# print("Did change bool:")
-		# print(did_change)
-		# if did_change:
-		# 	update_Value(country_query, state_query, type_query, amount_query)
-		# 	did_change = False
 		elapsed_time = time.time() - start_time
 		print("Time elapsed for edit endpoint is : " + str(elapsed_time) + " seconds")
 
@@ -449,6 +408,23 @@ class BackupEndpoint(APIView):
 
 		return Response(payload, status=status.HTTP_200_OK)
 
+class CountryTopConfirmedEndpoint(APIView):
+	def post(self, request, format=None):
+		input_payload = self.request.data
+
+		country_query = input_payload["payload"]["countryVal"]
+		state_query = input_payload["payload"]["stateVal"]
+		type_query = input_payload["payload"]["typeVal"]
+		date_query = input_payload["payload"]["dateVal"]
+
+		start_time = time.time()
+		payload = Get_Top_5_Countries_Confirmed()
+		elapsed_time = time.time() - start_time
+		print(
+			"Time elapsed for country top confirmed endpoint is : " + str(elapsed_time) + " seconds"
+		)
+
+		return Response(payload, status=status.HTTP_200_OK)
 
 class CountryTopDeathsEndpoint(APIView):
 	def post(self, request, format=None):
