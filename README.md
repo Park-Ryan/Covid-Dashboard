@@ -53,7 +53,7 @@ Covid Dashboard is a web application built to analyze a COVID-19 dataset. The go
   * cd./covid_dashboard/frontend
   * npm run dev 
 4. Unit Testing
-  * ./covid_dashboard
+  * cd ./covid_dashboard
   * python manage.py test
 
 ## Navigation
@@ -71,4 +71,4 @@ https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 ## Final Review
 1. There is unit testing in ./covid_dashboard/api/tests.py
   * The unit test uses Django-Python framework unit testing
-2. No Continuous Integration
+2. Continuous Integration
